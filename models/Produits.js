@@ -1,0 +1,12 @@
+const mongoose = require('mongoose');
+
+const UsersSchema = new mongoose.Schema({
+  id: { type: String, required: true },
+  nom: { type: String, required: true },
+  id_catégorie: { type: mongoose.Schema.Types.ObjectId, ref: 'Categorie_produits', required: true },
+  // contrat_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Contrat', required: true },
+  prix: { type: Number, required: false },
+  description: { type: String, required: true }
+}, { timestamps: false });
+
+module.exports = mongoose.model('Users', UsersSchema);

@@ -20,7 +20,6 @@ app.use('/notifications', require('./routes/notificationRoutes'));
 app.use('/types-notifications', require('./routes/typeNotificationRoutes'));
 app.use('/favoris', require('./routes/favorisRoutes'));
 app.use('/produits', require('./routes/produitsRoutes'));
-app.use('/supermarches', require('./routes/supermarcheRoutes'));
 app.use('/users-status', require('./routes/usersStatusRoutes'));
 app.use('/roles', require('./routes/rolesRoutes'));
 app.use('/contrat', require('./routes/contratRoutes'));

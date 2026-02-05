@@ -205,11 +205,10 @@ router.get('/contrat/:contratId/dernier', async (req, res) => {
   }
 });
 
-// GET paiements récents (pour dashboard)
-router.get('/recent/:limit?', async (req, res) => {
+/// GET /recent?limit=5
+router.get('/recent', async (req, res) => {
+  const limit = parseInt(req.query.limit) || 10; // par défaut 10
   try {
-    const limit = parseInt(req.params.limit) || 10;
-    
     const paiementsRecents = await Paiement.find()
       .populate({
         path: 'contrat_id',
@@ -221,12 +220,13 @@ router.get('/recent/:limit?', async (req, res) => {
       })
       .sort({ date_paiement: -1 })
       .limit(limit);
-    
+
     res.json(paiementsRecents);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
 

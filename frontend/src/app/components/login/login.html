@@ -1,6 +1,29 @@
-<form (ngSubmit)="onLogin()">
-    <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required />
-    <input type="password" [(ngModel)]="mdp" name="mdp" placeholder="Mot de passe" required />
+<div class="login-container">
+  <form class="login-card" (ngSubmit)="onLogin()">
+    <h2>Connexion</h2>
+
+    <div class="input-group">
+      <input
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        placeholder=" "
+        required
+      />
+      <label>Email</label>
+    </div>
+
+    <div class="input-group">
+      <input
+        type="password"
+        [(ngModel)]="mdp"
+        name="mdp"
+        placeholder=" "
+        required
+      />
+      <label>Mot de passe</label>
+    </div>
+
     <button type="submit">Se connecter</button>
   </form>
-  
+</div>

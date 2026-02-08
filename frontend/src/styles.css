@@ -1,1 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+*{
+font-family: Arial, Helvetica, sans-serif;
+}
+.FOOT{
+   background-color: #858585; 
+   text-align: center;
+   color: white;
+   height: max-content;
+}

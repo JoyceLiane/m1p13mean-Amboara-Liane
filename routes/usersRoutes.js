@@ -34,6 +34,55 @@ router.get('/admin-only', auth, authorizeRoles('admin'), (req, res) => {
 });
 
 
+// récupérer le profil de l'utilisateur connecté
+router.get('/profile', auth, async (req, res) => {
+  try {
+    console.log('req.user:', req.user);
+
+    const user = await Users.findById(req.user.id)
+      .select('-mdp')
+      .populate('role_id')
+      .populate('statut_id');
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// modifier le profil de l'utilisateur connecté
+router.put('/profile', auth, async (req, res) => {
+  try {
+    const { prenom, nom, phone, adresse, pdp } = req.body;
+
+    const updated = await Users.findByIdAndUpdate(
+      req.user.id,
+      {
+        prenom,
+        nom,
+        phone,
+        adresse,
+        pdp,
+        updated_at: new Date()
+      },
+      { new: true }
+    )
+      .select('-mdp')
+      .populate('role_id')
+      .populate('statut_id');
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 router.post('/', async (req, res) => {
   try {
     const user = new Users(req.body);
@@ -86,5 +135,6 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;

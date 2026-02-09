@@ -1,0 +1,10 @@
+<h2>Mon profil</h2>
+
+<form (ngSubmit)="save()">
+  <input [(ngModel)]="user.prenom" name="prenom" placeholder="Prénom" />
+  <input [(ngModel)]="user.nom" name="nom" placeholder="Nom" />
+  <input [(ngModel)]="user.phone" name="phone" placeholder="Téléphone" />
+  <input [(ngModel)]="user.adresse" name="adresse" placeholder="Adresse" />
+
+  <button type="submit">Enregistrer</button>
+</form>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ContratService } from '../../services/contrat';
 import { CommonModule } from '@angular/common';
 
@@ -15,20 +15,25 @@ export class CarteSupermarcheComponent implements OnInit {
   contratsParEtage: { [etage: number]: any[] } = {};
   etages: number[] = []; 
 
-  constructor(private contratService: ContratService) {}
+  constructor(
+    private contratService: ContratService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
- ngOnInit() {
-  this.contratService.getContrats().subscribe({
-    next: data => {
-      this.contrats = Array.isArray(data) ? data : [];
-      this.organiserParEtage();
-    },
-    error: err => console.error(err)
-  });
-}
+  ngOnInit() {
+    this.contratService.getContrats().subscribe({
+      next: data => {
+        console.log('Contrats reçus :', data);
+        this.contrats = Array.isArray(data) ? data : [];
+        this.organiserParEtage();
+        console.log('Contrats par étage :', this.contratsParEtage);
+        console.log('Étages :', this.etages);
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Erreur lors du chargement des contrats:', err)
+    });
+  }
 
-  
-  
   organiserParEtage() {
     this.contratsParEtage = {};
     this.contrats.forEach(contrat => {
@@ -43,7 +48,6 @@ export class CarteSupermarcheComponent implements OnInit {
                         .map(key => parseInt(key))
                         .sort((a, b) => a - b);
   }
-  
 
   getStatutColor(contrat: any) {
     const nom = contrat.status_id?.nom || 'inconnu';

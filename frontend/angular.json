@@ -26,8 +26,8 @@
               }
             ],
             "styles": [
-              "src/material-theme.scss",
-              "src/styles.css"
+              "src/styles.css",
+              "src/material-theme.scss"
             ]
           },
           "configurations": {

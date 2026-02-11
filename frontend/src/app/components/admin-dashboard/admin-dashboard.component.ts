@@ -30,6 +30,8 @@ export class AdminDashboardComponent implements OnInit {
   showDeleteConfirm = false;
   userToDelete: any = null;
 
+    isDarkMode = false;
+
   constructor(
     private adminService: AdminService,
     private router: Router
@@ -149,6 +151,17 @@ loadDashboard(): void {
     this.userToDelete = user;
     this.showDeleteConfirm = true;
   }
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    const dashboard = document.querySelector('.admin-dashboard');
+    if (dashboard) {
+      if (this.isDarkMode) {
+        dashboard.classList.add('dark-mode');
+      } else {
+        dashboard.classList.remove('dark-mode');
+      }
+    }
+  }
 
   cancelDelete(): void {
     this.userToDelete = null;
@@ -170,6 +183,7 @@ loadDashboard(): void {
       }
     });
   }
+  
 
  toggleUserStatus(user: any): void {
   if (!user._id || !user.statut_id) return;

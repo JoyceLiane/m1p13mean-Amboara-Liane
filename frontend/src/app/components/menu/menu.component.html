@@ -1,0 +1,113 @@
+<!-- src/app/components/menu/menu.component.html -->
+<div class="menu-container" [class.menu-collapsed]="isCollapsed" [class.dark-mode]="isDarkMode">
+  
+  <!-- Logo / Brand -->
+  <div class="menu-brand">
+    <div class="logo">
+      <span class="logo-icon">AP</span>
+      <span class="logo-text" *ngIf="!isCollapsed">AdminPro</span>
+    </div>
+    <button class="btn-collapse" (click)="toggleCollapse()" [attr.aria-label]="isCollapsed ? 'Étendre' : 'Réduire'">
+      <span class="collapse-icon">{{ isCollapsed ? '→' : '←' }}</span>
+    </button>
+  </div>
+
+  <!-- User Info -->
+  <div class="menu-user" *ngIf="currentUser">
+    <div class="user-avatar">
+      <img [src]="currentUser.pdp || 'assets/default-avatar.png'" [alt]="'Avatar de ' + currentUser.prenom">
+    </div>
+    <div class="user-info" *ngIf="!isCollapsed">
+      <div class="user-name">{{ currentUser.prenom }} {{ currentUser.nom }}</div>
+      <div class="user-role">{{ getRoleLabel(currentUser.role_id?.nom) }}</div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="menu-nav">
+    <ul class="menu-list">
+      
+      <!-- Dashboard - Tous -->
+      <li class="menu-item" [class.active]="isActive('/admin-dashboard')">
+        <a (click)="navigateTo('/admin-dashboard')">
+          <span class="menu-label" *ngIf="!isCollapsed">Dashboard</span>
+          <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Dashboard">D</span>
+        </a>
+      </li>
+
+      <!-- Administration - Admin uniquement -->
+      <ng-container *ngIf="authService.isAdmin()">
+        <li class="menu-separator" *ngIf="!isCollapsed">
+          <span>ADMINISTRATION</span>
+        </li>
+        <li class="menu-separator-mini" *ngIf="isCollapsed"></li>
+
+        <!-- Utilisateurs -->
+        <li class="menu-item" [class.active]="isActive('/admin/users')">
+          <a (click)="navigateTo('/admin/users')">
+            <span class="menu-label" *ngIf="!isCollapsed">Utilisateurs</span>
+            <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Utilisateurs">U</span>
+          </a>
+        </li>
+
+      </ng-container>
+
+      <!-- Gestion - Admin et Manager -->
+      <ng-container *ngIf="authService.isAdmin()">
+        <li class="menu-separator" *ngIf="!isCollapsed">
+          <span>GESTION</span>
+        </li>
+        <li class="menu-separator-mini" *ngIf="isCollapsed"></li>
+
+        <!-- Statistiques -->
+        <li class="menu-item" [class.active]="isActive('/admin/stats')">
+          <a (click)="navigateTo('/admin/stats')">
+            <span class="menu-label" *ngIf="!isCollapsed">Contrats</span>
+            <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Contrats">C</span>
+          </a>
+        </li>
+
+        <!-- Rapports -->
+        <li class="menu-item" [class.active]="isActive('/admin/reports')">
+          <a (click)="navigateTo('/admin/reports')">
+            <span class="menu-label" *ngIf="!isCollapsed">Evénements</span>
+            <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Evénements">E</span>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- Personnel - Tous -->
+      <li class="menu-separator" *ngIf="!isCollapsed">
+        <span>PERSONNEL</span>
+      </li>
+      <li class="menu-separator-mini" *ngIf="isCollapsed"></li>
+
+      <!-- Profil -->
+      <li class="menu-item" [class.active]="isActive('/profile')">
+        <a (click)="navigateTo('/profile')">
+          <span class="menu-label" *ngIf="!isCollapsed">Mon profil</span>
+          <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon profil">P</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Footer Menu -->
+  <div class="menu-footer">
+    <!-- Theme Toggle -->
+    <button class="menu-footer-btn" (click)="toggleDarkMode()">
+      <span class="menu-label" *ngIf="!isCollapsed">
+        {{ isDarkMode ? 'Mode clair' : 'Mode sombre' }}
+      </span>
+      <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Changer le thème">
+        {{ isDarkMode ? 'C' : 'S' }}
+      </span>
+    </button>
+
+    <!-- Déconnexion -->
+    <button class="menu-footer-btn logout" (click)="logout()">
+      <span class="menu-label" *ngIf="!isCollapsed">Déconnexion</span>
+      <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Déconnexion">D</span>
+    </button>
+  </div>
+</div>

@@ -7,10 +7,11 @@ import { Location } from '@angular/common';
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './profile.html'
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-
+isDarkMode = false;
   user: any = {};
   
   constructor(private userService: UserService ,private location: Location) {}
@@ -30,6 +31,9 @@ export class ProfileComponent implements OnInit {
       }
     });
     
+  }
+   toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
   }
 
   save() {

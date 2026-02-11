@@ -1,0 +1,12 @@
+<div class="app-layout" [class.dark-mode]="isDarkMode">
+  
+  <!-- Menu TOUJOURS affiché (pas de condition) -->
+  <app-menu></app-menu>
+  
+  <!-- Contenu principal + Footer -->
+  <div class="main-content" [class.content-expanded]="menuCollapsed">
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
+  </div>
+  
+</div>

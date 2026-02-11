@@ -1,0 +1,135 @@
+<!-- src/app/components/profile/profile.component.html -->
+<div class="profile-container" [class.dark-mode]="isDarkMode">
+  <!-- Header -->
+  <div class="profile-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goback()">
+        <span class="back-icon">←</span>
+        Retour
+      </button>
+      <h2>Mon profil</h2>
+    </div>
+    <button class="btn-theme" (click)="toggleDarkMode()">
+      {{ isDarkMode ? '☀️' : '🌙' }}
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="profile-content">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-wrapper">
+        <img 
+          [src]="user.pdp || 'assets/default-avatar.png'" 
+          alt="Avatar"
+          class="profile-avatar">
+        <button class="btn-edit-avatar" title="Changer la photo">
+          📷
+        </button>
+      </div>
+      <h3>{{ user.prenom }} {{ user.nom }}</h3>
+      <p class="user-email">{{ user.email }}</p>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-section">
+      <h3>Informations personnelles</h3>
+      
+      <form (ngSubmit)="save()" class="profile-form">
+        <div class="form-grid">
+          <!-- Prénom -->
+          <div class="form-group">
+            <label for="prenom">Prénom</label>
+            <input 
+              id="prenom"
+              [(ngModel)]="user.prenom" 
+              name="prenom" 
+              type="text"
+              placeholder="Votre prénom"
+              class="form-input" />
+          </div>
+
+          <!-- Nom -->
+          <div class="form-group">
+            <label for="nom">Nom</label>
+            <input 
+              id="nom"
+              [(ngModel)]="user.nom" 
+              name="nom" 
+              type="text"
+              placeholder="Votre nom"
+              class="form-input" />
+          </div>
+
+          <!-- Téléphone -->
+          <div class="form-group">
+            <label for="phone">Téléphone</label>
+            <input 
+              id="phone"
+              [(ngModel)]="user.phone" 
+              name="phone" 
+              type="tel"
+              placeholder="Votre numéro"
+              class="form-input" />
+          </div>
+
+          <!-- Adresse -->
+          <div class="form-group full-width">
+            <label for="adresse">Adresse</label>
+            <input 
+              id="adresse"
+              [(ngModel)]="user.adresse" 
+              name="adresse" 
+              type="text"
+              placeholder="Votre adresse complète"
+              class="form-input" />
+          </div>
+
+          <!-- Email (lecture seule) -->
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              id="email"
+              [value]="user.email" 
+              class="form-input form-input-readonly"
+              readonly
+              disabled />
+          </div>
+
+          <!-- Rôle (lecture seule) -->
+          <div class="form-group">
+            <label for="role">Rôle</label>
+            <input 
+              id="role"
+              [value]="user.role_id?.nom || 'Utilisateur'" 
+              class="form-input form-input-readonly"
+              readonly
+              disabled />
+          </div>
+        </div>
+
+        <!-- Dates -->
+        <div class="dates-section">
+          <div class="date-item">
+            <span class="date-label">Compte créé le :</span>
+            <span class="date-value">{{ user.created_on | date:'dd MMMM yyyy' }}</span>
+          </div>
+          <div class="date-item" *ngIf="user.updated_at">
+            <span class="date-label">Dernière modification :</span>
+            <span class="date-value">{{ user.updated_at | date:'dd MMMM yyyy' }}</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="goback()">
+            Annuler
+          </button>
+          <button type="submit" class="btn-save">
+            Enregistrer les modifications
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

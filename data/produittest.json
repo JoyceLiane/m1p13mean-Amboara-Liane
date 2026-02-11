@@ -1,0 +1,33 @@
+[
+    {
+      "_id": { "$oid": "65b000000000000000000201" },
+      "id": "PROD001",
+      "nom": "Kylie Lip Kit Matte",
+      "id_categorie": { "$oid": "65a000000000000000000101" },
+      "id_vendeur":{ "$oid": "698c4b4ea135f816b83a0804" },
+      "prix": 120000,
+      "description": "Rouge à lèvres matte longue tenue avec crayon assorti.",
+      "imagepath": "kylie-lip-kit.jpg"
+    },
+    {
+      "_id": { "$oid": "65b000000000000000000202" },
+      "id": "PROD002",
+      "nom": "Kylie Blush Powder",
+      "id_vendeur":{ "$oid": "698c4b4ea135f816b83a0804" },
+      "id_categorie": { "$oid": "65a000000000000000000101" },
+      "prix": 95000,
+      "description": "Blush en poudre ultra-pigmenté pour un fini naturel.",
+      "imagepath": "kylie-blush.jpg"
+    },
+    {
+      "_id": { "$oid": "65b000000000000000000203" },
+      "id": "PROD003",
+      "id_vendeur":{ "$oid": "698c4b4ea135f816b83a0804" },
+      "nom": "Kylie Eyeshadow Palette",
+      "id_categorie": { "$oid": "65a000000000000000000101" },
+      "prix": 180000,
+      "description": "Palette de fards à paupières aux couleurs intenses et modulables.",
+      "imagepath": "kylie-eyeshadow.jpg"
+    }
+  ]
+  

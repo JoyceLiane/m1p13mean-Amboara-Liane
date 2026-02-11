@@ -1,26 +1,80 @@
-h2 { text-align: center; margin-bottom: 20px; }
-h3 { margin-top: 20px; }
+/* Titres */
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 26px;
+  letter-spacing: 1px;
+}
 
+h3 {
+  margin: 25px 0 10px;
+  padding-left: 5px;
+  border-left: 4px solid #333;
+  font-size: 18px;
+}
+
+/* Ligne d’un étage */
 .etage-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
+/* Carte magasin */
 .magasin-card {
-  border: 1px solid #333;
-  border-radius: 5px;
+  width: 160px;
+  min-height: 190px;
+  border-radius: 10px;
   padding: 10px;
-  width: 150px;
-  min-height: 100px;
   text-align: center;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
+/* Effet interactif */
 .magasin-card:hover {
-  transform: scale(1.05);
-  box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+/* Nom magasin */
+.magasin-card p:first-of-type {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Description */
+.magasin-card p:nth-of-type(2) {
+  font-size: 12px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* Image magasin */
+.magasin-img {
+  width: 100%;
+  height: 200px;               /* ✅ taille fixe */
+  object-fit: cover;          /* ✅ image bien cadrée */
+  border-radius: 6px;
+  margin-top: 5px;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .magasin-card {
+    width: 45%;
+  }
+}
+
+@media (max-width: 480px) {
+  .magasin-card {
+    width: 100%;
+  }
 }

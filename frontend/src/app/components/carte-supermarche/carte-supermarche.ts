@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ContratService } from '../../services/contrat';
 import { CommonModule } from '@angular/common';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-carte-supermarche',
   standalone: true,
@@ -17,7 +17,8 @@ export class CarteSupermarcheComponent implements OnInit {
 
   constructor(
     private contratService: ContratService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -33,7 +34,9 @@ export class CarteSupermarcheComponent implements OnInit {
       error: err => console.error('Erreur lors du chargement des contrats:', err)
     });
   }
-
+  goToProduits(contrat: any) {
+    this.router.navigate(['/magasin', contrat.id_magasin._id, 'produits']);
+  }
   organiserParEtage() {
     this.contratsParEtage = {};
     this.contrats.forEach(contrat => {

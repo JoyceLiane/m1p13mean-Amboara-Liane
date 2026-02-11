@@ -1,12 +1,13 @@
-<h2>Carte du supermarché</h2>
 <div *ngFor="let etage of etages">
   <h3>Étage {{ etage }}</h3>
-  <div class="etage-row">
+  <div class="etage-row" >
     <div *ngFor="let contrat of contratsParEtage[etage]" 
          class="magasin-card"
-         [style.background-color]="getStatutColor(contrat)">
+         [style.background-color]="getStatutColor(contrat)"
+         (click)="goToProduits(contrat)">
       <p><strong>{{ contrat.nom_magasin }}</strong></p>
-      <p>Superficie: {{ contrat.id_magasin?.superficie }} m²</p>
+      <p>{{ contrat.description || '' }}</p>
+      <img  class="magasin-img" alt="Image du magasin" [src]="'http://localhost:5000/uploads/' + contrat.imagepath" />
     </div>
   </div>
 </div>

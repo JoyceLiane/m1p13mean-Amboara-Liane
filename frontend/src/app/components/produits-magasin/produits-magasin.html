@@ -1,0 +1,16 @@
+<h2>Produits du magasin</h2>
+
+<label>Filtrer par catégorie:</label>
+<select [(ngModel)]="selectedCategorie" (change)="filterByCategorie()">
+  <option value="">Toutes</option>
+  <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.nom }}</option>
+</select>
+
+<div class="produits-grid">
+  <div *ngFor="let produit of filteredProduits" class="produit-card">
+    <img [src]="'http://localhost:5000/uploads/produits/' + produit.imagepath" />
+    <p><strong>{{ produit.nom }}</strong></p>
+    <p>{{ produit.description }}</p>
+    <p *ngIf="produit.prix">Prix: {{ produit.prix }} Ar</p>
+  </div>
+</div>

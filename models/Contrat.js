@@ -5,6 +5,8 @@ const ContratSchema = new mongoose.Schema({
     id_magasin: { type: mongoose.Schema.Types.ObjectId, ref: 'Magasin', required: true },
     nom_magasin: { type: String, required: true },
     locataire_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
+    description: { type: String, required: false},
+    imagepath: { type: String, required: false},
     
     // Dates (NULL pour les demandes)
     date_debut: { type: Date, default: null },

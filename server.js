@@ -32,4 +32,5 @@ app.use('/paiements', require('./routes/paiementsRoutes'));
 app.use('/statusContrat', require('./routes/statusContratRoutes'));
 app.use('/supermarche', require('./routes/supermarcheRoutes'));
 app.use('/urgenceMaintenance', require('./routes/urgenceMaintenanceRoutes'));
+app.use('/uploads', express.static('uploads'));
 app.listen(PORT, () => console.log(`Serveur démarré sur le ports${PORT}`));

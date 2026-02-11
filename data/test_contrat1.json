@@ -12,6 +12,8 @@
     "status_id": "650000000000000000000001",
     "created_at": "2026-02-11T10:00:00.000Z",
     "updated_at": "2026-02-11T10:00:00.000Z",
-    "deleted_at": null
+    "deleted_at": null,
+    "description":"Cosmetics manjakely tata bonbon ry kiala ah",
+    "imagepath":"/magasins/Kylie.jpg"
   }
 ]

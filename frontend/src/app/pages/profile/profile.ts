@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -12,9 +13,11 @@ import { CommonModule } from '@angular/common';
 export class ProfileComponent implements OnInit {
 
   user: any = {};
-
-  constructor(private userService: UserService) {}
-
+  
+  constructor(private userService: UserService ,private router: Router) {}
+  goToProfile() {
+    this.router.navigate(['/client-dashboard']);
+  } 
   ngOnInit() {
     this.userService.getProfile().subscribe({
       next: data => this.user = data,

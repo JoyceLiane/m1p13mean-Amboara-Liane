@@ -6,6 +6,225 @@ const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 const authorizeRoles = require('../middleware/role');
 
+// ============================================
+// ROUTES ADMIN - DOIVENT ÊTRE EN PREMIER !
+// ============================================
+
+// 🔥 DASHBOARD ADMIN - DOIT ÊTRE AVANT /:id
+router.get('/admin/dashboard', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    console.log('📊 1. Début dashboard');
+    
+    const users = await Users.find()
+      .select('-mdp')
+      .populate('role_id')
+      .populate('statut_id')
+      .sort({ created_on: -1 });
+    
+    console.log('📊 2. Users récupérés:', users.length);
+    
+    const totalUsers = users.length;
+    console.log('📊 3. Total calculé');
+    
+    const activeUsers = users.filter(u => u.statut_id?.nom === 'actif').length;
+    console.log('📊 4. Actifs calculés');
+    
+    const inactiveUsers = users.filter(u => u.statut_id?.nom === 'inactif').length;
+    console.log('📊 5. Inactifs calculés');
+    
+    const usersByRole = users.reduce((acc, user) => {
+      const roleName = user.role_id?.nom || 'unknown';
+      acc[roleName] = (acc[roleName] || 0) + 1;
+      return acc;
+    }, {});
+    console.log('📊 6. Roles calculés');
+    
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentUsers = users.filter(u => new Date(u.created_on) >= sevenDaysAgo).length;
+    console.log('📊 7. Récents calculés');
+    
+    console.log('📊 8. Envoi réponse');
+    
+    res.json({
+      success: true,
+      users: users,
+      stats: {
+        total: totalUsers,
+        active: activeUsers,
+        inactive: inactiveUsers,
+        recent: recentUsers,
+        byRole: usersByRole
+      },
+      data: users
+    });
+    
+    console.log('📊 9. ✅ Réponse envoyée');
+    
+  } catch (err) {
+    console.error('📊 ❌ ERREUR À L\'ÉTAPE:', err);
+    console.error('📊 ❌ Message:', err.message);
+    console.error('📊 ❌ Stack:', err.stack);
+    res.status(500).json({ 
+      success: false, 
+      error: err.message 
+    });
+  }
+});router.get('/admin/dashboard', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    console.log('📊 1. Début dashboard');
+    
+    const users = await Users.find()
+      .select('-mdp')
+      .populate('role_id')
+      .populate('statut_id')
+      .sort({ created_on: -1 });
+    
+    console.log('📊 2. Users récupérés:', users.length);
+    
+    const totalUsers = users.length;
+    console.log('📊 3. Total calculé');
+    
+    const activeUsers = users.filter(u => u.statut_id?.nom === 'actif').length;
+    console.log('📊 4. Actifs calculés');
+    
+    const inactiveUsers = users.filter(u => u.statut_id?.nom === 'inactif').length;
+    console.log('📊 5. Inactifs calculés');
+    
+    const usersByRole = users.reduce((acc, user) => {
+      const roleName = user.role_id?.nom || 'unknown';
+      acc[roleName] = (acc[roleName] || 0) + 1;
+      return acc;
+    }, {});
+    console.log('📊 6. Roles calculés');
+    
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentUsers = users.filter(u => new Date(u.created_on) >= sevenDaysAgo).length;
+    console.log('📊 7. Récents calculés');
+    
+    console.log('📊 8. Envoi réponse');
+    
+    res.json({
+      success: true,
+      users: users,
+      stats: {
+        total: totalUsers,
+        active: activeUsers,
+        inactive: inactiveUsers,
+        recent: recentUsers,
+        byRole: usersByRole
+      },
+      data: users
+    });
+    
+    console.log('📊 9. ✅ Réponse envoyée');
+    
+  } catch (err) {
+    console.error('📊 ❌ ERREUR À L\'ÉTAPE:', err);
+    console.error('📊 ❌ Message:', err.message);
+    console.error('📊 ❌ Stack:', err.stack);
+    res.status(500).json({ 
+      success: false, 
+      error: err.message 
+    });
+  }
+});
+
+// Récupérer un utilisateur spécifique (admin)
+router.get('/admin/:id', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id)
+      .select('-mdp')
+      .populate('role_id')
+      .populate('statut_id');
+    
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    res.json(user);
+  } catch (err) {
+    console.error('❌ Erreur get user:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Mettre à jour un utilisateur (admin)
+router.put('/admin/:id', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const { prenom, nom, phone, adresse, pdp, email, role_id, statut_id } = req.body;
+    
+    const updateData = {
+      prenom,
+      nom,
+      phone,
+      adresse,
+      pdp,
+      email,
+      role_id,
+      statut_id,
+      updated_at: new Date()
+    };
+
+    // Si le mot de passe est fourni, le hasher
+    if (req.body.mdp) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.mdp = await bcrypt.hash(req.body.mdp, salt);
+    }
+
+    const user = await Users.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    )
+      .select('-mdp')
+      .populate('role_id')
+      .populate('statut_id');
+
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    res.json(user);
+  } catch (err) {
+    console.error('❌ Erreur update user:', err);
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Supprimer un utilisateur (admin)
+router.delete('/admin/:id', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const user = await Users.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    res.json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (err) {
+    console.error('❌ Erreur delete user:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Changer le statut d'un utilisateur (admin)
+router.patch('/admin/:id/status', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const { statut_id } = req.body;
+    
+    const user = await Users.findByIdAndUpdate(
+      req.params.id,
+      { statut_id, updated_at: new Date() },
+      { new: true }
+    )
+      .select('-mdp')
+      .populate('role_id')
+      .populate('statut_id');
+
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    res.json(user);
+  } catch (err) {
+    console.error('❌ Erreur update status:', err);
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// ============================================
+// ROUTES AUTHENTIFICATION
+// ============================================
+
 // LOGIN
 router.post('/login', async (req, res) => {
   try {
@@ -24,6 +243,7 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, role: user.role_id.nom });
   } catch (err) {
+    console.error('❌ Erreur login:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -33,8 +253,11 @@ router.get('/admin-only', auth, authorizeRoles('admin'), (req, res) => {
   res.json({ message: "Bienvenue Admin !" });
 });
 
+// ============================================
+// ROUTES PROFIL UTILISATEUR
+// ============================================
 
-// récupérer le profil de l'utilisateur connecté
+// Récupérer le profil de l'utilisateur connecté
 router.get('/profile', auth, async (req, res) => {
   try {
     console.log('req.user:', req.user);
@@ -50,10 +273,12 @@ router.get('/profile', auth, async (req, res) => {
 
     res.json(user);
   } catch (err) {
+    console.error('❌ Erreur get profile:', err);
     res.status(500).json({ error: err.message });
   }
 });
-// modifier le profil de l'utilisateur connecté
+
+// Modifier le profil de l'utilisateur connecté
 router.put('/profile', auth, async (req, res) => {
   try {
     const { prenom, nom, phone, adresse, pdp } = req.body;
@@ -80,9 +305,15 @@ router.put('/profile', auth, async (req, res) => {
 
     res.json(updated);
   } catch (err) {
+    console.error('❌ Erreur update profile:', err);
     res.status(500).json({ error: err.message });
   }
 });
+
+// ============================================
+// ROUTES CRUD GÉNÉRIQUES - EN DERNIER !
+// ============================================
+
 router.post('/', async (req, res) => {
   try {
     const user = new Users(req.body);
@@ -102,6 +333,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// ⚠️ CETTE ROUTE DOIT ÊTRE EN DERNIER car elle capture tout /:id
 router.get('/:id', async (req, res) => {
   try {
     const user = await Users.findById(req.params.id);
@@ -135,6 +367,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;

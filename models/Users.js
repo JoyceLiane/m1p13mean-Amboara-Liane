@@ -7,7 +7,7 @@ const UsersSchema = new mongoose.Schema({
   nom: { type: String, required: true },
   phone: { type: String, required: false },
   role_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Roles', required: true },
-  statut_id: { type: String, ref: 'UsersStatuts', required: true },
+  statut_id: { type: mongoose.Schema.Types.ObjectId, ref: 'UsersStatus', required: true },
   created_on: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
   pdp: { type: String, required: false },

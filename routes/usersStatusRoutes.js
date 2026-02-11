@@ -24,20 +24,39 @@ router.get('/', async (req, res) => {
 });
 
 // READ ONE
+const mongoose = require('mongoose');
+
+// READ ONE
 router.get('/:id', async (req, res) => {
   try {
-    const status = await UsersStatus.findOne({ 
-      $or: [
-        { _id: req.params.id },
-        { id: req.params.id }
-      ]
-    });
+    let query;
+    
+    // ✅ Vérifie si c'est un ObjectId valide
+    if (mongoose.Types.ObjectId.isValid(req.params.id) && req.params.id.length === 24) {
+      query = { 
+        $or: [
+          { _id: req.params.id },
+          { id: req.params.id }
+        ]
+      };
+    } else {
+      // C'est un string (nom ou id)
+      query = { 
+        $or: [
+          { id: req.params.id },
+          { nom: req.params.id }
+        ]
+      };
+    }
+    
+    const status = await UsersStatus.findOne(query);
     
     if (!status) {
       return res.status(404).json({ error: 'Statut utilisateur non trouvé' });
     }
     res.json(status);
   } catch (err) {
+    console.error('❌ Erreur GET status:', err);
     res.status(500).json({ error: err.message });
   }
 });

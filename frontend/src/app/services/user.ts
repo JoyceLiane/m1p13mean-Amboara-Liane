@@ -26,10 +26,6 @@ export class UserService {
         })
       );
   }
-  
-  
-
-
   updateProfile(data: any) {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({

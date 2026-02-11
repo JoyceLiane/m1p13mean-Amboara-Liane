@@ -1,6 +1,8 @@
+// src/app/components/login/login.component.ts
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -13,20 +15,36 @@ import { AuthService } from '../../services/auth';
 export class LoginComponent {
   email: string = '';
   mdp: string = '';
+  loading: boolean = false;
+  errorMessage: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   onLogin() {
+    this.loading = true;
+    this.errorMessage = '';
+
     this.authService.login(this.email, this.mdp).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', res.role);
-        // alert(`Connecté en tant que ${res.role}`);
-        if (res.role === 'admin') window.location.href = '/admin-dashboard';
-        else if (res.role === 'boutique') window.location.href = '/shop-dashboard';
-        else window.location.href = '/client-dashboard';
+        
+        // Navigation avec Router au lieu de window.location
+        if (res.role === 'admin') {
+          this.router.navigate(['/admin-dashboard']);
+        } else if (res.role === 'boutique') {
+          this.router.navigate(['/shop-dashboard']);
+        } else {
+          this.router.navigate(['/client-dashboard']);
+        }
       },
-      error: (err) => alert(err.error.error)
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.error?.error || 'Erreur de connexion';
+      }
     });
   }
 }

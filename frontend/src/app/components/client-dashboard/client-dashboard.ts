@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
+import { CarteSupermarcheComponent } from '../carte-supermarche/carte-supermarche';
 
 
 @Component({
   selector: 'app-client-dashboard',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule,CarteSupermarcheComponent],
   templateUrl: './client-dashboard.html',
   styleUrl: './client-dashboard.css',
 })

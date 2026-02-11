@@ -1,0 +1,13 @@
+<h2>Carte du supermarché et mes codes</h2>
+<div *ngFor="let etage of etages">
+  <h3>Étage {{ etage }}</h3>
+  <div class="etage-row">
+    <div *ngFor="let contrat of contratsParEtage[etage]" 
+         class="magasin-card"
+         [style.background-color]="getStatutColor(contrat)">
+      <p><strong>{{ contrat.id_magasin?.nom_magasin || 'Magasin sans nom' }}</strong></p>
+      <p>Superficie: {{ contrat.id_magasin?.superficie }} m²</p>
+      <p>Statut: {{ contrat.status_id?.nom || 'Inconnu' }}</p>
+    </div>
+  </div>
+</div>

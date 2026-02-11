@@ -1,7 +1,7 @@
 [
   {
     "id": "CONTRAT001",
-    "id_magasin": "64f000000000000000000002", 
+    "id_magasin": "64f000000000000000001001", 
     "nom_magasin": "Kylie cosmetics",
     "locataire_id": "64f000000000000000000001", 
     "date_debut": "2026-02-01T00:00:00.000Z",

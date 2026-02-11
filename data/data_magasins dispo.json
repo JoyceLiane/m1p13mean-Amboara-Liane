@@ -1,0 +1,32 @@
+[
+  {
+    "_id": { "$oid": "64f000000000000000001001" },
+    "id": "S001-E1-M001",
+    "superficie": 50,
+    "etage": 1,
+    "prix_m2": 20,
+    "created_at": { "$date": "2026-02-11T07:00:00Z" },
+    "updated_at": { "$date": "2026-02-11T07:00:00Z" },
+    "deleted_at": null
+  },
+  {
+    "_id": { "$oid": "64f000000000000000001002" },
+    "id": "S001-E1-M002",
+    "superficie": 30,
+    "etage": 1,
+    "prix_m2": 18,
+    "created_at": { "$date": "2026-02-11T07:05:00Z" },
+    "updated_at": { "$date": "2026-02-11T07:05:00Z" },
+    "deleted_at": null
+  },
+  {
+    "_id": { "$oid": "64f000000000000000001003" },
+    "id": "S001-E2-M001",
+    "superficie": 40,
+    "etage": 2,
+    "prix_m2": 22,
+    "created_at": { "$date": "2026-02-11T07:10:00Z" },
+    "updated_at": { "$date": "2026-02-11T07:10:00Z" },
+    "deleted_at": null
+  }
+]

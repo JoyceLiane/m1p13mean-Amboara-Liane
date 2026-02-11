@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -14,9 +13,9 @@ export class ProfileComponent implements OnInit {
 
   user: any = {};
   
-  constructor(private userService: UserService ,private router: Router) {}
-  goToProfile() {
-    this.router.navigate(['/client-dashboard']);
+  constructor(private userService: UserService ,private location: Location) {}
+  goback() {
+    this.location.back();
   } 
   ngOnInit() {
     this.userService.getProfile().subscribe({

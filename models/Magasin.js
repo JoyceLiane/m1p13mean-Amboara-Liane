@@ -2,11 +2,9 @@ const mongoose = require('mongoose');
 
 const MagasinSchema = new mongoose.Schema({
     id: { type: String, required: true },
-    nom: { type: String, required: true },
     superficie: { type: Number, required: true },
     etage: { type: Number, required: true },
     prix_m2: { type: Number, required: true },
-    statut_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Status', required: true },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
     deleted_at: { type: Date, default: null }

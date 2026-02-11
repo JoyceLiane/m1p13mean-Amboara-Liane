@@ -25,12 +25,12 @@ const ContratSchema = new mongoose.Schema({
         default: null 
     },
     
-    // 3. Statut de la demande (en complément de status_id global)
-    statut_demande: {
-        type: String,
-        enum: ['EN_ATTENTE', 'APPROUVEE', 'REFUSEE', 'NON_DEMANDE'],
-        default: 'NON_DEMANDE'
-    },
+    // // 3. Statut de la demande (en complément de status_id global)
+    // statut_demande: {
+    //     type: String,
+    //     enum: ['EN_ATTENTE', 'APPROUVEE', 'REFUSEE', 'NON_DEMANDE'],
+    //     default: 'NON_DEMANDE'
+    // },
     
     status_id: { type: mongoose.Schema.Types.ObjectId, ref: 'StatusContrat', required: true },
     created_at: { type: Date, default: Date.now },

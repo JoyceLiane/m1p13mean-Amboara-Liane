@@ -20,9 +20,10 @@ export class LoginComponent {
     this.authService.login(this.email, this.mdp).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.token);
-        alert(`Connecté en tant que ${res.role}`);
+        localStorage.setItem('role', res.role);
+        // alert(`Connecté en tant que ${res.role}`);
         if (res.role === 'admin') window.location.href = '/admin-dashboard';
-        else if (res.role === 'shop_owner') window.location.href = '/shop-dashboard';
+        else if (res.role === 'boutique') window.location.href = '/shop-dashboard';
         else window.location.href = '/client-dashboard';
       },
       error: (err) => alert(err.error.error)

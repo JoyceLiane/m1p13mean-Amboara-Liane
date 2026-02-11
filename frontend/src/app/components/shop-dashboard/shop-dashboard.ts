@@ -2,16 +2,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
-
 @Component({
-  selector: 'app-client-dashboard',
+  selector: 'app-shop-dashboard',
   imports: [],
-  templateUrl: './client-dashboard.html',
-  styleUrl: './client-dashboard.css',
+  templateUrl: './shop-dashboard.html',
+  styleUrl: './shop-dashboard.css',
 })
-
-export class ClientDashboard {
-
+export class ShopDashboard {
   constructor(private router: Router,private authService: AuthService) { }
 
   goToProfile() {
@@ -19,5 +16,5 @@ export class ClientDashboard {
   }
   logout() {
     this.authService.logout();
-  }
+  }  
 }

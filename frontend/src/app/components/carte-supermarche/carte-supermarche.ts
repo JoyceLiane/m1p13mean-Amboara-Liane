@@ -1,11 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ContratService } from '../../services/contrat';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ProduitsService } from '../../services/produits';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-carte-supermarche',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './carte-supermarche.html',
   styleUrls: ['./carte-supermarche.css']
 })
@@ -13,13 +15,18 @@ export class CarteSupermarcheComponent implements OnInit {
 
   contrats: any[] = [];
   contratsParEtage: { [etage: number]: any[] } = {};
-  etages: number[] = []; 
+  etages: number[] = [];
+  selectedMagasin: any = null;
+  produitsMagasin: any[] = [];
+  filteredProduits: any[] = [];
+  categoriesMagasin: any[] = [];
+  selectedCategorie: string = '';
 
   constructor(
     private contratService: ContratService,
     private cdr: ChangeDetectorRef,
-    private router: Router
-  ) {}
+    private produitsService: ProduitsService
+  ) { }
 
   ngOnInit() {
     this.contratService.getContrats().subscribe({
@@ -34,9 +41,39 @@ export class CarteSupermarcheComponent implements OnInit {
       error: err => console.error('Erreur lors du chargement des contrats:', err)
     });
   }
-  goToProduits(contrat: any) {
-    this.router.navigate(['/magasin', contrat.id_magasin._id, 'produits']);
+  selectMagasin(contrat: any) {
+    this.selectedMagasin = contrat;
+    this.loadProduitsMagasin(contrat.id_magasin._id);
   }
+  loadProduitsMagasin(magasinId: string) {
+    this.produitsService.getProduitsByMagasin(magasinId).subscribe({
+        next: (data) => {
+          this.produitsMagasin = data;
+          this.filteredProduits = data;
+
+          // Extraire catégories uniques
+          const uniqueCategories = new Map();
+          data.forEach((p: any) => {
+            if (p.id_categorie) {
+              uniqueCategories.set(p.id_categorie._id, p.id_categorie);
+            }
+          });
+
+          this.categoriesMagasin = Array.from(uniqueCategories.values());
+        },
+        error: err => console.error(err)
+      });
+  }
+  filterByCategorie() {
+    if (!this.selectedCategorie) {
+      this.filteredProduits = this.produitsMagasin;
+    } else {
+      this.filteredProduits = this.produitsMagasin.filter(
+        p => p.id_categorie?._id === this.selectedCategorie
+      );
+    }
+  }
+
   organiserParEtage() {
     this.contratsParEtage = {};
     this.contrats.forEach(contrat => {
@@ -46,15 +83,15 @@ export class CarteSupermarcheComponent implements OnInit {
       }
       this.contratsParEtage[etage].push(contrat);
     });
-  
+
     this.etages = Object.keys(this.contratsParEtage)
-                        .map(key => parseInt(key))
-                        .sort((a, b) => a - b);
+      .map(key => parseInt(key))
+      .sort((a, b) => a - b);
   }
 
   getStatutColor(contrat: any) {
     const nom = contrat.status_id?.nom || 'inconnu';
-    switch(nom.toLowerCase()) {
+    switch (nom.toLowerCase()) {
       case 'actif': return '#a0e7a0';
       case 'resilie': return '#f7c59f';
       case 'expulse': return '#f08080';

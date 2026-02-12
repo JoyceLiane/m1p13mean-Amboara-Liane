@@ -47,12 +47,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: ['client'] }
       },
-      { 
-        path: 'produits-magasin', 
-        loadComponent: () => import('./components/produits-magasin/produits-magasin').then(m => m.ProduitsMagasinComponent),
-        canActivate: [RoleGuard],
-        data: { roles: ['client'] }
-      },
+
       
       // Shop uniquement
       // { 

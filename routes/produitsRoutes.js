@@ -31,6 +31,15 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.get('/magasin/:id', async (req, res) => {
+  try {
+    const produits = await Produits.find({ id_magasin: req.params.id })
+      .populate('id_categorie');
+    res.json(produits);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.put('/:id', async (req, res) => {
   try {

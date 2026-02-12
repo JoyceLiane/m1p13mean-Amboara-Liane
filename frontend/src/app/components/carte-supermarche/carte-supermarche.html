@@ -1,13 +1,51 @@
+<!-- CARTE -->
 <div *ngFor="let etage of etages">
   <h3>Étage {{ etage }}</h3>
-  <div class="etage-row" >
+
+  <div class="etage-row">
     <div *ngFor="let contrat of contratsParEtage[etage]" 
          class="magasin-card"
          [style.background-color]="getStatutColor(contrat)"
-         (click)="goToProduits(contrat)">
+         (click)="selectMagasin(contrat)">
+
       <p><strong>{{ contrat.nom_magasin }}</strong></p>
       <p>{{ contrat.description || '' }}</p>
-      <img  class="magasin-img" alt="Image du magasin" [src]="'http://localhost:5000/uploads/' + contrat.imagepath" />
+
+      <img class="magasin-img"
+           *ngIf="contrat.imagepath"
+           alt="Image du magasin"
+           [src]="'http://localhost:5000/uploads/' + contrat.imagepath" />
     </div>
   </div>
+</div>
+
+
+<!-- SECTION PRODUITS -->
+<div *ngIf="selectedMagasin" class="produits-section">
+
+  <h2>Produits de {{ selectedMagasin.nom_magasin }}</h2>
+
+  <!-- FILTRE -->
+  <label>Filtrer par catégorie :</label>
+  <select [(ngModel)]="selectedCategorie" (change)="filterByCategorie()">
+    <option value="">Toutes</option>
+    <option *ngFor="let cat of categoriesMagasin" [value]="cat._id">
+      {{ cat.nom }}
+    </option>
+  </select>
+
+  <!-- PRODUITS -->
+  <div class="produits-grid">
+    <div *ngFor="let produit of filteredProduits" class="produit-card">
+
+      <img *ngIf="produit.imagepath"
+           [src]="'http://localhost:5000/uploads/' + produit.imagepath" />
+
+      <p><strong>{{ produit.nom }}</strong></p>
+      <p>{{ produit.description }}</p>
+      <p *ngIf="produit.prix">Prix : {{ produit.prix }} Ar</p>
+
+    </div>
+  </div>
+
 </div>

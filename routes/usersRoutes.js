@@ -70,65 +70,6 @@ router.get('/admin/dashboard', auth, authorizeRoles('admin'), async (req, res) =
       error: err.message 
     });
   }
-});router.get('/admin/dashboard', auth, authorizeRoles('admin'), async (req, res) => {
-  try {
-    console.log('📊 1. Début dashboard');
-    
-    const users = await Users.find()
-      .select('-mdp')
-      .populate('role_id')
-      .populate('statut_id')
-      .sort({ created_on: -1 });
-    
-    console.log('📊 2. Users récupérés:', users.length);
-    
-    const totalUsers = users.length;
-    console.log('📊 3. Total calculé');
-    
-    const activeUsers = users.filter(u => u.statut_id?.nom === 'actif').length;
-    console.log('📊 4. Actifs calculés');
-    
-    const inactiveUsers = users.filter(u => u.statut_id?.nom === 'inactif').length;
-    console.log('📊 5. Inactifs calculés');
-    
-    const usersByRole = users.reduce((acc, user) => {
-      const roleName = user.role_id?.nom || 'unknown';
-      acc[roleName] = (acc[roleName] || 0) + 1;
-      return acc;
-    }, {});
-    console.log('📊 6. Roles calculés');
-    
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const recentUsers = users.filter(u => new Date(u.created_on) >= sevenDaysAgo).length;
-    console.log('📊 7. Récents calculés');
-    
-    console.log('📊 8. Envoi réponse');
-    
-    res.json({
-      success: true,
-      users: users,
-      stats: {
-        total: totalUsers,
-        active: activeUsers,
-        inactive: inactiveUsers,
-        recent: recentUsers,
-        byRole: usersByRole
-      },
-      data: users
-    });
-    
-    console.log('📊 9. ✅ Réponse envoyée');
-    
-  } catch (err) {
-    console.error('📊 ❌ ERREUR À L\'ÉTAPE:', err);
-    console.error('📊 ❌ Message:', err.message);
-    console.error('📊 ❌ Stack:', err.stack);
-    res.status(500).json({ 
-      success: false, 
-      error: err.message 
-    });
-  }
 });
 
 // Récupérer un utilisateur spécifique (admin)

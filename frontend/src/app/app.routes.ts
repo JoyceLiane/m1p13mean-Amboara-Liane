@@ -35,19 +35,19 @@ export const routes: Routes = [
       },
       
       // Client uniquement
-      // { 
-      //   path: 'client-dashboard', 
-      //   loadComponent: () => import('./components/client-dashboard/client-dashboard').then(m => m.ClientDashboardComponent),
-      //   canActivate: [RoleGuard],
-      //   data: { roles: ['client'] }
-      // },
+      { 
+        path: 'client-dashboard', 
+        loadComponent: () => import('./components/client-dashboard/client-dashboard').then(m => m.ClientDashboardComponent),
+        canActivate: [RoleGuard],
+        data: { roles: ['client'] }
+      },
       { 
         path: 'carte-supermarche', 
         loadComponent: () => import('./components/carte-supermarche/carte-supermarche').then(m => m.CarteSupermarcheComponent),
         canActivate: [RoleGuard],
         data: { roles: ['client'] }
       },
-
+      
       
       // Shop uniquement
       // { 
@@ -60,9 +60,10 @@ export const routes: Routes = [
       // Redirection par défaut
       { 
         path: '', 
-        redirectTo: '/admin-dashboard', 
-        pathMatch: 'full' 
+        loadComponent: () => import('./components/dashboard-redirect/dashboard-redirect')
+          .then(m => m.DashboardRedirectComponent)
       }
+      
     ]
   },
   

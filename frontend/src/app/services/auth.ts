@@ -55,27 +55,22 @@ export class AuthService {
   /**
    * Connexion
    */
-  login(email: string, mdp: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, mdp })
+  login(email: string, mdp: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, mdp })
       .pipe(
         tap(response => {
-          // Sauvegarder le token
+  
           localStorage.setItem('token', response.token);
           localStorage.setItem('role', response.role);
-          
-          // Mettre à jour les subjects
+  
           this.isAuthenticatedSubject.next(true);
-          
-          // Si l'API retourne les infos utilisateur
-          if (response.user) {
-            this.setCurrentUser(response.user);
-          } else {
-            // Sinon, aller chercher les infos utilisateur
-            this.fetchCurrentUser().subscribe();
-          }
+  
+          // Charger profil via /profile
+          this.fetchCurrentUser().subscribe();
         })
       );
   }
+  
 
   /**
    * Déconnexion
@@ -98,8 +93,8 @@ export class AuthService {
    * Récupérer les informations de l'utilisateur courant
    */
   fetchCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`).pipe(
-      tap(user => {
+    return this.http.get<User>(`${this.apiUrl}/profile`).pipe(
+        tap(user => {
         this.setCurrentUser(user);
       })
     );
@@ -206,10 +201,11 @@ export class AuthService {
   hasMinLevel(requiredLevel: number): boolean {
     return this.getRoleLevel() >= requiredLevel;
   }
-   hasRole(role: string): boolean {
-    const userRole = this.getRole()?.toLowerCase();
-    return userRole === role.toLowerCase();
+  hasRole(role: string): boolean {
+    const user = this.getCurrentUser();
+    return user?.role_id?.nom?.toLowerCase() === role.toLowerCase();
   }
+  
 
   /**
    * Vérifier si l'utilisateur a un rôle parmi une liste
@@ -239,22 +235,23 @@ export class AuthService {
    */
   redirectToDashboard(): void {
     const role = this.getRole()?.toLowerCase();
-    
+  
     switch(role) {
       case 'admin':
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/admin-dashboard']);
         break;
       case 'client':
-        this.router.navigate(['/client/dashboard']);
+        this.router.navigate(['/client-dashboard']);
         break;
       case 'shop':
       case 'boutique':
-        this.router.navigate(['/shop/dashboard']);
+        this.router.navigate(['/shop-dashboard']);
         break;
       default:
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/login']);
     }
   }
+  
 
   /**
    * Mettre à jour le profil utilisateur

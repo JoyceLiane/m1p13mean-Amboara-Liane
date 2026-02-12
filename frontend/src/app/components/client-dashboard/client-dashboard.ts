@@ -13,7 +13,7 @@ import { CarteSupermarcheComponent } from '../carte-supermarche/carte-supermarch
   styleUrl: './client-dashboard.css',
 })
 
-export class ClientDashboard {
+export class ClientDashboardComponent {
 
   constructor(private router: Router,private authService: AuthService) { }
 

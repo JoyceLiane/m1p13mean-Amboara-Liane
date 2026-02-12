@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  private apiUrl = 'http://localhost:5000/users';
+    private apiUrl = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient) {}
 
@@ -18,7 +19,7 @@ export class UserService {
     }
   
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get<any>('http://localhost:5000/users/profile', { headers })
+    return this.http.get<any>(`${this.apiUrl}/profile`, { headers })
       .pipe(
         catchError(err => {
           console.error('Erreur backend', err);

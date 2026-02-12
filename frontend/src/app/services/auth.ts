@@ -93,12 +93,12 @@ export class AuthService {
    * Récupérer les informations de l'utilisateur courant
    */
   fetchCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/profile`).pipe(
-        tap(user => {
-        this.setCurrentUser(user);
-      })
-    );
+    const token = this.getToken();
+    return this.http.get<User>(`${this.apiUrl}/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(tap(user => this.setCurrentUser(user)));
   }
+  
 
   /**
    * Définir l'utilisateur courant

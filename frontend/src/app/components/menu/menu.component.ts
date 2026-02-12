@@ -23,20 +23,18 @@ export class MenuComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // État du menu
-    this.menuService.isCollapsed$.subscribe(
-      collapsed => this.isCollapsed = collapsed
-    );
-    
-    // Utilisateur courant
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      this.currentUser = JSON.parse(storedUser);
-    }
-    
+    // Abonnement aux changements de user
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+  
+    // Abonnement au menu collapse
+    this.menuService.isCollapsed$.subscribe(collapsed => this.isCollapsed = collapsed);
+  
     // Thème
     this.isDarkMode = localStorage.getItem('theme') === 'dark';
   }
+  
 
   toggleCollapse() {
     this.menuService.toggle();
@@ -56,7 +54,11 @@ export class MenuComponent implements OnInit {
   isActive(route: string): boolean {
     return this.router.url === route;
   }
-
+  get isClientUser(): boolean {
+    const role = this.currentUser?.role_id?.nom || this.authService.getRole();
+    return role?.toLowerCase() === 'client';
+  }
+  
   navigateTo(route: string) {
     this.router.navigate([route]);
   }

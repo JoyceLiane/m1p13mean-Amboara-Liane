@@ -15,7 +15,7 @@
   <!-- User Info -->
   <div class="menu-user" *ngIf="currentUser">
     <div class="user-avatar">
-      <img [src]="currentUser.pdp || 'assets/default-avatar.png'" [alt]="'Avatar de ' + currentUser.prenom">
+      <img [src]="'http://localhost:5000/uploads' + (currentUser?.pdp || 'default-avatar.png')" />
     </div>
     <div class="user-info" *ngIf="!isCollapsed">
       <div class="user-name">{{ currentUser.prenom }} {{ currentUser.nom }}</div>

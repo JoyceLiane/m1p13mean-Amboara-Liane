@@ -116,7 +116,7 @@
           <tr *ngFor="let user of paginatedUsers">
             <td>
               <img 
-                [src]="user.pdp || 'assets/default-avatar.png'" 
+                [src]="user.pdp || 'uploads/default-avatar.png'" 
                 alt="Avatar de {{ user.prenom }} {{ user.nom }}"
                 class="user-avatar">
             </td>
@@ -199,7 +199,7 @@
       <div class="modal-body">
         <div class="user-detail-header">
           <img 
-            [src]="selectedUser.pdp || 'assets/default-avatar.png'" 
+            [src]="selectedUser.pdp || 'uploads/default-avatar.png'" 
             alt="Avatar de {{ selectedUser.prenom }} {{ selectedUser.nom }}"
             class="user-detail-avatar">
           <div>

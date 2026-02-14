@@ -3,6 +3,7 @@ import { UserService } from '../../services/user';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Location } from '@angular/common';
+import { UrlHelper } from '../../services/url.helper';
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -14,7 +15,7 @@ export class ProfileComponent implements OnInit {
 isDarkMode = false;
   user: any = {};
   
-  constructor(private userService: UserService ,private location: Location) {}
+  constructor(private userService: UserService ,private location: Location,public urlHelper: UrlHelper) {}
   goback() {
     this.location.back();
   } 

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Produits = require('../models/Produits');
+const mongoose = require('mongoose');
 
 router.post('/', async (req, res) => {
   try {
@@ -31,16 +32,28 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/magasin/:id', async (req, res) => {
+// Produits par CONTRAT (vendeur)
+router.get('/contrat/:contratId', async (req, res) => {
   try {
-    const produits = await Produits.find({ id_magasin: req.params.id })
-      .populate('id_categorie');
+    console.log('=== GET /produits/contrat/:contratId ===');
+    console.log('contratId reçu:', req.params.contratId);
+    
+    const mongoose = require('mongoose');
+    const contratObjectId = mongoose.Types.ObjectId.isValid(req.params.contratId) 
+      ? new mongoose.Types.ObjectId(req.params.contratId)
+      : req.params.contratId;
+    
+    const produits = await Produits.find({ id_vendeur: contratObjectId })
+      .populate('id_categorie')
+      .populate('id_vendeur');
+    
+    console.log(`✅ ${produits.length} produit(s) trouvé(s)`);
     res.json(produits);
   } catch (err) {
+    console.error('❌ Erreur:', err);
     res.status(500).json({ error: err.message });
   }
 });
-
 router.put('/:id', async (req, res) => {
   try {
     const produit = await Produits.findByIdAndUpdate(req.params.id, req.body, { new: true });

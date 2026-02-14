@@ -3,7 +3,7 @@ import { ContratService } from '../../services/contrat';
 import { CommonModule } from '@angular/common';
 import { ProduitsService } from '../../services/produits';
 import { FormsModule } from '@angular/forms';
-
+import { UrlHelper } from '../../services/url.helper';
 @Component({
   selector: 'app-carte-supermarche',
   standalone: true,
@@ -25,7 +25,8 @@ export class CarteSupermarcheComponent implements OnInit {
   constructor(
     private contratService: ContratService,
     private cdr: ChangeDetectorRef,
-    private produitsService: ProduitsService
+    private produitsService: ProduitsService,
+    public urlHelper: UrlHelper
   ) { }
 
   ngOnInit() {
@@ -42,29 +43,42 @@ export class CarteSupermarcheComponent implements OnInit {
     });
   }
   selectMagasin(contrat: any) {
+    console.log('Magasin sélectionné:', contrat);
+    console.log('ID du contrat:', contrat._id);
+    console.log('ID du magasin:', contrat.id_magasin?._id);
+
     this.selectedMagasin = contrat;
-    this.loadProduitsMagasin(contrat.id_magasin._id);
-  }
-  loadProduitsMagasin(magasinId: string) {
-    this.produitsService.getProduitsByMagasin(magasinId).subscribe({
-        next: (data) => {
-          this.produitsMagasin = data;
-          this.filteredProduits = data;
 
-          // Extraire catégories uniques
-          const uniqueCategories = new Map();
-          data.forEach((p: any) => {
-            if (p.id_categorie) {
-              uniqueCategories.set(p.id_categorie._id, p.id_categorie);
-            }
-          });
-
-          this.categoriesMagasin = Array.from(uniqueCategories.values());
-        },
-        error: err => console.error(err)
-      });
+    this.loadProduitsMagasin(contrat._id);
   }
+loadProduitsMagasin(contratId: string) {
+    console.log('Chargement des produits pour contrat:', contratId);
+
+    this.produitsService.getProduitsByContrat(contratId).subscribe({  // ← Changé !
+      next: (data) => {
+        // console.log('Produits reçus:', data);
+        this.produitsMagasin = data;
+        this.filteredProduits = data;
+
+        const uniqueCategories = new Map();
+        data.forEach((p: any) => {
+          if (p.id_categorie) {
+            uniqueCategories.set(p.id_categorie._id, p.id_categorie);
+          }
+        });
+
+        this.categoriesMagasin = Array.from(uniqueCategories.values());
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error('Erreur chargement produits:', err);
+      }
+    });
+  }
+
   filterByCategorie() {
+    console.log('Filtre par catégorie:', this.selectedCategorie);
+
     if (!this.selectedCategorie) {
       this.filteredProduits = this.produitsMagasin;
     } else {
@@ -72,6 +86,9 @@ export class CarteSupermarcheComponent implements OnInit {
         p => p.id_categorie?._id === this.selectedCategorie
       );
     }
+
+    console.log('Produits après filtre:', this.filteredProduits);
+    this.cdr.detectChanges();
   }
 
   organiserParEtage() {

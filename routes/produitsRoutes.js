@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Produits = require('../models/Produits');
 const mongoose = require('mongoose');
+const MouvementStock = require('../models/MouvementStock');
 
 router.post('/', async (req, res) => {
   try {
@@ -13,14 +14,53 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Fonction helper pour calculer le stock d'un produit
+async function calculerStockProduit(produitId) {
+  const mouvements = await MouvementStock.find({ produits_id: produitId });
+  
+  const stock = mouvements.reduce((total, mouv) => {
+    return total + (mouv.qt_entree || 0) - (mouv.qt_sortie || 0);
+  }, 0);
+  
+  return Math.max(0, stock); // Éviter stock négatif
+}
+
+// Fonction helper pour calculer le stock d'un produit
+async function calculerStockProduit(produitId) {
+  const mouvements = await MouvementStock.find({ produits_id: produitId });
+  
+  const stock = mouvements.reduce((total, mouv) => {
+    return total + (mouv.qt_entree || 0) - (mouv.qt_sortie || 0);
+  }, 0);
+  
+  return Math.max(0, stock); // Éviter stock négatif
+}
+
+// GET tous les produits avec stock calculé et mis à jour
 router.get('/', async (req, res) => {
   try {
     const produits = await Produits.find().populate('id_categorie');
-    res.json(produits);
+    
+    // Calculer le stock pour chaque produit et mettre à jour en BDD
+    const produitsAvecStock = await Promise.all(
+      produits.map(async (produit) => {
+        const stockCalcule = await calculerStockProduit(produit._id);
+        
+        // Mettre à jour le stock en base de données
+        produit.stock = stockCalcule;
+        await produit.save();
+        
+        return produit.toObject();
+      })
+    );
+    
+    res.json(produitsAvecStock);
   } catch (err) {
+    console.error('Erreur lors du calcul des stocks:', err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 router.get('/:id', async (req, res) => {
   try {

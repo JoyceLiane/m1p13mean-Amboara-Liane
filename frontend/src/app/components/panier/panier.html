@@ -1,0 +1,118 @@
+<!-- src/app/components/panier/panier.component.html -->
+<div class="panier-container">
+  
+    <!-- Header -->
+    <div class="panier-header">
+      <button class="btn-retour" (click)="retour()">
+        ← Retour
+      </button>
+      <h1>Mon Panier</h1>
+      <button 
+        class="btn-vider" 
+        (click)="viderPanier()"
+        *ngIf="panierItems.length > 0">
+        Vider le panier
+      </button>
+    </div>
+  
+    <!-- Panier vide -->
+    <div class="panier-vide" *ngIf="panierItems.length === 0">
+      <div class="vide-icon">🛒</div>
+      <h2>Votre panier est vide</h2>
+      <p>Ajoutez des produits depuis nos magasins</p>
+      <button class="btn-continuer" (click)="continuerAchats()">
+        Continuer mes achats
+      </button>
+    </div>
+  
+    <!-- Liste des produits -->
+    <div class="panier-content" *ngIf="panierItems.length > 0">
+      
+      <div class="produits-liste">
+        <div class="produit-item" *ngFor="let item of panierItems">
+          
+          <!-- Image -->
+          <div class="produit-image">
+            <img 
+              [src]="urlHelper.getProductImageUrl(item.produit.imagepath)"
+              [alt]="item.produit.nom"
+            />
+          </div>
+  
+          <!-- Infos -->
+          <div class="produit-infos">
+            <h3>{{ item.produit.nom }}</h3>
+            <p class="magasin-nom">📍 {{ item.magasinNom }}</p>
+            <p class="produit-description">{{ item.produit.description }}</p>
+            <p class="stock-info">Stock disponible: {{ item.produit.stock }}</p>
+          </div>
+  
+          <!-- Prix unitaire -->
+          <div class="produit-prix-unitaire">
+            <p class="prix-label">Prix unitaire</p>
+            <p class="prix-valeur">{{ item.produit.prix }} Ar</p>
+          </div>
+  
+          <!-- Quantité -->
+          <div class="produit-quantite">
+            <button 
+              class="btn-qty" 
+              (click)="diminuerQuantite(item.produit._id)"
+              [disabled]="item.quantite <= 1">
+              −
+            </button>
+            <span class="qty-value">{{ item.quantite }}</span>
+            <button 
+              class="btn-qty" 
+              (click)="augmenterQuantite(item.produit._id)"
+              [disabled]="item.quantite >= item.produit.stock">
+              +
+            </button>
+          </div>
+  
+          <!-- Sous-total -->
+          <div class="produit-subtotal">
+            <p class="subtotal-label">Sous-total</p>
+            <p class="subtotal-valeur">{{ item.produit.prix * item.quantite }} Ar</p>
+          </div>
+  
+          <!-- Bouton supprimer -->
+          <button 
+            class="btn-supprimer" 
+            (click)="retirerProduit(item.produit._id)"
+            title="Retirer du panier">
+            🗑️
+          </button>
+  
+        </div>
+      </div>
+  
+      <!-- Résumé -->
+      <div class="panier-resume">
+        <h2>Résumé de la commande</h2>
+        
+        <div class="resume-ligne">
+          <span>Nombre d'articles</span>
+          <span>{{ panierService.getNombreItems() }}</span>
+        </div>
+  
+        <div class="resume-ligne total">
+          <span>Total</span>
+          <span class="total-prix">{{ total }} Ar</span>
+        </div>
+  
+        <button 
+          class="btn-valider" 
+          (click)="validerCommande()"
+          [disabled]="isProcessing">
+          {{ isProcessing ? 'Traitement en cours...' : 'Valider la commande' }}
+        </button>
+  
+        <button class="btn-continuer-achats" (click)="continuerAchats()">
+          Continuer mes achats
+        </button>
+      </div>
+  
+    </div>
+  
+  </div>

@@ -7,11 +7,13 @@ import { environment } from '../../environments/environment';
 export interface LoginResponse {
   token: string;
   role: string;
-  user?: any; // Optionnel: si votre API retourne les infos utilisateur
+  user?: any;
 }
 
+// ✅ Interface User mise à jour pour supporter MongoDB
 export interface User {
-  id: number;
+  _id?: string;       // MongoDB ID (string)
+  id?: number;        // ID optionnel pour compatibilité
   prenom: string;
   nom: string;
   email: string;
@@ -19,11 +21,13 @@ export interface User {
   adresse?: string;
   pdp?: string;
   role_id?: {
-    id: number;
+    _id?: string;
+    id?: number;
     nom: string;
   };
   statut_id?: {
-    id: number;
+    _id?: string;
+    id?: number;
     nom: string;
   };
   created_on?: Date;
@@ -36,11 +40,9 @@ export interface User {
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/users`;
   
-  // BehaviorSubject pour l'utilisateur courant
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   
-  // BehaviorSubject pour l'état d'authentification
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -48,69 +50,42 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    // Charger l'utilisateur au démarrage si token présent
     this.loadStoredUser();
   }
 
-  /**
-   * Connexion
-   */
   login(email: string, mdp: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, { email, mdp })
       .pipe(
         tap(response => {
-  
           localStorage.setItem('token', response.token);
           localStorage.setItem('role', response.role);
-  
           this.isAuthenticatedSubject.next(true);
-  
-          // Charger profil via /profile
           this.fetchCurrentUser().subscribe();
         })
       );
   }
-  
 
-  /**
-   * Déconnexion
-   */
   logout(): void {
-    // Nettoyer le localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('user');
-    
-    // Mettre à jour les subjects
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
-    
-    // Rediriger vers login
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Récupérer les informations de l'utilisateur courant
-   */
   fetchCurrentUser(): Observable<User> {
     const token = this.getToken();
     return this.http.get<User>(`${this.apiUrl}/profile`, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(tap(user => this.setCurrentUser(user)));
   }
-  
 
-  /**
-   * Définir l'utilisateur courant
-   */
   setCurrentUser(user: User): void {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
-  /**
-   * Charger l'utilisateur stocké
-   */
   private loadStoredUser(): void {
     const token = localStorage.getItem('token');
     if (token) {
@@ -129,18 +104,19 @@ export class AuthService {
     }
   }
 
-  /**
-   * Vérifier si un token existe
-   */
   private hasToken(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  /**
-   * Getters synchrones (pour les cas où on a besoin d'une valeur immédiate)
-   */
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+
+  // ✅ Nouvelle méthode helper pour obtenir l'ID utilisateur (supporte _id et id)
+  getUserId(): string | null {
+    const user = this.getCurrentUser();
+    if (!user) return null;
+    return user._id?.toString() || user.id?.toString() || null;
   }
 
   getToken(): string | null {
@@ -155,7 +131,6 @@ export class AuthService {
     return this.hasToken();
   }
 
-
   isAdmin(): boolean {
     return this.hasRole('admin');
   }
@@ -168,20 +143,11 @@ export class AuthService {
     return this.hasRole('shop') || this.hasRole('boutique');
   }
 
-
-
-
-  /**
-   * Vérifier si l'utilisateur a tous les rôles d'une liste
-   */
   hasAllRoles(roles: string[]): boolean {
     const userRole = this.getRole()?.toLowerCase();
     return roles.every(role => role.toLowerCase() === userRole);
   }
 
-  /**
-   * Obtenir le niveau hiérarchique d'un rôle
-   */
   getRoleLevel(role?: string): number {
     const roleLevels: { [key: string]: number } = {
       'admin': 100,
@@ -195,29 +161,20 @@ export class AuthService {
     return roleLevels[roleToCheck.toLowerCase()] || 0;
   }
 
-  /**
-   * Vérifier si l'utilisateur a un niveau supérieur ou égal
-   */
   hasMinLevel(requiredLevel: number): boolean {
     return this.getRoleLevel() >= requiredLevel;
   }
+
   hasRole(role: string): boolean {
     const user = this.getCurrentUser();
     return user?.role_id?.nom?.toLowerCase() === role.toLowerCase();
   }
-  
 
-  /**
-   * Vérifier si l'utilisateur a un rôle parmi une liste
-   */
   hasAnyRole(roles: string[]): boolean {
     const userRole = this.getRole()?.toLowerCase();
     return roles.some(role => role.toLowerCase() === userRole);
   }
 
-  /**
-   * Récupérer l'URL du dashboard selon le rôle
-   */
   getDashboardUrl(): string {
     const role = this.getRole()?.toLowerCase();
     
@@ -230,9 +187,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Rediriger selon le rôle
-   */
   redirectToDashboard(): void {
     const role = this.getRole()?.toLowerCase();
   
@@ -251,11 +205,7 @@ export class AuthService {
         this.router.navigate(['/login']);
     }
   }
-  
 
-  /**
-   * Mettre à jour le profil utilisateur
-   */
   updateProfile(userData: Partial<User>): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/profile`, userData).pipe(
       tap(updatedUser => {
@@ -268,9 +218,6 @@ export class AuthService {
     );
   }
 
-  /**
-   * Changer le mot de passe
-   */
   changePassword(oldPassword: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/change-password`, {
       oldPassword,

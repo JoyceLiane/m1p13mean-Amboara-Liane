@@ -1,3 +1,11 @@
+<!-- HEADER AVEC PANIER -->
+<div class="header-panier">
+  <h1>Découvrez nos magasins</h1>
+  <button class="btn-panier" (click)="voirPanier()" *ngIf="nombreItemsPanier > 0">
+    🛒 Panier ({{ nombreItemsPanier }})
+  </button>
+</div>
+
 <!-- CARTE -->
 <div *ngFor="let etage of etages">
   <h3>Étage {{ etage }}</h3>
@@ -22,16 +30,25 @@
 <!-- SECTION PRODUITS -->
 <div *ngIf="selectedMagasin" class="produits-section">
 
-  <h2>Produits de {{ selectedMagasin.nom_magasin }}</h2>
+  <div class="produits-header">
+    <h2>Produits de {{ selectedMagasin.nom_magasin }}</h2>
+    
+    <!-- Bouton panier flottant (visible uniquement dans la section produits) -->
+    <button class="btn-panier-fixed" (click)="voirPanier()" *ngIf="nombreItemsPanier > 0">
+      🛒 {{ nombreItemsPanier }}
+    </button>
+  </div>
 
   <!-- FILTRE -->
-  <label>Filtres :</label>
-  <select [(ngModel)]="selectedCategorie" (change)="filterByCategorie()">
-    <option value="">Toutes les catégories</option>
-    <option *ngFor="let cat of categoriesMagasin" [value]="cat._id">
-      {{ cat.nom }}
-    </option>
-  </select>
+  <div class="filter-bar">
+    <label>Filtres :</label>
+    <select [(ngModel)]="selectedCategorie" (change)="filterByCategorie()">
+      <option value="">Toutes les catégories</option>
+      <option *ngFor="let cat of categoriesMagasin" [value]="cat._id">
+        {{ cat.nom }}
+      </option>
+    </select>
+  </div>
 
   <!-- PRODUITS -->
   <div class="produits-grid">
@@ -47,9 +64,23 @@
       <div class="produit-content">
         <p class="produit-nom">{{ produit.nom }}</p>
         <p class="produit-description">{{ produit.description }}</p>
-        <p *ngIf="produit.prix" class="produit-prix">
-          {{ produit.prix }} Ar
-        </p>
+        
+        <div class="produit-footer">
+          <p *ngIf="produit.prix" class="produit-prix">
+            {{ produit.prix }} Ar
+          </p>
+          <p class="produit-stock" [class.stock-low]="produit.stock < 5" [class.stock-out]="produit.stock === 0">
+            {{ produit.stock > 0 ? 'Stock: ' + produit.stock : 'Rupture' }}
+          </p>
+        </div>
+
+        <!-- BOUTON AJOUTER AU PANIER -->
+        <button 
+          class="btn-ajouter-panier" 
+          (click)="ajouterAuPanier(produit, $event)"
+          [disabled]="produit.stock === 0">
+          {{ produit.stock > 0 ? '+  Ajouter au panier' : 'Rupture de stock' }}
+        </button>
       </div>
   
     </div>

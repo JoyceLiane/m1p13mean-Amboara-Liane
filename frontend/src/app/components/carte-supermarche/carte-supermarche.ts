@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { ProduitsService } from '../../services/produits';
 import { FormsModule } from '@angular/forms';
 import { UrlHelper } from '../../services/url.helper';
+import { PanierService } from '../../services/panier';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-carte-supermarche',
   standalone: true,
@@ -21,42 +24,41 @@ export class CarteSupermarcheComponent implements OnInit {
   filteredProduits: any[] = [];
   categoriesMagasin: any[] = [];
   selectedCategorie: string = '';
+  nombreItemsPanier: number = 0;
 
   constructor(
     private contratService: ContratService,
     private cdr: ChangeDetectorRef,
     private produitsService: ProduitsService,
-    public urlHelper: UrlHelper
+    public urlHelper: UrlHelper,
+    public panierService: PanierService,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.contratService.getContrats().subscribe({
       next: data => {
-        console.log('Contrats reçus :', data);
         this.contrats = Array.isArray(data) ? data : [];
         this.organiserParEtage();
-        console.log('Contrats par étage :', this.contratsParEtage);
-        console.log('Étages :', this.etages);
         this.cdr.detectChanges();
       },
       error: err => console.error('Erreur lors du chargement des contrats:', err)
     });
+
+    this.panierService.panier$.subscribe(items => {
+      this.nombreItemsPanier = this.panierService.getNombreItems();
+      this.cdr.detectChanges();
+    });
   }
+
   selectMagasin(contrat: any) {
-    console.log('Magasin sélectionné:', contrat);
-    console.log('ID du contrat:', contrat._id);
-    console.log('ID du magasin:', contrat.id_magasin?._id);
-
     this.selectedMagasin = contrat;
-
     this.loadProduitsMagasin(contrat._id);
   }
-loadProduitsMagasin(contratId: string) {
-    console.log('Chargement des produits pour contrat:', contratId);
 
-    this.produitsService.getProduitsByContrat(contratId).subscribe({  // ← Changé !
+  loadProduitsMagasin(contratId: string) {
+    this.produitsService.getProduitsByContrat(contratId).subscribe({
       next: (data) => {
-        // console.log('Produits reçus:', data);
         this.produitsMagasin = data;
         this.filteredProduits = data;
 
@@ -70,15 +72,11 @@ loadProduitsMagasin(contratId: string) {
         this.categoriesMagasin = Array.from(uniqueCategories.values());
         this.cdr.detectChanges();
       },
-      error: err => {
-        console.error('Erreur chargement produits:', err);
-      }
+      error: err => console.error('Erreur chargement produits:', err)
     });
   }
 
   filterByCategorie() {
-    console.log('Filtre par catégorie:', this.selectedCategorie);
-
     if (!this.selectedCategorie) {
       this.filteredProduits = this.produitsMagasin;
     } else {
@@ -86,9 +84,35 @@ loadProduitsMagasin(contratId: string) {
         p => p.id_categorie?._id === this.selectedCategorie
       );
     }
-
-    console.log('Produits après filtre:', this.filteredProduits);
     this.cdr.detectChanges();
+  }
+
+  ajouterAuPanier(produit: any, event: Event) {
+    event.stopPropagation();
+    
+    if (!this.selectedMagasin) {
+      alert('Erreur: magasin non sélectionné');
+      return;
+    }
+
+    // Vérifier le stock
+    if (produit.stock <= 0) {
+      alert('Produit en rupture de stock');
+      return;
+    }
+
+    this.panierService.ajouterAuPanier(
+      produit, 
+      this.selectedMagasin.nom_magasin,
+      this.selectedMagasin._id,
+      1
+    );
+    
+    alert(`${produit.nom} ajouté au panier !`);
+  }
+
+  voirPanier() {
+    this.router.navigate(['/panier']);
   }
 
   organiserParEtage() {

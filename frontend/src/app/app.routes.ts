@@ -3,7 +3,7 @@ import { LoginComponent } from './components/login/login';
 import { LayoutComponent } from './components/layout/layout.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-
+import { PanierComponent } from './components/panier/panier';
 export const routes: Routes = [
   // Page de login (publique)
   { path: 'login', component: LoginComponent },
@@ -33,7 +33,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: ['admin', 'client', 'shop', 'boutique'] } // Tous les rôles
       },
-      
+      { path: 'panier', component: PanierComponent, canActivate: [AuthGuard] },
       // Client uniquement
       { 
         path: 'client-dashboard', 

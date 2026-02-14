@@ -20,7 +20,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes 
 app.use('/users', require('./routes/usersRoutes')); 
 app.use('/mouvements', require('./routes/mouvementStockRoutes'));
-app.use('/types-mouvements', require('./routes/typeMouvementRoutes'));
+app.use('/types_mouvements', require('./routes/typeMouvementRoutes'));
 app.use('/avis', require('./routes/avisRoutes'));
 app.use('/notifications', require('./routes/notificationRoutes'));
 app.use('/types-notifications', require('./routes/typeNotificationRoutes'));

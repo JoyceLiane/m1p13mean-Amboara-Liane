@@ -1,4 +1,10 @@
 /* Titres */
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 52px;
+  padding-bottom: 20px;
+}
 h2 {
   text-align: center;
   margin-bottom: 30px;
@@ -139,4 +145,112 @@ h3 {
   .produits-grid {
     grid-template-columns: 1fr;
   }
+}
+/* ===== CONTAINER FILTRE ===== */
+.filter-bar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 30px 0;
+  padding: 15px 20px;
+}
+
+.filter-bar label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.filter-bar select {
+  min-width: 240px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 30px;
+  border: 1px solid #ddd;
+  outline: none;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.filter-bar select:hover {
+  border-color: #0a8f3c;
+  box-shadow: 0 6px 16px rgba(10, 143, 60, 0.15);
+}
+
+.filter-bar select:focus {
+  border-color: #0a8f3c;
+  box-shadow: 0 0 0 3px rgba(10, 143, 60, 0.2);
+}
+
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter-bar select {
+    width: 100%;
+  }
+}
+/* style pour panier*/
+
+.header-panier {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header-panier h1 {
+  margin: 0;
+  color: #333;
+}
+
+.btn-panier {
+  padding: 12px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-panier:hover {
+  background: #218838;
+}
+
+.btn-ajouter-panier {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn-ajouter-panier:hover {
+  background: #0056b3;
+}
+
+.btn-ajouter-panier:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
 }

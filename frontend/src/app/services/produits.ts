@@ -27,4 +27,16 @@ export class ProduitsService {
   getProduitById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
+  createProduit(data: any) {
+    return this.http.post(this.apiUrl, data);
+  }
+  
+  updateProduit(id: string, data: any) {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
+  }
+  
+  deleteProduit(id: string) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  
 }

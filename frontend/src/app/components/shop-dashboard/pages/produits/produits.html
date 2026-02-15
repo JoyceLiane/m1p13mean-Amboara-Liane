@@ -1,0 +1,57 @@
+<div class="produits-container">
+
+    <h2>Gestion des Produits</h2>
+  
+    <!-- FILTRES -->
+    <div class="filters">
+  
+      <input type="text"
+             placeholder="Rechercher par nom..."
+             [(ngModel)]="searchTerm"
+             (input)="applyFilters()">
+  
+      <select [(ngModel)]="stockFilter"
+              (change)="applyFilters()">
+        <option value="">Tous les stocks</option>
+        <option value="dispo">En stock</option>
+        <option value="rupture">Rupture</option>
+      </select>
+  
+    </div>
+  
+    <!-- TABLE PRODUITS -->
+    <table class="produits-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Catégorie</th>
+          <th>Prix</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+  
+      <tbody>
+        <tr *ngFor="let produit of filteredProduits">
+          <td>{{ produit.nom }}</td>
+          <td>{{ produit.id_categorie?.nom }}</td>
+          <td>{{ produit.prix }} €</td>
+          <td [class.rupture]="produit.stock === 0">
+            {{ produit.stock }}
+          </td>
+          <td>
+            <button>Edit</button>
+            <button (click)="deleteProduit(produit._id)">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div *ngIf="filteredProduits.length === 0">
+      Aucun produit trouvé
+    </div>
+  
+  </div>
+  

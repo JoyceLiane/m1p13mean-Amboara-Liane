@@ -15,7 +15,7 @@
   <!-- User Info -->
   <div class="menu-user" *ngIf="currentUser">
     <div class="user-avatar">
-      <img [src]="'http://localhost:5000/uploads' + (currentUser?.pdp || 'default-avatar.png')" />
+      <img [src]="urlHelper.getProfilUrl(currentUser.pdp)" />
     </div>
     <div class="user-info" *ngIf="!isCollapsed">
       <div class="user-name">{{ currentUser.prenom }} {{ currentUser.nom }}</div>
@@ -44,8 +44,28 @@ class="menu-item"
     <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon Dashboard">C</span>
   </a>
 </li>
+<!-- Dashboard boutique -->
+<li *ngIf="isBoutiqueUser" class="menu-item" [class.active]="isActive('/shop-dashboard')">
+  <a (click)="navigateTo('/shop-dashboard')">
+    <span class="menu-label" *ngIf="!isCollapsed">Mon Dashboard</span>
+    <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon Dashboard">C</span>
+  </a>
+</li>
 
-
+<!-- stock boutique -->
+<li *ngIf="isBoutiqueUser" class="menu-item" [class.active]="isActive('/shop-info')">
+  <a (click)="navigateTo('/shop-info')">
+    <span class="menu-label" *ngIf="!isCollapsed">Mon contrat</span>
+    <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon contrat">C</span>
+  </a>
+</li>
+<!-- stock boutique -->
+<li *ngIf="isBoutiqueUser" class="menu-item" [class.active]="isActive('/shop-produits')">
+  <a (click)="navigateTo('/shop-produits')">
+    <span class="menu-label" *ngIf="!isCollapsed">Mes produits</span>
+    <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mes produits">C</span>
+  </a>
+</li>
       <!-- Administration - Admin uniquement -->
       <ng-container *ngIf="authService.isAdmin()">
         <li class="menu-separator" *ngIf="!isCollapsed">

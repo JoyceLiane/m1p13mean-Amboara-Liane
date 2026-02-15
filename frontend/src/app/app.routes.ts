@@ -40,6 +40,18 @@ export const routes: Routes = [
         loadComponent: () => import('./components/client-dashboard/client-dashboard').then(m => m.ClientDashboardComponent),
         canActivate: [RoleGuard],
         data: { roles: ['client'] }
+      }, 
+      { 
+        path: 'shop-dashboard', 
+        loadComponent: () => import('./components/shop-dashboard/shop-dashboard').then(m => m.ShopDashboard),
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] }
+      },
+      { 
+        path: 'shop-produits', 
+        loadComponent: () => import('./components/shop-dashboard/pages/produits/produits').then(m => m.ProduitsPageComponent),
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] }
       },
       { 
         path: 'carte-supermarche', 

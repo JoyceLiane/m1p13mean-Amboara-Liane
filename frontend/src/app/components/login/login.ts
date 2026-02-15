@@ -31,7 +31,6 @@ export class LoginComponent {
       next: (res) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', res.role);
-        
         // Navigation avec Router au lieu de window.location
         if (res.role === 'admin') {
           this.router.navigate(['/admin-dashboard']);

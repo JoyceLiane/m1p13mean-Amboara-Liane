@@ -10,7 +10,6 @@ export interface LoginResponse {
   user?: any;
 }
 
-// ✅ Interface User mise à jour pour supporter MongoDB
 export interface User {
   _id?: string;       // MongoDB ID (string)
   id?: number;        // ID optionnel pour compatibilité
@@ -112,7 +111,6 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  // ✅ Nouvelle méthode helper pour obtenir l'ID utilisateur (supporte _id et id)
   getUserId(): string | null {
     const user = this.getCurrentUser();
     if (!user) return null;
@@ -165,11 +163,19 @@ export class AuthService {
     return this.getRoleLevel() >= requiredLevel;
   }
 
+  // hasRole(role: string): boolean {
+  //   const user = this.getCurrentUser();
+  //   return user?.role_id?.nom?.toLowerCase() === role.toLowerCase();
+  // }
   hasRole(role: string): boolean {
     const user = this.getCurrentUser();
-    return user?.role_id?.nom?.toLowerCase() === role.toLowerCase();
+    const roleFromProfile = user?.role_id?.nom?.toLowerCase();
+    const roleFromStorage = this.getRole()?.toLowerCase();
+  
+    return roleFromProfile === role.toLowerCase() ||
+           roleFromStorage === role.toLowerCase();
   }
-
+  
   hasAnyRole(roles: string[]): boolean {
     const userRole = this.getRole()?.toLowerCase();
     return roles.some(role => role.toLowerCase() === userRole);

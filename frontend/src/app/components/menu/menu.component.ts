@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { MenuService } from '../../services/menu.service';
+import { UrlHelper } from '../../services/url.helper';
 
 @Component({
   selector: 'app-menu',
@@ -19,7 +20,9 @@ export class MenuComponent implements OnInit {
   constructor(
     private router: Router,
     public authService: AuthService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    public urlHelper: UrlHelper,
+
   ) {}
 
   ngOnInit() {
@@ -58,7 +61,10 @@ export class MenuComponent implements OnInit {
     const role = this.currentUser?.role_id?.nom || this.authService.getRole();
     return role?.toLowerCase() === 'client';
   }
-  
+  get isBoutiqueUser(): boolean {
+    const role = this.currentUser?.role_id?.nom || this.authService.getRole();
+    return role?.toLowerCase() === 'boutique';
+  }
   navigateTo(route: string) {
     this.router.navigate([route]);
   }

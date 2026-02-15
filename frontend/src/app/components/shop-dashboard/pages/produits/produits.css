@@ -1,0 +1,30 @@
+.produits-container {
+    padding: 20px;
+  }
+  
+  .filters {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .produits-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .produits-table th,
+  .produits-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .produits-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .rupture {
+    color: red;
+    font-weight: bold;
+  }
+  

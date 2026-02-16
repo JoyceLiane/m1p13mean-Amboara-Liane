@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Produit, Categorie } from '../models/produit';
 
 @Injectable({
   providedIn: 'root'
@@ -12,31 +13,34 @@ export class ProduitsService {
 
   constructor(private http: HttpClient) {}
 
-  getProduitsByContrat(contratId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/contrat/${contratId}`);
+  getProduitsByContrat(contratId: string): Observable<Produit[]> {
+    return this.http.get<Produit[]>(`${this.apiUrl}/contrat/${contratId}`);
   }
 
-  getCategories(): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}/categorie_produits`);
+  getCategories(): Observable<Categorie[]> {
+    return this.http.get<Categorie[]>(`${environment.apiUrl}/categorieProduits`);
   }
 
-  getAllProduits(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getAllProduits(): Observable<Produit[]> {
+    return this.http.get<Produit[]>(this.apiUrl);
   }
 
-  getProduitById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getProduitById(id: string): Observable<Produit> {
+    return this.http.get<Produit>(`${this.apiUrl}/${id}`);
+    //                             ^ manquait la parenthèse
   }
-  createProduit(data: any) {
-    return this.http.post(this.apiUrl, data);
+
+  createProduit(data: Partial<Produit>): Observable<Produit> {
+    return this.http.post<Produit>(this.apiUrl, data);
   }
   
-  updateProduit(id: string, data: any) {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
+  updateProduit(id: string, data: Partial<Produit>): Observable<Produit> {
+    return this.http.put<Produit>(`${this.apiUrl}/${id}`, data);
+    //                             ^ manquait la parenthèse
   }
   
-  deleteProduit(id: string) {
+  deleteProduit(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+    //                       ^ manquait la parenthèse
   }
-  
 }

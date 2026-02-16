@@ -52,3 +52,52 @@
     "admin"
   ]
 }]
+
+// ajout pour le côté client et le shop 
+[
+  {
+    "_id": { "$oid": "69934001b5fbd669dbe0de30" },
+    "title": "Dashboard Client",
+    "icon": "view-dashboard",
+    "route": "/client-dashboard",
+    "orderIndex": 2,
+    "parent": null,
+    "roles": ["client"]
+  },
+  {
+    "_id": { "$oid": "69934002b5fbd669dbe0de31" },
+    "title": "Dashboard Boutique",
+    "icon": "storefront",
+    "route": "/shop-dashboard",
+    "orderIndex": 2,
+    "parent": null,
+    "roles": ["boutique"]
+  },
+  {
+    "_id": { "$oid": "69934003b5fbd669dbe0de32" },
+    "title": "Mes Produits",
+    "icon": "package-variant",
+    "route": "/shop-produits",
+    "orderIndex": 3,
+    "parent": "69934002b5fbd669dbe0de31",
+    "roles": ["boutique"]
+  },
+  {
+    "_id": { "$oid": "69934004b5fbd669dbe0de33" },
+    "title": "Carte Supermarché",
+    "icon": "map",
+    "route": "/carte-supermarche",
+    "orderIndex": 3,
+    "parent": null,
+    "roles": ["client"]
+  },
+  {
+    "_id": { "$oid": "69934005b5fbd669dbe0de34" },
+    "title": "Panier",
+    "icon": "cart",
+    "route": "/panier",
+    "orderIndex": 4,
+    "parent": null,
+    "roles": ["client", "boutique", "admin"]
+  }
+]

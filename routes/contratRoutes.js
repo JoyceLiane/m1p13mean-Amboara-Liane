@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Contrat = require('../models/Contrat');
+const mongoose = require('mongoose');
 
 // CREATE
 router.post('/', async (req, res) => {
@@ -31,6 +32,30 @@ router.get('/', async (req, res) => {
       .populate('contrat_parent_id', 'id date_debut date_fin')
       .sort({ created_at: -1 });
     
+    res.json(contrats);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// Read by user
+
+router.get('/user/:userId', async (req, res) => {
+  try {
+    // Vérifier si userId est un ObjectId valide
+    if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+      return res.status(400).json({ error: 'userId invalide' });
+    }
+
+    const contrats = await Contrat.find({
+      locataire_id: new mongoose.Types.ObjectId(req.params.userId),
+      deleted_at: null,
+      type_contrat: { $in: ['INITIAL', 'RENOUVELLEMENT_ACTIF'] }
+    })
+    .populate('id_magasin', 'nom superficie etage')
+    .populate('locataire_id', 'nom email telephone')
+    .populate('status_id', 'nom couleur')
+    .populate('contrat_parent_id', 'id date_debut date_fin');
+
     res.json(contrats);
   } catch (err) {
     res.status(500).json({ error: err.message });

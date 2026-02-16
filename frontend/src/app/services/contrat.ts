@@ -14,4 +14,9 @@ export class ContratService {
   getContrats(): Observable<any> {
     return this.http.get(this.apiUrl);
   }
+  getContratActifByUser(userId: string) {
+  return this.http.get<any[]>(`${this.apiUrl}/user/${userId}`);
+}
+
+  
 }

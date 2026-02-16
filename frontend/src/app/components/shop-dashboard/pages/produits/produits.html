@@ -1,57 +1,116 @@
 <div class="produits-container">
 
-    <h2>Gestion des Produits</h2>
-  
-    <!-- FILTRES -->
-    <div class="filters">
-  
-      <input type="text"
-             placeholder="Rechercher par nom..."
-             [(ngModel)]="searchTerm"
-             (input)="applyFilters()">
-  
-      <select [(ngModel)]="stockFilter"
-              (change)="applyFilters()">
-        <option value="">Tous les stocks</option>
-        <option value="dispo">En stock</option>
-        <option value="rupture">Rupture</option>
-      </select>
-  
+  <h2>
+    <i class="mdi mdi-package-variant"></i>
+    Gestion des Produits
+  </h2>
+
+  <!-- FILTRES -->
+  <div class="filters">
+
+    <div class="filter-item">
+      <i class="mdi mdi-magnify"></i>
+      <input type="text" placeholder="Rechercher..." [(ngModel)]="searchTerm" (input)="applyFilters()">
     </div>
-  
-    <!-- TABLE PRODUITS -->
-    <table class="produits-table">
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Catégorie</th>
-          <th>Prix</th>
-          <th>Stock</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-  
-      <tbody>
-        <tr *ngFor="let produit of filteredProduits">
+
+    <select [(ngModel)]="selectedCategorie" (change)="applyFilters()">
+      <option value="">Toutes catégories</option>
+      <option *ngFor="let cat of categories" [value]="cat._id">
+        {{ cat.nom }}
+      </option>
+    </select>
+
+    <select [(ngModel)]="stockFilter" (change)="applyFilters()">
+      <option value="">Tous les stocks</option>
+      <option value="dispo">En stock</option>
+      <option value="rupture">Rupture</option>
+    </select>
+
+  </div>
+
+  <!-- TABLE -->
+  <table class="produits-table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Catégorie</th>
+        <th>Prix</th>
+        <th>Stock</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let produit of filteredProduits">
+
+        <!-- MODE NORMAL -->
+        <ng-container *ngIf="editingId !== produit._id; else editMode">
+
           <td>{{ produit.nom }}</td>
-          <td>{{ produit.id_categorie?.nom }}</td>
+          <!-- Dans produits.html -->
+          <td>
+            {{ typeof produit.id_categorie === 'object' ? produit.id_categorie.nom : '' }}
+          </td>
           <td>{{ produit.prix }} €</td>
           <td [class.rupture]="produit.stock === 0">
             {{ produit.stock }}
           </td>
-          <td>
-            <button>Edit</button>
-            <button (click)="deleteProduit(produit._id)">
-              Supprimer
+          <td class="actions">
+
+            <button (click)="startEdit(produit)" class="btn-edit">
+              <i class="mdi mdi-pencil"></i>
             </button>
+
+            <button (click)="deleteProduit(produit._id)" class="btn-delete">
+              <i class="mdi mdi-delete"></i>
+            </button>
+
           </td>
-        </tr>
-      </tbody>
-    </table>
-  
-    <div *ngIf="filteredProduits.length === 0">
-      Aucun produit trouvé
-    </div>
-  
+
+        </ng-container>
+
+        <!-- MODE EDIT -->
+        <ng-template #editMode>
+          <td>
+            <input [(ngModel)]="editedProduit.nom">
+          </td>
+
+          <td>
+            <select [(ngModel)]="editedProduit.id_categorie">
+              <option *ngFor="let cat of categories" [value]="cat._id">
+                {{ cat.nom }}
+              </option>
+            </select>
+          </td>
+
+          <td>
+            <input type="number" [(ngModel)]="editedProduit.prix">
+          </td>
+
+          <td>
+            {{ produit.stock }}
+          </td>
+
+          <td class="actions">
+
+            <button (click)="saveEdit()" class="btn-save">
+              <i class="mdi mdi-content-save"></i>
+            </button>
+
+            <button (click)="cancelEdit()" class="btn-cancel">
+              <i class="mdi mdi-close"></i>
+            </button>
+
+          </td>
+        </ng-template>
+
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="filteredProduits.length === 0" class="empty">
+    <i class="mdi mdi-alert-circle-outline"></i>
+    Aucun produit trouvé
   </div>
-  
+
+</div>

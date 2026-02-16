@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "69930a44b5fbd669dbe0de0f"
+  },
+  "title": "Dashboard",
+  "icon": "eye",
+  "route": "/admin-dashboard",
+  "orderIndex": 1,
+  "parent": null,
+  "roles": [
+    "admin"
+  ]
+},
+{
+  "_id": {
+    "$oid": "69930f72b5fbd669dbe0de11"
+  },
+  "title": "Profil",
+  "icon": "account-circle",
+  "route": "/profile",
+  "orderIndex": 1,
+  "parent": null,
+  "roles": [
+    "admin",
+    "client",
+    "boutique"
+  ]
+}]

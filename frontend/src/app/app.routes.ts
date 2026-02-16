@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login';
-import { LayoutComponent } from './components/layout/layout.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { PanierComponent } from './components/panier/panier';
@@ -17,7 +16,6 @@ export const routes: Routes = [
   // Routes protégées avec layout
   {
     path: '',
-    component: LayoutComponent,
     canActivate: [AuthGuard], // AuthGuard protège TOUTES les routes enfants
     children: [
       // Admin uniquement

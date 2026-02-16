@@ -1,144 +1,106 @@
-<!-- src/app/components/menu/menu.component.html -->
-<div class="menu-container" [class.menu-collapsed]="isCollapsed" [class.dark-mode]="isDarkMode">
+<!-- Bouton toggle -->
+<div class="menu-header" [class.collapsed]="isCollapsed">
+  <button class="toggle-btn" (click)="toggleCollapse()">
+    <!-- MDI: chevron-right / chevron-left -->
+    <i [class]="isCollapsed ? 'mdi mdi-chevron-right' : 'mdi mdi-chevron-left'"></i>
+  </button>
   
-  <!-- Logo / Brand -->
-  <div class="menu-brand">
-    <div class="logo">
-      <span class="logo-icon">AP</span>
-      <span class="logo-text" *ngIf="!isCollapsed">AdminPro</span>
-    </div>
-    <button class="btn-collapse" (click)="toggleCollapse()" [attr.aria-label]="isCollapsed ? 'Étendre' : 'Réduire'">
-      <span class="collapse-icon">{{ isCollapsed ? '→' : '←' }}</span>
-    </button>
-  </div>
-
-  <!-- User Info -->
-  <div class="menu-user" *ngIf="currentUser">
-    <div class="user-avatar">
-      <img [src]="urlHelper.getProfilUrl(currentUser.pdp)" />
-    </div>
-    <div class="user-info" *ngIf="!isCollapsed">
-      <div class="user-name">{{ currentUser.prenom }} {{ currentUser.nom }}</div>
-      <div class="user-role">{{ getRoleLabel(currentUser.role_id?.nom) }}</div>
-    </div>
-  </div>
-
-  <!-- Navigation Menu -->
-  <nav class="menu-nav">
-    <ul class="menu-list">
-      
-     <!-- Dashboard Admin -->
-<li *ngIf="authService.isAdmin()" 
-class="menu-item" 
-[class.active]="isActive('/admin-dashboard')">
-<a (click)="navigateTo('/admin-dashboard')">
-<span class="menu-label" *ngIf="!isCollapsed">Dashboard Admin</span>
-<span class="menu-label-collapsed" *ngIf="isCollapsed" title="Dashboard Admin">A</span>
-</a>
-</li>
-
-<!-- Dashboard Client -->
-<li *ngIf="isClientUser" class="menu-item" [class.active]="isActive('/client-dashboard')">
-  <a (click)="navigateTo('/client-dashboard')">
-    <span class="menu-label" *ngIf="!isCollapsed">Mon Dashboard</span>
-    <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon Dashboard">C</span>
-  </a>
-</li>
-<!-- Dashboard boutique -->
-<li *ngIf="isBoutiqueUser" class="menu-item" [class.active]="isActive('/shop-dashboard')">
-  <a (click)="navigateTo('/shop-dashboard')">
-    <span class="menu-label" *ngIf="!isCollapsed">Mon Dashboard</span>
-    <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon Dashboard">C</span>
-  </a>
-</li>
-
-<!-- stock boutique -->
-<li *ngIf="isBoutiqueUser" class="menu-item" [class.active]="isActive('/shop-info')">
-  <a (click)="navigateTo('/shop-info')">
-    <span class="menu-label" *ngIf="!isCollapsed">Mon contrat</span>
-    <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon contrat">C</span>
-  </a>
-</li>
-<!-- stock boutique -->
-<li *ngIf="isBoutiqueUser" class="menu-item" [class.active]="isActive('/shop-produits')">
-  <a (click)="navigateTo('/shop-produits')">
-    <span class="menu-label" *ngIf="!isCollapsed">Mes produits</span>
-    <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mes produits">C</span>
-  </a>
-</li>
-      <!-- Administration - Admin uniquement -->
-      <ng-container *ngIf="authService.isAdmin()">
-        <li class="menu-separator" *ngIf="!isCollapsed">
-          <span>ADMINISTRATION</span>
-        </li>
-        <li class="menu-separator-mini" *ngIf="isCollapsed"></li>
-
-        <!-- Utilisateurs -->
-        <li class="menu-item" [class.active]="isActive('/admin/users')">
-          <a (click)="navigateTo('/admin/users')">
-            <span class="menu-label" *ngIf="!isCollapsed">Utilisateurs</span>
-            <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Utilisateurs">U</span>
-          </a>
-        </li>
-
-      </ng-container>
-
-      <!-- Gestion - Admin et Manager -->
-      <ng-container *ngIf="authService.isAdmin()">
-        <li class="menu-separator" *ngIf="!isCollapsed">
-          <span>GESTION</span>
-        </li>
-        <li class="menu-separator-mini" *ngIf="isCollapsed"></li>
-
-        <!-- Statistiques -->
-        <li class="menu-item" [class.active]="isActive('/admin/stats')">
-          <a (click)="navigateTo('/admin/stats')">
-            <span class="menu-label" *ngIf="!isCollapsed">Contrats</span>
-            <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Contrats">C</span>
-          </a>
-        </li>
-
-        <!-- Rapports -->
-        <li class="menu-item" [class.active]="isActive('/admin/reports')">
-          <a (click)="navigateTo('/admin/reports')">
-            <span class="menu-label" *ngIf="!isCollapsed">Evénements</span>
-            <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Evénements">E</span>
-          </a>
-        </li>
-      </ng-container>
-
-      <!-- Personnel - Tous -->
-      <li class="menu-separator" *ngIf="!isCollapsed">
-        <span>PERSONNEL</span>
-      </li>
-      <li class="menu-separator-mini" *ngIf="isCollapsed"></li>
-
-      <!-- Profil -->
-      <li class="menu-item" [class.active]="isActive('/profile')">
-        <a (click)="navigateTo('/profile')">
-          <span class="menu-label" *ngIf="!isCollapsed">Mon profil</span>
-          <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Mon profil">P</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <!-- Footer Menu -->
-  <div class="menu-footer">
-    <!-- Theme Toggle -->
-    <button class="menu-footer-btn" (click)="toggleDarkMode()">
-      <span class="menu-label" *ngIf="!isCollapsed">
-        {{ isDarkMode ? 'Mode clair' : 'Mode sombre' }}
-      </span>
-      <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Changer le thème">
-        {{ isDarkMode ? 'C' : 'S' }}
-      </span>
-    </button>
-
-    <!-- Déconnexion -->
-    <button class="menu-footer-btn logout" (click)="logout()">
-      <span class="menu-label" *ngIf="!isCollapsed">Déconnexion</span>
-      <span class="menu-label-collapsed" *ngIf="isCollapsed" title="Déconnexion">D</span>
+  <div class="theme-toggle" *ngIf="!isCollapsed">
+    <button (click)="toggleDarkMode()" class="theme-btn">
+      <!-- MDI: white-balance-sunny / moon-waning-crescent -->
+      <i [class]="isDarkMode ? 'mdi mdi-white-balance-sunny' : 'mdi mdi-moon-waning-crescent'"></i>
     </button>
   </div>
 </div>
+
+<!-- Profil utilisateur -->
+<div class="user-profile" *ngIf="currentUser && !isCollapsed">
+  <div class="user-avatar">
+    <!-- MDI: account-circle -->
+    <i class="mdi mdi-account-circle"></i>
+  </div>
+  <div class="user-info">
+    <div class="user-name">{{ currentUser.prenom || 'Utilisateur' }} {{ currentUser.nom || '' }}</div>
+    <div class="user-role">{{ getRoleLabel(currentUser.role_id?.nom) }}</div>
+  </div>
+</div>
+
+<!-- Version réduite du profil -->
+<div class="user-profile-collapsed" *ngIf="currentUser && isCollapsed">
+  <!-- MDI: account-circle -->
+  <i class="mdi mdi-account-circle"></i>
+</div>
+
+<!-- Loading -->
+<div class="menu-loading" *ngIf="isLoading">
+  <!-- MDI: loading (spin) -->
+  <i class="mdi mdi-loading mdi-spin"></i> Chargement...
+</div>
+
+<!-- Menu dynamique -->
+<nav class="menu-nav" [class.collapsed]="isCollapsed" *ngIf="!isLoading">
+  <ul class="menu-list">
+    <!-- Boucle sur les menus racines -->
+    <ng-container *ngFor="let menu of menus; trackBy: trackByMenuId">
+      <!-- Menu sans enfant -->
+      <li class="menu-item" *ngIf="!hasChildren(menu)">
+        <a class="menu-link" 
+           [class.active]="isActive(menu.route)"
+           (click)="navigateTo(menu.route)"
+           [title]="isCollapsed ? menu.title : ''">
+          <!-- MDI: dynamic icon from database -->
+          <i class="mdi mdi-{{ menu.icon || 'circle' }} menu-icon"></i>
+          <span class="menu-title" *ngIf="!isCollapsed">{{ menu.title }}</span>
+        </a>
+      </li>
+
+      <!-- Menu avec enfants -->
+      <li class="menu-item has-submenu" *ngIf="hasChildren(menu)">
+        <a class="menu-link" 
+           (click)="toggleSubmenu(menu._id, $event)"
+           [class.expanded]="expandedMenus[menu._id]">
+          <!-- MDI: folder for parent, or icon from db -->
+          <i class="mdi mdi-{{ menu.icon || 'folder' }} menu-icon"></i>
+          <span class="menu-title" *ngIf="!isCollapsed">{{ menu.title }}</span>
+          <!-- MDI: chevron-right for submenu arrow -->
+          <i class="mdi mdi-chevron-right submenu-arrow" *ngIf="!isCollapsed" 
+             [class.rotated]="expandedMenus[menu._id]"></i>
+        </a>
+        
+        <!-- Sous-menus -->
+        <ul class="submenu" *ngIf="expandedMenus[menu._id] && !isCollapsed">
+          <li *ngFor="let child of menu.children; trackBy: trackByMenuId">
+            <a class="submenu-link"
+               [class.active]="isActive(child.route)"
+               (click)="navigateTo(child.route)">
+              <!-- MDI: icon for child -->
+              <i class="mdi mdi-{{ child.icon || 'circle' }} submenu-icon"></i>
+              <span class="submenu-title">{{ child.title }}</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ng-container>
+
+    <!-- Message si aucun menu -->
+    <li class="menu-item no-menu" *ngIf="menus.length === 0 && !isCollapsed">
+      <span class="menu-link disabled">
+        <!-- MDI: information -->
+        <i class="mdi mdi-information menu-icon"></i>
+        <span class="menu-title">Aucun menu disponible</span>
+      </span>
+    </li>
+
+    <!-- Séparateur -->
+    <li class="menu-divider" *ngIf="menus.length > 0"></li>
+
+    <!-- Déconnexion -->
+    <li class="menu-item logout-item">
+      <a class="menu-link" (click)="logout()" [title]="isCollapsed ? 'Déconnexion' : ''">
+        <!-- MDI: logout -->
+        <i class="mdi mdi-logout menu-icon"></i>
+        <span class="menu-title" *ngIf="!isCollapsed">Déconnexion</span>
+      </a>
+    </li>
+  </ul>
+</nav>

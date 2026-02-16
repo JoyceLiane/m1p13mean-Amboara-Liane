@@ -26,9 +26,9 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "src/material-theme.scss"
-            ]
+            "node_modules/@mdi/font/css/materialdesignicons.min.css",
+            "src/styles.css"
+          ]
           },
           "configurations": {
             "production": {

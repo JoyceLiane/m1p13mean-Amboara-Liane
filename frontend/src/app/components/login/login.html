@@ -1,29 +1,47 @@
 <div class="login-container">
-  <form class="login-card" (ngSubmit)="onLogin()">
+  <div class="login-card">
     <h2>Connexion</h2>
 
-    <div class="input-group">
-      <input
-        type="email"
-        [(ngModel)]="email"
-        name="email"
-        placeholder=" "
-        required
-      />
-      <label>Email</label>
+    <!-- Message d'erreur -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
     </div>
 
-    <div class="input-group">
-      <input
-        type="password"
-        [(ngModel)]="mdp"
-        name="mdp"
-        placeholder=" "
-        required
-      />
-      <label>Mot de passe</label>
-    </div>
+    <form (ngSubmit)="onLogin()">
+      <div class="input-group">
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder=" "
+          required
+        />
+        <label>Email</label>
+      </div>
 
-    <button type="submit">Se connecter</button>
-  </form>
+      <div class="input-group">
+        <input
+          type="password"
+          [(ngModel)]="mdp"
+          name="mdp"
+          placeholder=" "
+          required
+        />
+        <label>Mot de passe</label>
+      </div>
+
+      <button 
+        type="submit" 
+        class="login-button"
+        [class.loading]="loading"
+        [disabled]="loading"
+      >
+        {{ loading ? '' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Mot de passe oublié ? <a href="#">Réinitialiser</a></p>
+    </div>
+  </div>
 </div>

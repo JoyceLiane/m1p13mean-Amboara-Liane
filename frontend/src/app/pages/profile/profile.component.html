@@ -4,31 +4,43 @@
   <div class="profile-header">
     <div class="header-left">
       <button class="btn-back" (click)="goback()">
-        <span class="back-icon">←</span>
+        <i class="mdi mdi-arrow-left back-icon"></i>
         Retour
       </button>
       <h2>Mon profil</h2>
     </div>
     <button class="btn-theme" (click)="toggleDarkMode()">
-      {{ isDarkMode ? '☀️' : '🌙' }}
+      <i [class]="isDarkMode ? 'mdi mdi-white-balance-sunny' : 'mdi mdi-moon-waning-crescent'"></i>
     </button>
   </div>
 
   <!-- Content -->
   <div class="profile-content">
-    <!-- Avatar Section -->
-    <div class="avatar-section">
-      <div class="avatar-wrapper">
-        <img [src]="urlHelper.getProfilUrl(user.pdp)"
-        alt="Avatar"
-          class="profile-avatar" />
-        <button class="btn-edit-avatar" title="Changer la photo">
-          📷
-        </button>
+<!-- Avatar Section avec fallback MDI -->
+<div class="avatar-section">
+  <div class="avatar-wrapper">
+    <!-- Afficher l'image si elle existe -->
+    <ng-container *ngIf="user.pdp; else avatarIcon">
+      <img [src]="urlHelper.getProfilUrl(user.pdp)"
+           alt="Avatar"
+           class="profile-avatar"
+           (error)="user.pdp = null" />
+    </ng-container>
+    
+    <!-- Fallback avec icône MDI -->
+    <ng-template #avatarIcon>
+      <div class="avatar-placeholder">
+        <i class="mdi mdi-account-circle" style="font-size: 150px; color: #7c4dff;"></i>
       </div>
-      <h3>{{ user.prenom }} {{ user.nom }}</h3>
-      <p class="user-email">{{ user.email }}</p>
-    </div>
+    </ng-template>
+
+    <button class="btn-edit-avatar" title="Changer la photo">
+      <i class="mdi mdi-camera"></i>
+    </button>
+  </div>
+  <h3>{{ user.prenom }} {{ user.nom }}</h3>
+  <p class="user-email">{{ user.email }}</p>
+</div>
 
     <!-- Formulaire -->
     <div class="form-section">
@@ -110,10 +122,12 @@
         <!-- Dates -->
         <div class="dates-section">
           <div class="date-item">
+            <i class="mdi mdi-calendar-clock date-icon"></i>
             <span class="date-label">Compte créé le :</span>
             <span class="date-value">{{ user.created_on | date:'dd MMMM yyyy' }}</span>
           </div>
           <div class="date-item" *ngIf="user.updated_at">
+            <i class="mdi mdi-update date-icon"></i>
             <span class="date-label">Dernière modification :</span>
             <span class="date-value">{{ user.updated_at | date:'dd MMMM yyyy' }}</span>
           </div>
@@ -122,9 +136,11 @@
         <!-- Actions -->
         <div class="form-actions">
           <button type="button" class="btn-cancel" (click)="goback()">
+            <i class="mdi mdi-close"></i>
             Annuler
           </button>
           <button type="submit" class="btn-save">
+            <i class="mdi mdi-check"></i>
             Enregistrer les modifications
           </button>
         </div>

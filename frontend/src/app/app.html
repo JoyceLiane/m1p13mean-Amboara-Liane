@@ -1,1 +1,13 @@
-<router-outlet></router-outlet>
+<div class="app-container">
+  <!-- Sidebar avec menu -->
+  <aside class="sidebar" [class.collapsed]="isCollapsed$ | async" *ngIf="isLoggedIn$ | async">
+    <app-menu></app-menu>
+  </aside>
+
+  <!-- Contenu principal avec le router-outlet -->
+  <main class="main-content">
+    <!-- Votre contenu existant avec router-outlet -->
+    <router-outlet></router-outlet>
+  </main>
+  <footer></footer>
+</div>

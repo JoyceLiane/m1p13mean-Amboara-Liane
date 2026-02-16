@@ -3,7 +3,7 @@
     "$oid": "69930a44b5fbd669dbe0de0f"
   },
   "title": "Dashboard",
-  "icon": "eye",
+  "icon": "view-dashboard-variant",
   "route": "/admin-dashboard",
   "orderIndex": 1,
   "parent": null,
@@ -24,5 +24,31 @@
     "admin",
     "client",
     "boutique"
+  ]
+},
+{
+  "_id": {
+    "$oid": "69932e7bb5fbd669dbe0de23"
+  },
+  "title": "Evenement",
+  "icon": "calendar-edit",
+  "route": "admin/events",
+  "orderIndex": 1,
+  "parent": null,
+  "roles": [
+    "admin"
+  ]
+},
+{
+  "_id": {
+    "$oid": "69933022b5fbd669dbe0de24"
+  },
+  "title": "Nouvel évènement",
+  "icon": "calendar-plus",
+  "route": "admin/events/new",
+  "orderIndex": 2,
+  "parent": "69932e7bb5fbd669dbe0de23",
+  "roles": [
+    "admin"
   ]
 }]

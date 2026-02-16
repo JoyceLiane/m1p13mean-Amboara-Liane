@@ -6,11 +6,11 @@ import { PanierComponent } from './components/panier/panier';
 export const routes: Routes = [
   // Page de login (publique)
   { path: 'login', component: LoginComponent },
-  
+
   // Page non autorisée (optionnelle)
-  { 
-    path: 'non-autorise', 
-    loadComponent: () => import('./components/not-found/not-found.component').then(m => m.NotFoundComponent) 
+  {
+    path: 'non-autorise',
+    loadComponent: () => import('./components/not-found/not-found.component').then(m => m.NotFoundComponent)
   },
 
   // Routes protégées avec layout
@@ -19,46 +19,46 @@ export const routes: Routes = [
     canActivate: [AuthGuard], // AuthGuard protège TOUTES les routes enfants
     children: [
       // Admin uniquement
-      { 
-        path: 'admin-dashboard', 
+      {
+        path: 'admin-dashboard',
         loadComponent: () => import('./components/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
         canActivate: [RoleGuard],
         data: { roles: ['admin'] }
       },
-      { 
-        path: 'profile', 
+      {
+        path: 'profile',
         loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
         canActivate: [RoleGuard],
         data: { roles: ['admin', 'client', 'shop', 'boutique'] } // Tous les rôles
       },
       { path: 'panier', component: PanierComponent, canActivate: [AuthGuard] },
       // Client uniquement
-      { 
-        path: 'client-dashboard', 
+      {
+        path: 'client-dashboard',
         loadComponent: () => import('./components/client-dashboard/client-dashboard').then(m => m.ClientDashboardComponent),
         canActivate: [RoleGuard],
         data: { roles: ['client'] }
-      }, 
-      { 
-        path: 'shop-dashboard', 
+      },
+      {
+        path: 'shop-dashboard',
         loadComponent: () => import('./components/shop-dashboard/shop-dashboard').then(m => m.ShopDashboard),
         canActivate: [RoleGuard],
         data: { roles: ['boutique'] }
       },
-      { 
-        path: 'shop-produits', 
+      {
+        path: 'shop-produits',
         loadComponent: () => import('./components/shop-dashboard/pages/produits/produits').then(m => m.ProduitsPageComponent),
         canActivate: [RoleGuard],
         data: { roles: ['boutique'] }
       },
-      { 
-        path: 'carte-supermarche', 
+      {
+        path: 'carte-supermarche',
         loadComponent: () => import('./components/carte-supermarche/carte-supermarche').then(m => m.CarteSupermarcheComponent),
         canActivate: [RoleGuard],
         data: { roles: ['client'] }
       },
-      
-      
+
+
       // Shop uniquement
       // { 
       //   path: 'shop-dashboard', 
@@ -66,23 +66,44 @@ export const routes: Routes = [
       //   canActivate: [RoleGuard],
       //   data: { roles: ['shop', 'boutique'] }
       // },
-      
+      {
+        path: 'admin/events',
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./components/admin/events/event.component').then(m => m.EventsComponent)
+          },
+          {
+            path: 'new',
+            loadComponent: () => import('./components/admin/events/event-form.component').then(m => m.EventFormComponent)
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./components/admin/events/event-form.component').then(m => m.EventFormComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./components/admin/events/event-detail.component').then(m => m.EventDetailComponent)
+          }
+        ]
+      },
       // Redirection par défaut
-      { 
-        path: '', 
+      {
+        path: '',
         loadComponent: () => import('./components/dashboard-redirect/dashboard-redirect')
           .then(m => m.DashboardRedirectComponent)
       }
-      
+
     ]
   },
-  
+
   // Redirection racine
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  
+
   // Wildcard (404)
-  { 
-    path: '**', 
-    loadComponent: () => import('./components/not-found/not-found.component').then(m => m.NotFoundComponent) 
+  {
+    path: '**',
+    loadComponent: () => import('./components/not-found/not-found.component').then(m => m.NotFoundComponent)
   }
 ];

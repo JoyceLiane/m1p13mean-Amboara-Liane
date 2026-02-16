@@ -1,0 +1,142 @@
+<div class="event-form-container">
+  <!-- Header -->
+  <div class="form-header">
+    <button class="btn-back" (click)="onCancel()">
+      <i class="mdi mdi-arrow-left"></i>
+      Retour
+    </button>
+    <h1>{{ isEditMode ? 'Modifier' : 'Créer' }} un événement</h1>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage">
+    <i class="mdi mdi-alert-circle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Formulaire -->
+  <form (ngSubmit)="onSubmit()" #eventForm="ngForm" class="event-form" *ngIf="!isLoading">
+    <div class="form-grid">
+      <!-- Titre -->
+      <div class="form-group full-width">
+        <label for="titre">Titre de l'événement *</label>
+        <input
+          type="text"
+          id="titre"
+          name="titre"
+          [(ngModel)]="event.titre"
+          #titre="ngModel"
+          required
+          minlength="3"
+          placeholder="Ex: Salon professionnel 2024"
+          class="form-input"
+        />
+        <div class="error-field" *ngIf="titre.invalid && titre.touched">
+          Le titre est requis (min. 3 caractères)
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group full-width">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          name="description"
+          [(ngModel)]="event.description"
+          rows="4"
+          placeholder="Description détaillée de l'événement..."
+          class="form-textarea"
+        ></textarea>
+      </div>
+
+      <!-- Date début -->
+      <div class="form-group">
+        <label for="date_debut">Date de début *</label>
+        <input
+          type="datetime-local"
+          id="date_debut"
+          name="date_debut"
+          [(ngModel)]="event.date_debut"
+          #dateDebut="ngModel"
+          required
+          [min]="minDate + 'T00:00'"
+          class="form-input"
+        />
+        <div class="error-field" *ngIf="dateDebut.invalid && dateDebut.touched">
+          Date de début requise
+        </div>
+      </div>
+
+      <!-- Date fin -->
+      <div class="form-group">
+        <label for="date_fin">Date de fin *</label>
+        <input
+          type="datetime-local"
+          id="date_fin"
+          name="date_fin"
+          [(ngModel)]="event.date_fin"
+          #dateFin="ngModel"
+          required
+          [min]="event.date_debut || minDate + 'T00:00'"
+          class="form-input"
+        />
+        <div class="error-field" *ngIf="dateFin.invalid && dateFin.touched">
+          Date de fin requise
+        </div>
+      </div>
+
+      <!-- Statut -->
+      <div class="form-group">
+        <label for="statut">Statut</label>
+        <select
+          id="statut"
+          name="statut"
+          [(ngModel)]="event.statut"
+          class="form-select"
+        >
+          <option *ngFor="let statut of statuts" [value]="statut">
+            {{ statut }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Coût -->
+      <div class="form-group">
+        <label for="cout">Coût (€)</label>
+        <input
+          type="number"
+          id="cout"
+          name="cout"
+          [(ngModel)]="event.cout"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          class="form-input"
+        />
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="onCancel()">
+        <i class="mdi mdi-close"></i>
+        Annuler
+      </button>
+      <button 
+        type="submit" 
+        class="btn-save"
+        [disabled]="eventForm.invalid || isLoading"
+        [class.loading]="isLoading"
+      >
+        <i class="mdi mdi-check"></i>
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,156 @@
+<div class="event-detail-container">
+  <!-- Loading -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement de l'événement...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="error-message" *ngIf="errorMessage">
+    <i class="mdi mdi-alert-circle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Event Detail -->
+  <div class="event-detail" *ngIf="!isLoading && event">
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="header-left">
+        <button class="btn-back" (click)="goBack()">
+          <i class="mdi mdi-arrow-left"></i>
+          Retour
+        </button>
+        <h1>{{ event.titre }}</h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn-edit" (click)="editEvent()">
+          <i class="mdi mdi-pencil"></i>
+          Modifier
+        </button>
+        <button class="btn-delete" (click)="deleteEvent()">
+          <i class="mdi mdi-delete"></i>
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Banner -->
+    <div class="status-banner" [ngClass]="getStatutClass(event.statut)">
+      <i class="mdi" [ngClass]="getStatutIcon(event.statut)"></i>
+      <span>Statut : {{ event.statut }}</span>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="info-grid">
+      <!-- Dates Card -->
+      <div class="info-card">
+        <div class="card-header">
+          <i class="mdi mdi-calendar"></i>
+          <h3>Dates</h3>
+        </div>
+        <div class="card-content">
+          <div class="info-item">
+            <span class="info-label">Début :</span>
+            <span class="info-value">{{ formatDate(event.date_debut) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Fin :</span>
+            <span class="info-value">{{ formatDate(event.date_fin) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget Card -->
+      <div class="info-card">
+        <div class="card-header">
+          <i class="mdi mdi-currency-eur"></i>
+          <h3>Budget</h3>
+        </div>
+        <div class="card-content">
+          <div class="info-item">
+            <span class="info-label">Coût total :</span>
+            <span class="info-value budget">{{ formatCout(event.cout) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Createur Card -->
+      <div class="info-card" *ngIf="event.created_by">
+        <div class="card-header">
+          <i class="mdi mdi-account"></i>
+          <h3>Créé par</h3>
+        </div>
+        <div class="card-content">
+          <div class="info-item">
+            <span class="info-label">Nom :</span>
+            <span class="info-value">{{ event.created_by.nom }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email :</span>
+            <span class="info-value">{{ event.created_by.email }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates création Card -->
+      <div class="info-card" *ngIf="event.date_creation">
+        <div class="card-header">
+          <i class="mdi mdi-clock-outline"></i>
+          <h3>Informations</h3>
+        </div>
+        <div class="card-content">
+          <div class="info-item">
+            <span class="info-label">Créé le :</span>
+            <span class="info-value">{{ event.date_creation | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="description-card" *ngIf="event.description">
+      <div class="card-header">
+        <i class="mdi mdi-text-box"></i>
+        <h3>Description</h3>
+      </div>
+      <div class="card-content">
+        <p>{{ event.description }}</p>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions">
+      <h3>Actions rapides</h3>
+      <div class="action-buttons">
+        <button 
+          class="action-btn planifie" 
+          [class.active]="event.statut === 'PLANIFIE'"
+          (click)="updateStatut('PLANIFIE')">
+          <i class="mdi mdi-calendar-clock"></i>
+          Planifier
+        </button>
+        <button 
+          class="action-btn en-cours" 
+          [class.active]="event.statut === 'EN_COURS'"
+          (click)="updateStatut('EN_COURS')">
+          <i class="mdi mdi-progress-clock"></i>
+          Démarrer
+        </button>
+        <button 
+          class="action-btn termine" 
+          [class.active]="event.statut === 'TERMINE'"
+          (click)="updateStatut('TERMINE')">
+          <i class="mdi mdi-check-circle"></i>
+          Terminer
+        </button>
+        <button 
+          class="action-btn annule" 
+          [class.active]="event.statut === 'ANNULE'"
+          (click)="updateStatut('ANNULE')">
+          <i class="mdi mdi-cancel"></i>
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

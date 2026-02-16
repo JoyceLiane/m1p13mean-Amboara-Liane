@@ -1,0 +1,182 @@
+<div class="events-container">
+  <!-- Header -->
+  <div class="events-header">
+    <div class="header-left">
+      <h1>Gestion des événements</h1>
+      <p class="header-subtitle">{{ stats.total }} événements au total</p>
+    </div>
+    <button class="btn-create" (click)="createEvent()">
+      <i class="mdi mdi-plus"></i>
+      Nouvel événement
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <i class="mdi mdi-calendar"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Total</h3>
+        <p class="stat-value">{{ stats.total }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <i class="mdi mdi-calendar-clock"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Planifiés</h3>
+        <p class="stat-value">{{ stats.planifie }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orange">
+        <i class="mdi mdi-progress-clock"></i>
+      </div>
+      <div class="stat-info">
+        <h3>En cours</h3>
+        <p class="stat-value">{{ stats.enCours }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <i class="mdi mdi-check-circle"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Terminés</h3>
+        <p class="stat-value">{{ stats.termine }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon red">
+        <i class="mdi mdi-cancel"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Annulés</h3>
+        <p class="stat-value">{{ stats.annule }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon gold">
+        <i class="mdi mdi-currency-eur"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Budget total</h3>
+        <p class="stat-value">{{ formatCout(stats.coutTotal) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <div class="search-box">
+        <i class="mdi mdi-magnify"></i>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          placeholder="Rechercher un événement..."
+          class="search-input"
+        />
+      </div>
+
+      <select [(ngModel)]="selectedStatut" (ngModelChange)="applyFilters()" class="filter-select">
+        <option *ngFor="let statut of statuts" [value]="statut">
+          {{ statut === 'TOUS' ? 'Tous les statuts' : statut }}
+        </option>
+      </select>
+
+      <button class="btn-stats" (click)="getMonthStats()" title="Voir les statistiques du mois">
+        <i class="mdi mdi-chart-bar"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement des événements...</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container" *ngIf="!isLoading">
+    <table class="events-table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Début</th>
+          <th>Fin</th>
+          <th>Statut</th>
+          <th>Coût</th>
+          <th>Créé par</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of paginatedEvents">
+          <td>
+            <div class="event-title">{{ event.titre }}</div>
+            <small class="event-desc">{{ event.description | slice:0:50 }}...</small>
+          </td>
+          <td>{{ formatDate(event.date_debut) }}</td>
+          <td>{{ formatDate(event.date_fin) }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatutClass(event.statut)">
+              <i class="mdi" [ngClass]="getStatutIcon(event.statut)"></i>
+              {{ event.statut }}
+            </span>
+          </td>
+          <td class="cout-cell">{{ formatCout(event.cout) }}</td>
+          <td>{{ event.created_by?.nom || 'N/A' }}</td>
+          <td class="actions-cell">
+            <button class="btn-action btn-view" (click)="viewEvent(event._id!)" title="Voir">
+              <i class="mdi mdi-eye"></i>
+            </button>
+            <button class="btn-action btn-edit" (click)="editEvent(event._id!)" title="Modifier">
+              <i class="mdi mdi-pencil"></i>
+            </button>
+            <button class="btn-action btn-delete" (click)="deleteEvent(event._id!)" title="Supprimer">
+              <i class="mdi mdi-delete"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="paginatedEvents.length === 0">
+          <td colspan="7" class="no-data">
+            <i class="mdi mdi-calendar-remove"></i>
+            <p>Aucun événement trouvé</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredEvents.length > itemsPerPage">
+    <button 
+      class="btn-pagination" 
+      [disabled]="currentPage === 1"
+      (click)="changePage(currentPage - 1)">
+      <i class="mdi mdi-chevron-left"></i>
+    </button>
+    
+    <span class="page-info">
+      Page {{ currentPage }} sur {{ totalPages }}
+    </span>
+    
+    <button 
+      class="btn-pagination" 
+      [disabled]="currentPage === totalPages"
+      (click)="changePage(currentPage + 1)">
+      <i class="mdi mdi-chevron-right"></i>
+    </button>
+  </div>
+</div>

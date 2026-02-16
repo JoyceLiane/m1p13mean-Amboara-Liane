@@ -32,15 +32,19 @@ router.get('/', async (req, res) => {
 
 // READ ONE
 router.get('/:id', async (req, res) => {
+  console.time(`🔍 getEvent-${req.params.id}`);
   try {
     const event = await Event.findById(req.params.id)
-      .populate('created_by', 'nom email telephone role');
+      .populate('created_by', 'nom email');
+    
+    console.timeEnd(`🔍 getEvent-${req.params.id}`);
     
     if (!event) {
       return res.status(404).json({ error: 'Événement non trouvé' });
     }
     res.json(event);
   } catch (err) {
+    console.timeEnd(`🔍 getEvent-${req.params.id}`);
     res.status(500).json({ error: err.message });
   }
 });

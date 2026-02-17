@@ -60,7 +60,12 @@
             <button (click)="startEdit(produit)" class="btn-edit">
               <i class="mdi mdi-pencil"></i>
             </button>
-
+            <button 
+            (click)="goToMouvement(produit._id)" 
+            class="btn-stock">
+            <i class="mdi mdi-swap-horizontal"></i>
+          </button>
+          
             <button (click)="deleteProduit(produit._id)" class="btn-delete">
               <i class="mdi mdi-delete"></i>
             </button>

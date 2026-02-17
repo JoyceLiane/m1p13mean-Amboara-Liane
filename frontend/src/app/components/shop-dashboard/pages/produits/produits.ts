@@ -5,6 +5,7 @@ import { AuthService } from '../../../../services/auth';
 import { ProduitsService } from '../../../../services/produits';
 import { ContratService } from '../../../../services/contrat';
 import { Produit, Categorie } from '../../../../models/produit';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-produits-page',
@@ -28,7 +29,8 @@ export class ProduitsPageComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private produitsService: ProduitsService,
-    private contratService: ContratService
+    private contratService: ContratService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -82,7 +84,10 @@ export class ProduitsPageComponent implements OnInit {
         error: (err) => console.error('Erreur chargement contrats:', err)
       });
   }
-
+  goToMouvement(produitId: string) {
+    this.router.navigate(['/shop-mouvement-stock', produitId]);
+  }
+  
   applyFilters() {
     this.filteredProduits = this.produits.filter(p => {
 

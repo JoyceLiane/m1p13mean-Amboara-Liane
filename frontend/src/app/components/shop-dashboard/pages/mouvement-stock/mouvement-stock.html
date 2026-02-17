@@ -1,0 +1,64 @@
+<div class="mouvement-container">
+    <div class="mouvement-card">
+  
+      <!-- En-tête -->
+      <h2>
+        <i class="mdi mdi-swap-horizontal"></i>
+        Mouvement de Stock
+      </h2>
+      <p class="mouvement-subtitle">Enregistrement · Inventaire</p>
+  
+      
+  
+      <div class="mouvement-divider"></div>
+  
+      <!-- Type de mouvement -->
+      <div class="form-group">
+        <label>Type de mouvement</label>
+        <select [(ngModel)]="typeMouvementId" (change)="onTypeChange()">
+          <option value="">— Sélectionner un type —</option>
+          <option *ngFor="let t of types" [value]="t._id">
+            {{ t.nom }}
+          </option>
+        </select>
+      </div>
+  
+      <!-- Quantité -->
+      <div class="form-group">
+        <label>Quantité</label>
+        <div class="quantite-wrapper">
+          <input type="number" [(ngModel)]="quantite" min="1" placeholder="0">
+          <span class="quantite-unit">unités</span>
+        </div>
+      </div>
+  
+      <!-- Preview -->
+      <div class="mouvement-preview" *ngIf="typeMouvementId && quantite > 0">
+        <div class="preview-item">
+          <span class="preview-label">Entrée</span>
+          <span class="preview-value"
+            [class.entree]="['achat','retour'].includes(typeMouvementNom)"
+            [class.neutre]="!['achat','retour'].includes(typeMouvementNom)">
+            +{{ ['achat','retour'].includes(typeMouvementNom) ? quantite : 0 }}
+          </span>
+        </div>
+        <div class="preview-item">
+          <span class="preview-label">Sortie</span>
+          <span class="preview-value"
+            [class.sortie]="typeMouvementNom === 'vente'"
+            [class.neutre]="typeMouvementNom !== 'vente'">
+            -{{ typeMouvementNom === 'vente' ? quantite : 0 }}
+          </span>
+        </div>
+      </div>
+  
+      <div class="mouvement-divider"></div>
+  
+      <!-- Bouton -->
+      <button (click)="createMouvement()" class="btn-save">
+        <i class="mdi mdi-content-save"></i>
+        Enregistrer le mouvement
+      </button>
+  
+    </div>
+  </div>

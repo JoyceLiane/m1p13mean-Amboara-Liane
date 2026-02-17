@@ -86,7 +86,14 @@ export const routes: Routes = [
           
         ]
       },
-
+      {
+        path: 'shop-mouvement-stock/:produitId',
+        loadComponent: () =>
+          import('./components/shop-dashboard/pages/mouvement-stock/mouvement-stock')
+            .then(m => m.MouvementStockPageComponent),
+        data: { roles: ['boutique'] }
+      },
+      
       // Routes d'administration des événements
       {
         path: 'admin/events',

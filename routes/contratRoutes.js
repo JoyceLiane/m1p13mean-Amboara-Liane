@@ -37,8 +37,30 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// GET contrats par userId (avec validation ObjectId et filtres stricts)
+router.get('/user/:userId', async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+      return res.status(400).json({ error: 'userId invalide' });
+    }
 
-// GET contrats par locataire
+    const contrats = await Contrat.find({
+      locataire_id: new mongoose.Types.ObjectId(req.params.userId),
+      deleted_at: null,
+      type_contrat: { $in: ['INITIAL', 'RENOUVELLEMENT_ACTIF'] }
+    })
+    .populate('id_magasin', 'nom superficie etage')
+    .populate('locataire_id', 'nom email telephone')
+    .populate('status_id', 'nom couleur')
+    .populate('contrat_parent_id', 'id date_debut date_fin');
+
+    res.json(contrats);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET contrats par locataire (sans filtre type_contrat, triés par date_fin)
 router.get('/locataire/:locataireId', async (req, res) => {
   try {
     const contrats = await Contrat.find({ 
@@ -48,14 +70,13 @@ router.get('/locataire/:locataireId', async (req, res) => {
     .populate('id_magasin', 'nom superficie etage')
     .populate('status_id', 'nom couleur')
     .populate('contrat_parent_id', 'id date_debut date_fin')
-    .sort({ date_fin: -1 }); // Les plus récents d'abord
-    
+    .sort({ date_fin: -1 });
+
     res.json(contrats);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 // READ ONE
 router.get('/:id', async (req, res) => {
   try {

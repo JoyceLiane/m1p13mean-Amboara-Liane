@@ -50,16 +50,16 @@ export const routes: Routes = [
 
       // Routes pour les boutiques (maintenance)
       {
-        path: 'boutique-dashboard',
+        path: 'shop-dashboard',
         loadComponent: () => import('./components/shop-dashboard/shop-dashboard').then(m => m.ShopDashboard),
         canActivate: [RoleGuard],
-        data: { roles: ['boutique'] }
+        data: { roles: ['shop','boutique'] }
       },
       {
-        path: 'boutique-produits',
+        path: 'shop-produits',
         loadComponent: () => import('./components/shop-dashboard/pages/produits/produits').then(m => m.ProduitsPageComponent),
         canActivate: [RoleGuard],
-        data: { roles: ['boutique'] }
+        data: { roles: ['shop','boutique'] }
       },
       
       // ROUTES DE MAINTENANCE POUR LES BOUTIQUES

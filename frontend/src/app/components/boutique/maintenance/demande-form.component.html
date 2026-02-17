@@ -1,0 +1,61 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier la demande' : 'Nouvelle demande de maintenance' }}</h2>
+
+  <form [formGroup]="demandeForm" (ngSubmit)="onSubmit()" class="form-container">
+    
+    <!-- Sélection du contrat -->
+    <div class="form-group">
+      <label for="contrat">Magasin / Contrat <span class="required">*</span></label>
+      <select id="contrat" formControlName="contrat_id" class="form-control">
+        <option value="" disabled selected>-- Sélectionnez un magasin --</option>
+        <option *ngFor="let contrat of contrats" [value]="contrat._id">
+          {{ contrat.nom_magasin }} ({{ contrat.id }})
+        </option>
+      </select>
+      <div class="error-message" *ngIf="demandeForm.get('contrat_id')?.invalid && demandeForm.get('contrat_id')?.touched">
+        Veuillez sélectionner un magasin
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description du problème <span class="required">*</span></label>
+      <textarea id="description" formControlName="description" rows="5" 
+                class="form-control" placeholder="Décrivez le problème rencontré..."></textarea>
+      <div class="error-message" *ngIf="demandeForm.get('description')?.invalid && demandeForm.get('description')?.touched">
+        <span *ngIf="demandeForm.get('description')?.errors?.['required']">La description est requise</span>
+        <span *ngIf="demandeForm.get('description')?.errors?.['minlength']">Minimum 10 caractères</span>
+      </div>
+    </div>
+
+    <!-- Niveau d'urgence -->
+    <div class="form-group">
+      <label for="urgence">Niveau d'urgence <span class="required">*</span></label>
+      <select id="urgence" formControlName="urgence_id" class="form-control">
+        <option value="" disabled selected>-- Sélectionnez un niveau d'urgence --</option>
+        <option *ngFor="let urgence of urgences" [value]="urgence._id" 
+                [style.color]="urgence.couleur">
+          {{ urgence.niveau }}
+          <span *ngIf="urgence.delai_max_jours">(Intervention sous {{ urgence.delai_max_jours }} jours)</span>
+        </option>
+      </select>
+      <div class="error-message" *ngIf="demandeForm.get('urgence_id')?.invalid && demandeForm.get('urgence_id')?.touched">
+        Veuillez sélectionner un niveau d'urgence
+      </div>
+    </div>
+
+    <!-- Message d'information -->
+    <div class="info-message">
+      <i class="mdi mdi-information"></i>
+      <span>Votre demande sera traitée par notre équipe dans les plus brefs délais.</span>
+    </div>
+
+    <!-- Boutons -->
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="annuler()">Annuler</button>
+      <button type="submit" class="btn-primary" [disabled]="demandeForm.invalid || loading">
+        {{ loading ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Envoyer la demande') }}
+      </button>
+    </div>
+  </form>
+</div>

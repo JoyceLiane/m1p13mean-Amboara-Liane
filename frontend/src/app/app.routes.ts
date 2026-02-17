@@ -3,6 +3,7 @@ import { LoginComponent } from './components/login/login';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { PanierComponent } from './components/panier/panier';
+
 export const routes: Routes = [
   // Page de login (publique)
   { path: 'login', component: LoginComponent },
@@ -32,6 +33,7 @@ export const routes: Routes = [
         data: { roles: ['admin', 'client', 'shop', 'boutique'] } // Tous les rôles
       },
       { path: 'panier', component: PanierComponent, canActivate: [AuthGuard] },
+      
       // Client uniquement
       {
         path: 'client-dashboard',
@@ -40,35 +42,56 @@ export const routes: Routes = [
         data: { roles: ['client'] }
       },
       {
-        path: 'shop-dashboard',
-        loadComponent: () => import('./components/shop-dashboard/shop-dashboard').then(m => m.ShopDashboard),
-        canActivate: [RoleGuard],
-        data: { roles: ['boutique'] }
-      },
-      {
-        path: 'shop-produits',
-        loadComponent: () => import('./components/shop-dashboard/pages/produits/produits').then(m => m.ProduitsPageComponent),
-        canActivate: [RoleGuard],
-        data: { roles: ['boutique'] }
-      },
-      {
         path: 'carte-supermarche',
         loadComponent: () => import('./components/carte-supermarche/carte-supermarche').then(m => m.CarteSupermarcheComponent),
         canActivate: [RoleGuard],
         data: { roles: ['client'] }
       },
 
+      // Routes pour les boutiques (maintenance)
+      {
+        path: 'boutique-dashboard',
+        loadComponent: () => import('./components/shop-dashboard/shop-dashboard').then(m => m.ShopDashboard),
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] }
+      },
+      {
+        path: 'boutique-produits',
+        loadComponent: () => import('./components/shop-dashboard/pages/produits/produits').then(m => m.ProduitsPageComponent),
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] }
+      },
+      
+      // ROUTES DE MAINTENANCE POUR LES BOUTIQUES
+      {
+        path: 'maintenance',
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] }, // Les boutiques et admin peuvent accéder
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./components/boutique/maintenance/demande-list.component')
+              .then(m => m.DemandeListComponent)
+          },
+          {
+            path: 'nouvelle',
+            loadComponent: () => import('./components/boutique/maintenance/demande-form.component')
+              .then(m => m.DemandeFormComponent)
+          },
+          {
+            path: 'modifier/:id',
+            loadComponent: () => import('./components/boutique/maintenance/demande-form.component')
+              .then(m => m.DemandeFormComponent)
+          }
+          
+        ]
+      },
 
-      // Shop uniquement
-      // { 
-      //   path: 'shop-dashboard', 
-      //   loadComponent: () => import('./components/shop-dashboard/shop-dashboard').then(m => m.ShopDashboardComponent),
-      //   canActivate: [RoleGuard],
-      //   data: { roles: ['shop', 'boutique'] }
-      // },
+      // Routes d'administration des événements
       {
         path: 'admin/events',
-        canActivate: [AuthGuard],
+        canActivate: [RoleGuard],
+        data: { roles: ['admin'] },
         children: [
           {
             path: '',
@@ -88,13 +111,37 @@ export const routes: Routes = [
           }
         ]
       },
+
+      // ROUTES ADMIN POUR LA GESTION DES MAINTENANCES
+      {
+        path: 'admin/maintenance',
+        canActivate: [RoleGuard],
+        data: { roles: ['admin'] },
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./components/admin/maintenance/maintenance-list.component')
+              .then(m => m.MaintenanceListComponent)
+          },
+          {
+            path: 'planifier/:id',
+            loadComponent: () => import('./components/admin/maintenance/maintenance-planification.component')
+              .then(m => m.MaintenancePlanificationComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./components/admin/maintenance/demande-detail.component')
+              .then(m => m.DemandeDetailComponent)
+          }
+        ]
+      },
+
       // Redirection par défaut
       {
         path: '',
         loadComponent: () => import('./components/dashboard-redirect/dashboard-redirect')
           .then(m => m.DashboardRedirectComponent)
       }
-
     ]
   },
 

@@ -1,0 +1,94 @@
+<div class="container">
+  <div class="header">
+    <h2>Gestion des demandes de maintenance</h2>
+  </div>
+
+  <div class="filters">
+    <div class="search-field">
+      <i class="mdi mdi-magnify"></i>
+      <input type="text" 
+             [(ngModel)]="recherche" 
+             (ngModelChange)="filtrerDemandes()" 
+             placeholder="Magasin, description...">
+    </div>
+
+    <div class="filter-field">
+      <select [(ngModel)]="filtreStatut" (ngModelChange)="filtrerDemandes()">
+        <option value="all">Tous les statuts</option>
+        <option *ngFor="let statut of statuts" [value]="statut._id">
+          {{ statut.nom }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-field">
+      <select [(ngModel)]="filtreUrgence" (ngModelChange)="filtrerDemandes()">
+        <option value="all">Toutes les urgences</option>
+        <option *ngFor="let urgence of urgences" [value]="urgence._id">
+          {{ urgence.niveau }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="table-container" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Date demande</th>
+          <th>Magasin</th>
+          <th>Description</th>
+          <th>Urgence</th>
+          <th>Statut</th>
+          <th>Intervention</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let demande of demandesFiltrees">
+          <td>{{ demande.date_demande | date:'dd/MM/yyyy' }}</td>
+          <td>{{ demande.contrat_id?.nom_magasin }}</td>
+          <td class="description-cell">{{ demande.description | slice:0:100 }}...</td>
+          <td>
+            <span class="urgence-badge" [style.backgroundColor]="demande.urgence_id?.couleur">
+              {{ demande.urgence_id?.niveau }}
+            </span>
+          </td>
+          <td>
+            <span class="statut-badge" [style.backgroundColor]="demande.statut_id?.couleur">
+              {{ demande.statut_id?.nom }}
+            </span>
+          </td>
+          <td>
+            <span *ngIf="demande.date_intervention">
+              {{ demande.date_intervention | date:'dd/MM/yyyy' }}
+            </span>
+            <span *ngIf="!demande.date_intervention" class="non-planifie">
+              Non planifiée
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-icon" (click)="voirDetails(demande._id!)" title="Voir détails">
+              <i class="mdi mdi-eye"></i>
+            </button>
+            <button class="btn-icon" 
+                    *ngIf="!demande.date_intervention" 
+                    (click)="planifierIntervention(demande._id!)" 
+                    title="Planifier intervention">
+              <i class="mdi mdi-calendar-plus"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-data" *ngIf="demandesFiltrees.length === 0">
+      <i class="mdi mdi-information-outline"></i>
+      <p>Aucune demande trouvée</p>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const DemandeMaintenance = require('../models/DemandeMaintenance');
+const DemandeMaintenance = require('../models/Maintenance');
 
 // CREATE
 router.post('/', async (req, res) => {

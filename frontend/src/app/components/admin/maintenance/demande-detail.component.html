@@ -1,0 +1,155 @@
+<div class="container" *ngIf="!loading && demande">
+  <div class="header">
+    <button class="btn-back" (click)="retour()">
+      <i class="mdi mdi-arrow-left"></i>
+      Retour
+    </button>
+    <h2>Détail de la demande de maintenance</h2>
+    <div class="actions">
+      <button class="btn-secondary" (click)="imprimer()">
+        <i class="mdi mdi-printer"></i> Imprimer
+      </button>
+      <button class="btn-primary" (click)="planifier()" 
+              *ngIf="!demande.date_intervention">
+        <i class="mdi mdi-calendar-plus"></i> Planifier
+      </button>
+      <button class="btn-primary" (click)="changerStatut()" 
+              *ngIf="demande.statut_id?.nom !== 'TERMINEE'">
+        <i class="mdi mdi-update"></i> Changer statut
+      </button>
+      <button class="btn-warning" (click)="marquerTermine()" 
+              *ngIf="demande.statut_id?.nom !== 'TERMINEE' && demande.date_intervention">
+        <i class="mdi mdi-check-circle"></i> Terminer
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Informations principales -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          {{ demande.contrat_id?.nom_magasin }}
+          <span class="contrat-id">({{ demande.contrat_id?.id }})</span>
+        </h3>
+        <div class="sous-titre">
+          <i class="mdi mdi-tag"></i> Demande #{{ demande._id?.slice(-6) }} • 
+          <i class="mdi mdi-calendar"></i> {{ formatDate(demande.date_demande) }}
+        </div>
+      </div>
+
+      <div class="carte-body">
+        <div class="status-bar">
+          <div class="status-item">
+            <span class="label">
+              <i class="mdi mdi-check-circle"></i> Statut actuel
+            </span>
+            <span class="statut-badge" [style.backgroundColor]="getStatutColor(demande.statut_id)">
+              {{ demande.statut_id?.nom }}
+            </span>
+          </div>
+          <div class="status-item">
+            <span class="label">
+              <i class="mdi mdi-alert"></i> Niveau d'urgence
+            </span>
+            <span class="urgence-badge" [style.backgroundColor]="getUrgenceColor(demande.urgence_id)">
+              {{ demande.urgence_id?.niveau }}
+            </span>
+            <span class="delai" *ngIf="getDelaiMessage(demande.urgence_id)">
+              {{ getDelaiMessage(demande.urgence_id) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h4>
+            <i class="mdi mdi-text-box"></i> Description du problème
+          </h4>
+          <p class="description">{{ demande.description }}</p>
+        </div>
+
+        <div class="section" *ngIf="demande.date_intervention || demande.cout">
+          <h4>
+            <i class="mdi mdi-wrench"></i> Intervention
+          </h4>
+          <div class="intervention-details">
+            <div class="detail-item" *ngIf="demande.date_intervention">
+              <span class="label">
+                <i class="mdi mdi-calendar"></i> Date prévue
+              </span>
+              <span class="value">{{ formatDate(demande.date_intervention) }}</span>
+            </div>
+            <div class="detail-item" *ngIf="demande.cout">
+              <span class="label">
+                <i class="mdi mdi-currency-eur"></i> Coût
+              </span>
+              <span class="value">{{ demande.cout | number:'1.2-2' }} €</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section locataire avec vérifications -->
+<div class="carte" *ngIf="demande.contrat_id?.locataire_id">
+  <div class="carte-header">
+    <h3>
+      <i class="mdi mdi-store"></i> Informations locataire
+    </h3>
+  </div>
+
+  <div class="carte-body">
+    <div class="locataire-grid">
+      <!-- Vérification avec *ngIf sur chaque champ -->
+      <div class="locataire-item" *ngIf="demande.contrat_id?.locataire_id?.nom">
+        <span class="label">
+          <i class="mdi mdi-account"></i> Nom
+        </span>
+        <span class="value">{{ demande.contrat_id?.locataire_id?.nom }}</span>
+      </div>
+      
+      <div class="locataire-item" *ngIf="demande.contrat_id?.locataire_id?.email">
+        <span class="label">
+          <i class="mdi mdi-email"></i> Email
+        </span>
+        <span class="value">
+          <a [href]="'mailto:' + demande.contrat_id?.locataire_id?.email">
+            {{ demande.contrat_id?.locataire_id?.email }}
+          </a>
+        </span>
+      </div>
+      
+      <div class="locataire-item" *ngIf="demande.contrat_id?.locataire_id?.telephone">
+        <span class="label">
+          <i class="mdi mdi-phone"></i> Téléphone
+        </span>
+        <span class="value">
+          <a [href]="'tel:' + demande.contrat_id?.locataire_id?.telephone">
+            {{ demande.contrat_id?.locataire_id?.telephone }}
+          </a>
+        </span>
+      </div>
+      
+      <div class="locataire-item" *ngIf="demande.contrat_id?.locataire_id?.adresse">
+        <span class="label">
+          <i class="mdi mdi-map-marker"></i> Adresse
+        </span>
+        <span class="value">{{ demande.contrat_id?.locataire_id?.adresse }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="carte-footer" *ngIf="demande.contrat_id?.locataire_id?._id">
+  <button class="btn-link" (click)="voirLocataire(demande.contrat_id?.locataire_id?._id)">
+    <i class="mdi mdi-arrow-right"></i> Voir le dossier locataire
+  </button>
+</div>
+</div>
+  </div>
+</div>
+
+<!-- Loading spinner -->
+<div class="loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Chargement...</p>
+</div>

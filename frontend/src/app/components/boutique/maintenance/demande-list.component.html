@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="header">
+    <h2>Mes demandes de maintenance</h2>
+    <button class="btn-primary" (click)="nouvelleDemande()">
+      <i class="mdi mdi-plus"></i>
+      Nouvelle demande
+    </button>
+  </div>
+
+  <div class="filter-field">
+    <label>Filtrer par statut</label>
+    <select [(ngModel)]="filtreStatut" (change)="filtrerDemandes()">
+      <option value="all">Toutes les demandes</option>
+      <option *ngFor="let statut of statuts" [value]="statut._id">
+        {{ statut.nom }}
+      </option>
+    </select>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="demandes-grid" *ngIf="!loading">
+    <div class="carte" *ngFor="let demande of demandesFiltrees">
+      <div class="carte-header">
+        <h3>{{ demande.contrat_id?.nom_magasin || 'Magasin' }}</h3>
+        <span class="date">
+          <i class="mdi mdi-calendar"></i>
+          {{ demande.date_demande | date:'dd/MM/yyyy' }}
+        </span>
+      </div>
+
+      <div class="carte-contenu">
+        <p class="description">{{ demande.description }}</p>
+        
+        <div class="info-row">
+          <span class="label">
+            <i class="mdi mdi-alert"></i> Urgence:
+          </span>
+          <span class="urgence-badge" [style.backgroundColor]="demande.urgence_id?.couleur">
+            {{ demande.urgence_id?.niveau }}
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">
+            <i class="mdi mdi-check-circle"></i> Statut:
+          </span>
+          <span class="statut-badge" [style.backgroundColor]="demande.statut_id?.couleur">
+            {{ demande.statut_id?.nom }}
+          </span>
+        </div>
+
+        <div class="info-row" *ngIf="demande.date_intervention">
+          <span class="label">
+            <i class="mdi mdi-calendar-clock"></i> Intervention:
+          </span>
+          <span>{{ demande.date_intervention | date:'dd/MM/yyyy' }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="demande.cout">
+          <span class="label">
+            <i class="mdi mdi-currency-eur"></i> Coût:
+          </span>
+          <span>{{ demande.cout | number:'1.2-2' }} €</span>
+        </div>
+      </div>
+
+      <div class="carte-footer">
+        <button class="btn-details" (click)="voirDetails(demande._id)">
+          <i class="mdi mdi-eye"></i> Détails
+        </button>
+      </div>
+    </div>
+
+    <div class="no-data" *ngIf="demandesFiltrees.length === 0">
+      <i class="mdi mdi-information-outline"></i>
+      <p>Aucune demande de maintenance</p>
+    </div>
+  </div>
+</div>

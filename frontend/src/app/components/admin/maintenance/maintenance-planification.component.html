@@ -1,0 +1,141 @@
+<div class="container" *ngIf="!loading && demande">
+  <div class="header">
+    <button class="btn-icon" (click)="annuler()">
+      <i class="mdi mdi-arrow-left"></i>
+    </button>
+    <h2>Planifier une intervention</h2>
+  </div>
+
+  <div class="content">
+    <!-- Résumé de la demande (carte simple) -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>{{ demande.contrat_id?.nom_magasin }}</h3>
+        <span class="sous-titre">
+          <i class="mdi mdi-calendar"></i>
+          Demande du {{ demande.date_demande | date:'dd/MM/yyyy' }}
+        </span>
+      </div>
+
+      <div class="carte-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">
+              <i class="mdi mdi-text-box"></i> Description
+            </span>
+            <span class="value">{{ demande.description }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">
+              <i class="mdi mdi-alert"></i> Urgence
+            </span>
+            <span class="value">
+              <span class="urgence-badge" [style.backgroundColor]="getUrgenceColor(demande.urgence_id)">
+                {{ demande.urgence_id?.niveau }}
+              </span>
+              <span class="delai" *ngIf="getDelaiMaxMessage(demande.urgence_id)">
+                {{ getDelaiMaxMessage(demande.urgence_id) }}
+              </span>
+            </span>
+          </div>
+
+          <div class="info-item full-width">
+            <span class="label">
+              <i class="mdi mdi-store"></i> Locataire
+            </span>
+            <span class="value">
+              {{ demande.contrat_id?.locataire_id?.nom }}<br>
+              <small>
+                <i class="mdi mdi-email"></i> {{ demande.contrat_id?.locataire_id?.email }}
+              </small><br>
+              <small *ngIf="demande.contrat_id?.locataire_id?.telephone">
+                <i class="mdi mdi-phone"></i> {{ demande.contrat_id?.locataire_id?.telephone }}
+              </small>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire de planification (carte simple) -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-calendar-clock"></i>
+          Détails de l'intervention
+        </h3>
+      </div>
+
+      <div class="carte-body">
+        <form [formGroup]="planificationForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Date d'intervention -->
+          <div class="form-group">
+            <label for="date_intervention">
+              <i class="mdi mdi-calendar"></i> Date d'intervention <span class="required">*</span>
+            </label>
+            <input type="date" 
+                   id="date_intervention"
+                   class="form-control"
+                   formControlName="date_intervention"
+                   [min]="today">
+            <div class="error-message" *ngIf="planificationForm.get('date_intervention')?.invalid && planificationForm.get('date_intervention')?.touched">
+              La date d'intervention est requise
+            </div>
+          </div>
+
+          <!-- Coût -->
+          <div class="form-group">
+            <label for="cout">
+              <i class="mdi mdi-currency-eur"></i> Coût de l'intervention <span class="required">*</span>
+            </label>
+            <div class="input-group">
+              <input type="number" 
+                     id="cout"
+                     class="form-control"
+                     formControlName="cout"
+                     step="0.01"
+                     min="0"
+                     placeholder="0.00">
+              <span class="input-suffix">€</span>
+            </div>
+            <div class="error-message" *ngIf="planificationForm.get('cout')?.invalid && planificationForm.get('cout')?.touched">
+              <span *ngIf="planificationForm.get('cout')?.errors?.['required']">Le coût est requis</span>
+              <span *ngIf="planificationForm.get('cout')?.errors?.['min']">Le coût doit être positif</span>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label for="notes">
+              <i class="mdi mdi-note"></i> Notes (optionnel)
+            </label>
+            <textarea id="notes"
+                      class="form-control"
+                      formControlName="notes"
+                      rows="3"
+                      placeholder="Informations complémentaires pour l'intervention..."></textarea>
+          </div>
+
+          <!-- Boutons -->
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="annuler()">
+              <i class="mdi mdi-cancel"></i> Annuler
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="planificationForm.invalid || saving">
+              <i class="mdi mdi-check"></i>
+              {{ saving ? 'Enregistrement...' : 'Planifier l\'intervention' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading spinner (CSS pur) -->
+<div class="loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Chargement...</p>
+</div>

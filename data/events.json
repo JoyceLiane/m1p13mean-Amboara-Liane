@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "69933575e65512a2a120113f"
+  },
+  "titre": "Rentrée S8",
+  "description": "",
+  "date_debut": {
+    "$date": "2026-02-16T15:18:00.000Z"
+  },
+  "date_fin": {
+    "$date": "2026-02-23T15:18:00.000Z"
+  },
+  "statut": "TERMINE",
+  "cout": 250000,
+  "created_by": {
+    "$oid": "698b4f4c4563d7fc6600ccda"
+  },
+  "date_creation": {
+    "$date": "2026-02-16T15:19:17.796Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69933623e65512a2a1201153"
+  },
+  "titre": "Les Misérables ",
+  "description": "",
+  "date_debut": {
+    "$date": "2026-03-16T11:10:00.000Z"
+  },
+  "date_fin": {
+    "$date": "2026-04-16T17:20:00.000Z"
+  },
+  "statut": "PLANIFIE",
+  "cout": 4500000,
+  "created_by": {
+    "$oid": "698b4f4c4563d7fc6600ccda"
+  },
+  "date_creation": {
+    "$date": "2026-02-16T15:22:11.133Z"
+  },
+  "__v": 0
+}]

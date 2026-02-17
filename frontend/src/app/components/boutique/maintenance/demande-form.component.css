@@ -1,0 +1,33 @@
+.container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.info-card {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e3f2fd;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-card mat-icon {
+  color: #1976d2;
+}
+
+mat-card-actions {
+  padding: 16px;
+  margin: 0;
+}

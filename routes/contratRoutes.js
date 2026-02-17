@@ -36,7 +36,23 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
+// GET contrats par locataire
+router.get('/locataire/:locataireId', async (req, res) => {
+  try {
+    const contrats = await Contrat.find({ 
+      locataire_id: req.params.locataireId,
+      deleted_at: null 
+    })
+    .populate('id_magasin', 'nom superficie etage')
+    .populate('status_id', 'nom couleur')
+    .populate('contrat_parent_id', 'id date_debut date_fin')
+    .sort({ date_fin: -1 }); // Les plus récents d'abord
+    
+    res.json(contrats);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // READ ONE
 router.get('/:id', async (req, res) => {
   try {

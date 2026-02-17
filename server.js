@@ -27,6 +27,7 @@ app.use('/types-notifications', require('./routes/typeNotificationRoutes'));
 app.use('/favoris', require('./routes/favorisRoutes'));
 app.use('/produits', require('./routes/produitsRoutes'));
 app.use('/users-status', require('./routes/usersStatusRoutes'));
+app.use('/status-maintenance', require('./routes/statut-maintenance'));
 app.use('/roles', require('./routes/rolesRoutes'));
 app.use('/contrat', require('./routes/contratRoutes'));
 app.use('/categorieProduits', require('./routes/categorieProduitsRoutes'));

@@ -1,0 +1,439 @@
+/* ===== CONTAINER ===== */
+.container {
+  padding: 24px;
+  background: #fafbff;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== HEADER ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  background: white;
+  padding: 20px 24px;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+  box-shadow: 0 2px 8px rgba(124, 77, 255, 0.05);
+}
+
+.header h2 {
+  margin: 0;
+  color: #1e1e2f;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.badge-info {
+  background: #f5f3ff;
+  color: #7c4dff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ===== LISTE DES CONTRATS ===== */
+.contrats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== CARTE CONTRAT ===== */
+.carte {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+  box-shadow: 0 2px 8px rgba(124, 77, 255, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.carte:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(124, 77, 255, 0.15);
+}
+
+/* En-tête de carte */
+.carte-header {
+  padding: 20px 24px;
+  background: linear-gradient(to right, #fafbff, white);
+  border-bottom: 1px solid #f0f0fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.magasin-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.magasin-info i {
+  font-size: 24px;
+  color: #7c4dff;
+}
+
+.magasin-info h3 {
+  margin: 0;
+  color: #1e1e2f;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.statut-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Corps de carte */
+.carte-body {
+  padding: 24px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.label {
+  min-width: 100px;
+  color: #6b6b7a;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.label i {
+  color: #7c4dff;
+  font-size: 16px;
+}
+
+.value {
+  color: #1e1e2f;
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.date-fin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-fin.urgent {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.delai {
+  background: #fff3e0;
+  color: #f57c00;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.delai-expire {
+  background: #ffebee;
+  color: #d32f2f;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.description {
+  color: #6b6b7a;
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+/* Messages d'état */
+.demande-en-cours {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fff3e0;
+  border-left: 3px solid #f57c00;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f57c00;
+  font-size: 13px;
+}
+
+.demande-en-cours i {
+  font-size: 18px;
+}
+
+.contrat-expire {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #ffebee;
+  border-left: 3px solid #d32f2f;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d32f2f;
+  font-size: 13px;
+}
+
+.contrat-expire i {
+  font-size: 18px;
+}
+
+/* Barre de progression */
+.progress-bar {
+  margin-top: 20px;
+  height: 6px;
+  background: #f0f0fa;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #7c4dff;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-fill.progress-urgent {
+  background: #f57c00;
+}
+
+/* Pied de carte */
+.carte-footer {
+  padding: 16px 24px;
+  background: #fafbff;
+  border-top: 1px solid #f0f0fa;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-details {
+  padding: 8px 20px;
+  background: white;
+  border: 1px solid #e0e0ed;
+  border-radius: 6px;
+  color: #6b6b7a;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-details:hover {
+  background: #f5f3ff;
+  border-color: #7c4dff;
+  color: #7c4dff;
+  transform: translateY(-2px);
+}
+
+.btn-renouveler {
+  padding: 8px 20px;
+  background: #7c4dff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-renouveler:hover:not(:disabled) {
+  background: #6b3f8a;
+  box-shadow: 0 4px 12px rgba(124, 77, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-renouveler:disabled {
+  background: #b0b0c0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ===== LOADING ===== */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+}
+
+.spinner {
+  border: 3px solid #f0f0fa;
+  border-top-color: #7c4dff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: #6b6b7a;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ===== ÉTAT VIDE ===== */
+.no-data {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+}
+
+.no-data i {
+  font-size: 48px;
+  color: #7c4dff;
+  opacity: 0.5;
+  margin-bottom: 16px;
+}
+
+.no-data p {
+  margin: 0 0 8px 0;
+  color: #1e1e2f;
+  font-size: 1.1rem;
+}
+
+.no-data small {
+  color: #6b6b7a;
+  font-size: 13px;
+}
+
+/* ===== DARK MODE ===== */
+:host-context(body.dark-mode) .container {
+  background: #0a0a0f;
+}
+
+:host-context(body.dark-mode) .header,
+:host-context(body.dark-mode) .carte,
+:host-context(body.dark-mode) .loading,
+:host-context(body.dark-mode) .no-data {
+  background: #16161d;
+  border-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .header h2,
+:host-context(body.dark-mode) .magasin-info h3,
+:host-context(body.dark-mode) .value {
+  color: white;
+}
+
+:host-context(body.dark-mode) .carte-header {
+  background: linear-gradient(to right, #1a1a24, #16161d);
+  border-bottom-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .carte-footer {
+  background: #1a1a24;
+  border-top-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .label {
+  color: #a0a0b0;
+}
+
+:host-context(body.dark-mode) .description {
+  color: #a0a0b0;
+}
+
+:host-context(body.dark-mode) .badge-info {
+  background: #1e1e2a;
+  color: #9f7aea;
+}
+
+:host-context(body.dark-mode) .btn-details {
+  background: #1e1e2a;
+  border-color: #3a3a48;
+  color: #a0a0b0;
+}
+
+:host-context(body.dark-mode) .btn-details:hover {
+  background: #2a1e3a;
+  border-color: #9f7aea;
+  color: #9f7aea;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .carte-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .carte-footer {
+    flex-direction: column;
+  }
+
+  .btn-details,
+  .btn-renouveler {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .label {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+
+  .carte-header,
+  .carte-body,
+  .carte-footer {
+    padding: 16px;
+  }
+}

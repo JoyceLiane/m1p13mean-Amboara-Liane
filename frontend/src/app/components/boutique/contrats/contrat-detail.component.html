@@ -1,0 +1,153 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <button class="btn-icon" (click)="retour()" title="Retour">
+      <i class="mdi mdi-arrow-left"></i>
+    </button>
+    <h2>Détails du contrat</h2>
+    <span class="statut-badge" [style.backgroundColor]="contrat?.status_id?.couleur">
+      {{ contrat?.status_id?.nom }}
+    </span>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement du contrat...</p>
+  </div>
+
+  <!-- Contenu -->
+  <div class="content" *ngIf="!loading && contrat">
+    <!-- Carte informations magasin -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-store"></i>
+          Informations du magasin
+        </h3>
+      </div>
+      <div class="carte-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Magasin:</span>
+            <span class="value">{{ contrat.nom_magasin }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Référence:</span>
+            <span class="value">{{ contrat.id }}</span>
+          </div>
+          <div class="info-item" *ngIf="contrat.id_magasin?.superficie">
+            <span class="label">Superficie:</span>
+            <span class="value">{{ contrat.id_magasin?.superficie }} m²</span>
+          </div>
+          <div class="info-item" *ngIf="contrat.id_magasin?.etage">
+            <span class="label">Étage:</span>
+            <span class="value">{{ contrat.id_magasin?.etage }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte dates du contrat -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-calendar"></i>
+          Période du contrat
+        </h3>
+      </div>
+      <div class="carte-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Date de début:</span>
+            <span class="value">
+              {{ contrat.date_debut ? (contrat.date_debut | date:'dd/MM/yyyy') : 'Non définie' }}
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="label">Date de fin:</span>
+            <span class="value" [class.urgent]="estUrgent(contrat.date_fin!)" [class.expire]="estExpire(contrat.date_fin!)">
+              {{ contrat.date_fin ? (contrat.date_fin | date:'dd/MM/yyyy') : 'Non définie' }}
+              <!-- Utilisation de ! pour dire à TypeScript que ce n'est pas null -->
+              <span class="delai" *ngIf="!estExpire(contrat.date_fin!) && joursRestants(contrat.date_fin!) > 0">
+                ({{ joursRestants(contrat.date_fin!) }} jours restants)
+              </span>
+              <span class="delai-expire" *ngIf="estExpire(contrat.date_fin!)">
+                (Contrat expiré)
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Barre de progression -->
+        <div class="progress-section" *ngIf="contrat.date_debut && contrat.date_fin">
+          <div class="progress-label">
+            <span>Progression du contrat</span>
+            <span>{{ progressionExpiration(contrat.date_fin) | number:'1.0-0' }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="progressionExpiration(contrat.date_fin)"
+                 [class.progress-urgent]="estUrgent(contrat.date_fin)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte description -->
+    <div class="carte" *ngIf="contrat.description">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-text"></i>
+          Description
+        </h3>
+      </div>
+      <div class="carte-body">
+        <p class="description">{{ contrat.description }}</p>
+      </div>
+    </div>
+
+    <!-- Carte historique des renouvellements -->
+    <div class="carte" *ngIf="historiqueRenouvellements.length > 0">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-history"></i>
+          Historique des renouvellements
+        </h3>
+      </div>
+      <div class="carte-body">
+        <div class="historique-list">
+          <div class="historique-item" *ngFor="let item of historiqueRenouvellements">
+            <div class="historique-info">
+              <i class="mdi mdi-file-document"></i>
+              <div>
+                <strong>Demande du {{ item.created_at | date:'dd/MM/yyyy' }}</strong>
+                <span class="statut" [style.backgroundColor]="item.status_id?.couleur">
+                  {{ item.status_id?.nom }}
+                </span>
+              </div>
+            </div>
+            <small *ngIf="item.date_debut">Nouvelles dates: {{ item.date_debut | date:'dd/MM/yyyy' }} - {{ item.date_fin | date:'dd/MM/yyyy' }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-footer">
+      <button class="btn-secondary" (click)="retour()">
+        <i class="mdi mdi-arrow-left"></i>
+        Retour
+      </button>
+      
+      <button class="btn-primary" 
+              *ngIf="peutDemanderRenouvellement()"
+              (click)="demanderRenouvellement()"
+              [disabled]="renouvellementEnCours">
+        <i class="mdi mdi-file-document-edit"></i>
+        {{ renouvellementEnCours ? 'Envoi...' : 'Demander un renouvellement' }}
+      </button>
+    </div>
+  </div>
+</div>

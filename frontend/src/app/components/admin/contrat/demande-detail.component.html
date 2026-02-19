@@ -1,0 +1,189 @@
+<div class="container">
+  <div class="header">
+    <button class="btn-icon" (click)="retour()">
+      <i class="mdi mdi-arrow-left"></i>
+    </button>
+    <h2>Détails de la demande</h2>
+    <span class="statut-badge" [style.backgroundColor]="demande?.status_id?.couleur">
+      {{ demande?.status_id?.nom }}
+    </span>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="content" *ngIf="!loading && demande">
+    <!-- Informations demande -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-information"></i>
+          Informations de la demande
+        </h3>
+      </div>
+      <div class="carte-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Date de demande:</span>
+            <span class="value">{{ demande.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Statut:</span>
+            <span class="value">
+              <span class="statut-badge" [style.backgroundColor]="demande.status_id?.couleur">
+                {{ demande.status_id?.nom }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Magasin -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-store"></i>
+          Magasin concerné
+        </h3>
+      </div>
+      <div class="carte-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nom:</span>
+            <span class="value">{{ demande.nom_magasin }}</span>
+          </div>
+          <div class="info-item" *ngIf="demande.id_magasin?.superficie">
+            <span class="label">Superficie:</span>
+            <span class="value">{{ demande.id_magasin.superficie }} m²</span>
+          </div>
+          <div class="info-item" *ngIf="demande.id_magasin?.etage">
+            <span class="label">Étage:</span>
+            <span class="value">{{ demande.id_magasin.etage }} eme</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Locataire -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-account"></i>
+          Locataire
+        </h3>
+      </div>
+      <div class="carte-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nom:</span>
+            <span class="value">{{ demande.locataire_id?.nom }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ demande.locataire_id?.email }}</span>
+          </div>
+          <div class="info-item" *ngIf="demande.locataire_id?.telephone">
+            <span class="label">Téléphone:</span>
+            <span class="value">{{ demande.locataire_id?.telephone }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contrat actuel -->
+    <div class="carte">
+      <div class="carte-header">
+        <h3>
+          <i class="mdi mdi-file-document"></i>
+          Contrat actuel
+        </h3>
+      </div>
+      <div class="carte-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Référence:</span>
+            <span class="value">{{ demande.contrat_parent_id?.id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Date de début:</span>
+            <span class="value">{{ demande.contrat_parent_id?.date_debut | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Date de fin:</span>
+            <span class="value" [class.urgent]="joursRestants(demande.contrat_parent_id?.date_fin) <= 30">
+              {{ demande.contrat_parent_id?.date_fin | date:'dd/MM/yyyy' }}
+              <span class="delai" *ngIf="joursRestants(demande.contrat_parent_id?.date_fin) > 0">
+                ({{ joursRestants(demande.contrat_parent_id?.date_fin) }} jours)
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Actions -->
+    <div class="actions-footer" *ngIf="demande.statut_demande === 'EN_ATTENTE'">
+      <button class="btn-secondary" (click)="retour()">Retour</button>
+      <div class="actions-droite">
+        <button class="btn-warning" (click)="refuser()">
+          <i class="mdi mdi-close"></i> Refuser
+        </button>
+        <button class="btn-primary" (click)="ouvrirModalApprobation()">
+          <i class="mdi mdi-check-circle"></i> Approuver
+        </button>
+      </div>
+    </div>
+
+    <div class="actions-footer" *ngIf="demande.statut_demande !== 'EN_ATTENTE'">
+      <button class="btn-secondary" (click)="retour()">Retour</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal approbation -->
+<div class="modal" *ngIf="modalApprobationOuvert" (click)="fermerModalApprobation()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Approuver le renouvellement</h3>
+      <button class="btn-close" (click)="fermerModalApprobation()">
+        <i class="mdi mdi-close"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="approbationForm" (ngSubmit)="approuver()">
+        <div class="form-group">
+          <label>
+            <i class="mdi mdi-calendar"></i>
+            Nouvelle date de début <span class="required">*</span>
+          </label>
+          <input type="date" class="form-control" formControlName="date_debut" [min]="dateMin">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <i class="mdi mdi-calendar-end"></i>
+            Nouvelle date de fin <span class="required">*</span>
+          </label>
+          <input type="date" class="form-control" formControlName="date_fin" [min]="approbationForm.get('date_debut')?.value">
+        </div>
+
+        <div class="info-message" *ngIf="dureeMois > 0">
+          <i class="mdi mdi-information"></i>
+          Durée: {{ dureeMois }} mois
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="fermerModalApprobation()">Annuler</button>
+          <button type="submit" class="btn-primary" [disabled]="approbationForm.invalid || traitementEnCours">
+            {{ traitementEnCours ? 'Traitement...' : 'Confirmer' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

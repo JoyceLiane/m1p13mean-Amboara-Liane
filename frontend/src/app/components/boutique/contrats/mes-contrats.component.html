@@ -1,0 +1,110 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h2>Mes contrats de location</h2>
+    <span class="badge-info" *ngIf="contrats.length > 0">
+      {{ contrats.length }} contrat(s) actif(s)
+    </span>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement de vos contrats...</p>
+  </div>
+
+  <!-- Liste des contrats -->
+  <div class="contrats-list" *ngIf="!loading">
+    <!-- Message si aucun contrat -->
+    <div class="no-data" *ngIf="contrats.length === 0">
+      <i class="mdi mdi-file-document-outline"></i>
+      <p>Aucun contrat trouvé</p>
+      <small>Vous n'avez pas encore de contrat de location</small>
+    </div>
+
+    <!-- Cartes des contrats -->
+    <div class="carte" *ngFor="let contrat of contrats">
+      <!-- En-tête de la carte -->
+      <div class="carte-header">
+        <div class="magasin-info">
+          <i class="mdi mdi-store"></i>
+          <h3>{{ contrat.nom_magasin }}</h3>
+        </div>
+        <span class="statut-badge" [style.backgroundColor]="contrat.status_id?.couleur">
+          {{ contrat.status_id?.nom }}
+        </span>
+      </div>
+
+      <!-- Corps de la carte -->
+      <div class="carte-body">
+        <!-- Référence du contrat -->
+        <div class="info-row">
+          <span class="label">
+            <i class="mdi mdi-tag"></i> Référence:
+          </span>
+          <span class="value">{{ contrat.id }}</span>
+        </div>
+
+        <!-- Dates du contrat -->
+        <div class="info-row">
+          <span class="label">
+            <i class="mdi mdi-calendar"></i> Date de fin:
+          </span>
+          <span class="value date-fin" [class.urgent]="estUrgent(contrat.date_fin)">
+            {{ contrat.date_fin | date:'dd/MM/yyyy' }}
+            <span class="delai" *ngIf="joursRestants(contrat.date_fin) > 0">
+              ({{ joursRestants(contrat.date_fin) }} jours)
+            </span>
+            <span class="delai-expire" *ngIf="joursRestants(contrat.date_fin) <= 0">
+              (Expiré)
+            </span>
+          </span>
+        </div>
+
+        <!-- Description si présente -->
+        <div class="info-row" *ngIf="contrat.description">
+          <span class="label">
+            <i class="mdi mdi-text"></i> Description:
+          </span>
+          <span class="value description">{{ contrat.description | slice:0:100 }}...</span>
+        </div>
+
+        <!-- Message si demande déjà en cours -->
+        <div class="demande-en-cours" *ngIf="aDemandeEnCours(contrat._id!)">
+          <i class="mdi mdi-clock-outline"></i>
+          Demande de renouvellement en cours de traitement
+        </div>
+
+        <!-- Message si contrat expiré -->
+        <div class="contrat-expire" *ngIf="estExpire(contrat.date_fin)">
+          <i class="mdi mdi-alert-circle"></i>
+          Ce contrat est expiré
+        </div>
+
+        <!-- Barre de progression pour la fin du contrat -->
+        <div class="progress-bar" *ngIf="!estExpire(contrat.date_fin)">
+          <div class="progress-fill" 
+               [style.width.%]="progressionExpiration(contrat.date_fin)"
+               [class.progress-urgent]="estUrgent(contrat.date_fin)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Pied de carte avec actions -->
+      <div class="carte-footer">
+        <button class="btn-details" (click)="voirDetails(contrat._id!)" [disabled]="!contrat._id">
+          <i class="mdi mdi-eye"></i>
+          Détails
+        </button>
+
+        <button class="btn-renouveler" 
+                *ngIf="peutDemanderRenouvellement(contrat)"
+                (click)="demanderRenouvellement(contrat)"
+                [disabled]="renouvellementEnCours">
+          <i class="mdi mdi-file-document-edit"></i>
+          Demander un renouvellement
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

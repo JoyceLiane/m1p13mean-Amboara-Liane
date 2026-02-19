@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="header">
+    <button class="btn-icon" (click)="retour()">
+      <i class="mdi mdi-arrow-left"></i>
+    </button>
+    <h2>Demande de renouvellement</h2>
+  </div>
+
+  <div class="carte" *ngIf="contrat">
+    <div class="carte-header">
+      <h3>{{ contrat.nom_magasin }}</h3>
+    </div>
+    <div class="carte-body">
+      <div class="info-message">
+        <i class="mdi mdi-information"></i>
+        <p>Votre demande de renouvellement pour ce contrat sera envoyée à notre équipe.</p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Date de fin actuelle:</span>
+          <span class="value" [class.urgent]="estUrgent(contrat.date_fin)">
+            <!-- Solution: utiliser le safe navigation operator ?. -->
+            {{ contrat.date_fin ? (contrat.date_fin | date:'dd/MM/yyyy') : 'Non définie' }}
+            <span *ngIf="contrat.date_fin">
+              ({{ joursRestants(contrat.date_fin) }} jours restants)
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary" (click)="retour()">Annuler</button>
+        <button class="btn-primary" (click)="confirmer()" [disabled]="envoiEnCours">
+          {{ envoiEnCours ? 'Envoi...' : 'Confirmer la demande' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

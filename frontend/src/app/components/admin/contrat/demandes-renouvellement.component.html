@@ -1,0 +1,228 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h2>Demandes de renouvellement</h2>
+    <div class="filtres-rapides">
+      <button class="btn-filtre" [class.active]="filtreActif === 'toutes'" (click)="setFiltre('toutes')">
+        Toutes <span class="badge">{{ stats.total }}</span>
+      </button>
+      <button class="btn-filtre" [class.active]="filtreActif === 'en-attente'" (click)="setFiltre('en-attente')">
+        En attente <span class="badge">{{ stats.enAttente }}</span>
+      </button>
+      <button class="btn-filtre" [class.active]="filtreActif === 'approuvees'" (click)="setFiltre('approuvees')">
+        Approuvées <span class="badge">{{ stats.approuvees }}</span>
+      </button>
+      <button class="btn-filtre" [class.active]="filtreActif === 'refusees'" (click)="setFiltre('refusees')">
+        Refusées <span class="badge">{{ stats.refusees }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <i class="mdi mdi-clock-outline"></i>
+      </div>
+      <div class="stat-info">
+        <h3>En attente</h3>
+        <p class="stat-value">{{ stats.enAttente }}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <i class="mdi mdi-check-circle"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Approuvées</h3>
+        <p class="stat-value">{{ stats.approuvees }}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">
+        <i class="mdi mdi-close-circle"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Refusées</h3>
+        <p class="stat-value">{{ stats.refusees }}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <i class="mdi mdi-calendar"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Ce mois</h3>
+        <p class="stat-value">{{ stats.ceMois }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <div class="search-box">
+        <i class="mdi mdi-magnify"></i>
+        <input type="text" 
+               class="search-input" 
+               placeholder="Rechercher par magasin, locataire..."
+               [(ngModel)]="recherche"
+               (ngModelChange)="rechercher()">
+      </div>
+      <select class="filter-select" [(ngModel)]="filtreStatut" (ngModelChange)="changerFiltreStatut()">
+        <option value="all">Tous les statuts</option>
+        <option value="EN_ATTENTE">En attente</option>
+        <option value="APPROUVEE">Approuvées</option>
+        <option value="REFUSEE">Refusées</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Tableau -->
+  <div class="table-container" *ngIf="!loading">
+    <table class="demandes-table">
+      <thead>
+        <tr>
+          <th>Date demande</th>
+          <th>Magasin</th>
+          <th>Locataire</th>
+          <th>Contrat actuel</th>
+          <th>Fin contrat</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let demande of demandes">
+          <td>{{ demande.created_at | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <strong>{{ demande.nom_magasin }}</strong>
+          </td>
+          <td>
+            <div>{{ demande.locataire_id?.nom }}</div>
+            <small>{{ demande.locataire_id?.email }}</small>
+          </td>
+          <td>
+            <span class="contrat-ref">{{ demande.contrat_parent_id?.id }}</span>
+          </td>
+          <td>
+            <span [class.urgent]="joursRestants(demande.contrat_parent_id?.date_fin) <= 30">
+              {{ demande.contrat_parent_id?.date_fin | date:'dd/MM/yyyy' }}
+            </span>
+          </td>
+          <td>
+            <span class="statut-badge" [style.backgroundColor]="demande.status_id?.couleur">
+              {{ demande.status_id?.nom }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="btn-action" (click)="voirDetail(demande._id!)" title="Voir détails">
+              <i class="mdi mdi-eye"></i>
+            </button>
+            <button class="btn-action btn-edit" 
+                    *ngIf="demande.statut_demande === 'EN_ATTENTE'"
+                    (click)="ouvrirModalTraitement(demande)"
+                    title="Traiter">
+              <i class="mdi mdi-check-circle"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button class="btn-pagination" [disabled]="pageActuelle === 1" (click)="changerPage(pageActuelle - 1)">
+        <i class="mdi mdi-chevron-left"></i> Précédent
+      </button>
+      <span class="page-info">Page {{ pageActuelle }} sur {{ totalPages }}</span>
+      <button class="btn-pagination" [disabled]="pageActuelle === totalPages" (click)="changerPage(pageActuelle + 1)">
+        Suivant <i class="mdi mdi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de traitement -->
+<div class="modal" *ngIf="modalOuvert" (click)="fermerModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Traiter la demande de renouvellement</h3>
+      <button class="btn-close" (click)="fermerModal()">
+        <i class="mdi mdi-close"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="demandeSelectionnee">
+      <!-- Résumé -->
+      <div class="resume-card">
+        <div class="resume-item">
+          <span class="label">Magasin:</span>
+          <span class="value">{{ demandeSelectionnee.nom_magasin }}</span>
+        </div>
+        <div class="resume-item">
+          <span class="label">Locataire:</span>
+          <span class="value">{{ demandeSelectionnee.locataire_id?.nom }}</span>
+        </div>
+        <div class="resume-item">
+          <span class="label">Contrat actuel:</span>
+          <span class="value">{{ demandeSelectionnee.contrat_parent_id?.id }}</span>
+        </div>
+        <div class="resume-item">
+          <span class="label">Fin actuelle:</span>
+          <span class="value">{{ demandeSelectionnee.contrat_parent_id?.date_fin | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+
+      <!-- Formulaire dates -->
+      <form [formGroup]="traitementForm" (ngSubmit)="approuver()">
+        <div class="form-group">
+          <label>
+            <i class="mdi mdi-calendar"></i>
+            Nouvelle date de début <span class="required">*</span>
+          </label>
+          <input type="date" class="form-control" formControlName="date_debut" [min]="dateMin">
+          <div class="error-message" *ngIf="traitementForm.get('date_debut')?.invalid && traitementForm.get('date_debut')?.touched">
+            La date de début est requise
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <i class="mdi mdi-calendar-end"></i>
+            Nouvelle date de fin <span class="required">*</span>
+          </label>
+          <input type="date" class="form-control" formControlName="date_fin" [min]="traitementForm.get('date_debut')?.value">
+          <div class="error-message" *ngIf="traitementForm.get('date_fin')?.invalid && traitementForm.get('date_fin')?.touched">
+            La date de fin est requise
+          </div>
+          <div class="error-message" *ngIf="traitementForm.errors?.['datesInvalides']">
+            La date de fin doit être postérieure à la date de début
+          </div>
+        </div>
+
+        <!-- Durée calculée -->
+        <div class="info-message" *ngIf="dureeMois > 0">
+          <i class="mdi mdi-information"></i>
+          <span>Durée du nouveau contrat : {{ dureeMois }} mois</span>
+        </div>
+
+        <!-- Actions -->
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="fermerModal()">Annuler</button>
+          <button type="button" class="btn-warning" (click)="refuser()" [disabled]="traitementEnCours">
+            <i class="mdi mdi-close"></i> Refuser
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="traitementForm.invalid || traitementEnCours">
+            {{ traitementEnCours ? 'Traitement...' : 'Approuver' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

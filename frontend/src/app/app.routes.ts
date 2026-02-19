@@ -33,7 +33,7 @@ export const routes: Routes = [
         data: { roles: ['admin', 'client', 'shop', 'boutique'] } // Tous les rôles
       },
       { path: 'panier', component: PanierComponent, canActivate: [AuthGuard] },
-      
+
       // Client uniquement
       {
         path: 'client-dashboard',
@@ -53,15 +53,15 @@ export const routes: Routes = [
         path: 'shop-dashboard',
         loadComponent: () => import('./components/shop-dashboard/shop-dashboard').then(m => m.ShopDashboard),
         canActivate: [RoleGuard],
-        data: { roles: ['shop','boutique'] }
+        data: { roles: ['shop', 'boutique'] }
       },
       {
         path: 'shop-produits',
         loadComponent: () => import('./components/shop-dashboard/pages/produits/produits').then(m => m.ProduitsPageComponent),
         canActivate: [RoleGuard],
-        data: { roles: ['shop','boutique'] }
+        data: { roles: ['shop', 'boutique'] }
       },
-      
+
       // ROUTES DE MAINTENANCE POUR LES BOUTIQUES
       {
         path: 'maintenance',
@@ -83,7 +83,42 @@ export const routes: Routes = [
             loadComponent: () => import('./components/boutique/maintenance/demande-form.component')
               .then(m => m.DemandeFormComponent)
           }
-          
+
+        ]
+      },
+      {
+        path: 'mes-contrats',
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] }, // Les boutiques et admin peuvent accéder
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./components/boutique/contrats/mes-contrats.component')
+              .then(m => m.MesContratsComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./components/boutique/contrats/contrat-detail.component')
+              .then(m => m.ContratDetailComponent)
+          }
+        ]
+      },
+      {
+        path: 'demandes-renouvellement',
+        canActivate: [RoleGuard],
+        data: { roles: ['admin'] },
+        children: [
+
+          {
+            path: '',
+            loadComponent: () => import('./components/admin/contrat/demandes-renouvellement.component')
+              .then(m => m.DemandesRenouvellementComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./components/admin/contrat/demande-detail.component')
+              .then(m => m.DemandeDetailComponent)
+          }
         ]
       },
       {
@@ -93,7 +128,7 @@ export const routes: Routes = [
             .then(m => m.MouvementStockPageComponent),
         data: { roles: ['boutique'] }
       },
-      
+
       // Routes d'administration des événements
       {
         path: 'admin/events',

@@ -164,8 +164,7 @@ router.post('/:id/renouvellement', async (req, res) => {
       date_fin: null,
       type_contrat: 'DEMANDE_RENOUVELLEMENT',
       contrat_parent_id: contratOriginal._id,
-      statut_demande: 'EN_ATTENTE',
-      status_id: req.body.status_id // Statut "EN_ATTENTE_RENOUVELLEMENT"
+      status_id: req.body.status_id 
     });
 
     await demandeRenouvellement.save();
@@ -196,7 +195,6 @@ router.patch('/:id/approuver', async (req, res) => {
         date_debut,
         date_fin,
         type_contrat: 'RENOUVELLEMENT_ACTIF',
-        statut_demande: 'APPROUVEE',
         updated_at: new Date()
       },
       { new: true }
@@ -223,7 +221,6 @@ router.patch('/:id/refuser', async (req, res) => {
     const contrat = await Contrat.findByIdAndUpdate(
       req.params.id,
       {
-        statut_demande: 'REFUSEE',
         updated_at: new Date()
       },
       { new: true }
@@ -261,7 +258,6 @@ router.get('/renouvellements/en-attente', async (req, res) => {
   try {
     const demandes = await Contrat.find({
       type_contrat: 'DEMANDE_RENOUVELLEMENT',
-      statut_demande: 'EN_ATTENTE',
       deleted_at: null
     })
       .populate('id_magasin', 'nom superficie')

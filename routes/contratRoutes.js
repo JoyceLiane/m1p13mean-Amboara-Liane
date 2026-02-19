@@ -8,14 +8,14 @@ router.post('/', async (req, res) => {
   try {
     const contrat = new Contrat(req.body);
     await contrat.save();
-    
+
     // Popule les références après création
     const contratPopulated = await Contrat.findById(contrat._id)
       .populate('id_magasin', 'nom superficie etage')
       .populate('locataire_id', 'nom email')
       .populate('status_id', 'nom couleur')
       .populate('contrat_parent_id', 'id date_debut date_fin');
-    
+
     res.status(201).json(contratPopulated);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
       .populate('status_id', 'nom couleur')
       .populate('contrat_parent_id', 'id date_debut date_fin')
       .sort({ created_at: -1 });
-    
+
     res.json(contrats);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -49,10 +49,10 @@ router.get('/user/:userId', async (req, res) => {
       deleted_at: null,
       type_contrat: { $in: ['INITIAL', 'RENOUVELLEMENT_ACTIF'] }
     })
-    .populate('id_magasin', 'nom superficie etage')
-    .populate('locataire_id', 'nom email telephone')
-    .populate('status_id', 'nom couleur')
-    .populate('contrat_parent_id', 'id date_debut date_fin');
+      .populate('id_magasin', 'nom superficie etage')
+      .populate('locataire_id', 'nom email telephone')
+      .populate('status_id', 'nom couleur')
+      .populate('contrat_parent_id', 'id date_debut date_fin');
 
     res.json(contrats);
   } catch (err) {
@@ -63,14 +63,14 @@ router.get('/user/:userId', async (req, res) => {
 // GET contrats par locataire (sans filtre type_contrat, triés par date_fin)
 router.get('/locataire/:locataireId', async (req, res) => {
   try {
-    const contrats = await Contrat.find({ 
+    const contrats = await Contrat.find({
       locataire_id: req.params.locataireId,
-      deleted_at: null 
+      deleted_at: null
     })
-    .populate('id_magasin', 'nom superficie etage')
-    .populate('status_id', 'nom couleur')
-    .populate('contrat_parent_id', 'id date_debut date_fin')
-    .sort({ date_fin: -1 });
+      .populate('id_magasin', 'nom superficie etage')
+      .populate('status_id', 'nom couleur')
+      .populate('contrat_parent_id', 'id date_debut date_fin')
+      .sort({ date_fin: -1 });
 
     res.json(contrats);
   } catch (err) {
@@ -85,7 +85,7 @@ router.get('/:id', async (req, res) => {
       .populate('locataire_id', 'nom email telephone adresse')
       .populate('status_id', 'nom couleur description')
       .populate('contrat_parent_id', 'id date_debut date_fin type_contrat');
-    
+
     if (!contrat || contrat.deleted_at) {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
@@ -102,17 +102,17 @@ router.put('/:id', async (req, res) => {
       ...req.body,
       updated_at: new Date()
     };
-    
+
     const contrat = await Contrat.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true }
     )
-    .populate('id_magasin', 'nom superficie etage')
-    .populate('locataire_id', 'nom email')
-    .populate('status_id', 'nom couleur')
-    .populate('contrat_parent_id', 'id date_debut date_fin');
-    
+      .populate('id_magasin', 'nom superficie etage')
+      .populate('locataire_id', 'nom email')
+      .populate('status_id', 'nom couleur')
+      .populate('contrat_parent_id', 'id date_debut date_fin');
+
     if (!contrat) {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
@@ -127,13 +127,13 @@ router.delete('/:id', async (req, res) => {
   try {
     const contrat = await Contrat.findByIdAndUpdate(
       req.params.id,
-      { 
+      {
         deleted_at: new Date(),
         updated_at: new Date()
       },
       { new: true }
     );
-    
+
     if (!contrat) {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
@@ -149,11 +149,11 @@ router.delete('/:id', async (req, res) => {
 router.post('/:id/renouvellement', async (req, res) => {
   try {
     const contratOriginal = await Contrat.findById(req.params.id);
-    
+
     if (!contratOriginal) {
       return res.status(404).json({ error: 'Contrat original non trouvé' });
     }
-    
+
     // Créer la demande de renouvellement
     const demandeRenouvellement = new Contrat({
       id: `DEM-${Date.now()}`,
@@ -167,14 +167,14 @@ router.post('/:id/renouvellement', async (req, res) => {
       statut_demande: 'EN_ATTENTE',
       status_id: req.body.status_id // Statut "EN_ATTENTE_RENOUVELLEMENT"
     });
-    
+
     await demandeRenouvellement.save();
-    
+
     const populated = await Contrat.findById(demandeRenouvellement._id)
       .populate('id_magasin', 'nom')
       .populate('locataire_id', 'nom')
       .populate('status_id', 'nom');
-    
+
     res.status(201).json(populated);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -185,11 +185,11 @@ router.post('/:id/renouvellement', async (req, res) => {
 router.patch('/:id/approuver', async (req, res) => {
   try {
     const { date_debut, date_fin } = req.body;
-    
+
     if (!date_debut || !date_fin) {
       return res.status(400).json({ error: 'Dates de début et fin requises' });
     }
-    
+
     const contrat = await Contrat.findByIdAndUpdate(
       req.params.id,
       {
@@ -201,16 +201,16 @@ router.patch('/:id/approuver', async (req, res) => {
       },
       { new: true }
     )
-    .populate('id_magasin', 'nom')
-    .populate('locataire_id', 'nom');
-    
+      .populate('id_magasin', 'nom')
+      .populate('locataire_id', 'nom');
+
     if (!contrat) {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
-    
-    res.json({ 
+
+    res.json({
       message: 'Renouvellement approuvé avec succès',
-      contrat 
+      contrat
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -228,17 +228,31 @@ router.patch('/:id/refuser', async (req, res) => {
       },
       { new: true }
     );
-    
+
     if (!contrat) {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
-    
-    res.json({ 
+
+    res.json({
       message: 'Demande de renouvellement refusée',
-      contrat 
+      contrat
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+// GET demandes de renouvellement d'un locataire
+router.get('/locataire/:locataireId/demandes-renouvellement', async (req, res) => {
+  try {
+    const demandes = await Contrat.find({
+      locataire_id: req.params.locataireId,
+      type_contrat: 'DEMANDE_RENOUVELLEMENT',
+      deleted_at: null
+    }).populate('contrat_parent_id', '_id');
+
+    res.json(demandes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -250,11 +264,11 @@ router.get('/renouvellements/en-attente', async (req, res) => {
       statut_demande: 'EN_ATTENTE',
       deleted_at: null
     })
-    .populate('id_magasin', 'nom superficie')
-    .populate('locataire_id', 'nom email')
-    .populate('contrat_parent_id', 'id date_debut date_fin')
-    .sort({ created_at: -1 });
-    
+      .populate('id_magasin', 'nom superficie')
+      .populate('locataire_id', 'nom email')
+      .populate('contrat_parent_id', 'id date_debut date_fin')
+      .sort({ created_at: -1 });
+
     res.json(demandes);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -266,16 +280,16 @@ router.get('/expiration/prochaine', async (req, res) => {
   try {
     const dans30Jours = new Date();
     dans30Jours.setDate(dans30Jours.getDate() + 30);
-    
+
     const contrats = await Contrat.find({
       date_fin: { $lte: dans30Jours, $gte: new Date() },
       type_contrat: { $in: ['INITIAL', 'RENOUVELLEMENT_ACTIF'] },
       deleted_at: null
     })
-    .populate('id_magasin', 'nom')
-    .populate('locataire_id', 'nom email')
-    .sort({ date_fin: 1 });
-    
+      .populate('id_magasin', 'nom')
+      .populate('locataire_id', 'nom email')
+      .sort({ date_fin: 1 });
+
     res.json(contrats);
   } catch (err) {
     res.status(500).json({ error: err.message });

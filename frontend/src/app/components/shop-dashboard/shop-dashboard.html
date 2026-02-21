@@ -1,3 +1,211 @@
-<h2>Dashboard</h2>
+<!-- src/app/components/shop-dashboard/shop-dashboard.html -->
+<div class="shop-dashboard" [class.dark-mode]="isDarkMode">
 
-<p>Bienvenue sur votre espace boutique</p>
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-left">
+      <h1>
+        <i class="mdi mdi-store"></i>
+        Dashboard <span>Boutique</span>
+      </h1>
+      <p class="shop-name" *ngIf="contratActif">{{ contratActif.nom_magasin }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-theme" (click)="toggleDarkMode()">
+        <i class="mdi" [class.mdi-weather-night]="!isDarkMode" [class.mdi-weather-sunny]="isDarkMode"></i>
+      </button>
+      <button class="btn-action" (click)="goToProfile()">
+        <i class="mdi mdi-account"></i>
+        Profil
+      </button>
+      <button class="btn-logout" (click)="logout()">
+        <i class="mdi mdi-logout"></i>
+        Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement des statistiques...</p>
+  </div>
+
+  <!-- Pas de contrat actif -->
+  <div class="no-contract" *ngIf="!isLoading && !contratActif">
+    <i class="mdi mdi-alert-circle-outline"></i>
+    <h3>Aucun contrat actif</h3>
+    <p>Vous n'avez pas de contrat de location actif pour le moment.</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!isLoading && contratActif">
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon today">
+          <i class="mdi mdi-calendar-today"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Aujourd'hui</h3>
+          <p class="stat-value">{{ statistics.ventesAujourdhui }}</p>
+          <p class="stat-label">{{ formatCurrency(statistics.revenusAujourdhui) }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon week">
+          <i class="mdi mdi-calendar-week"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Cette semaine</h3>
+          <p class="stat-value">{{ statistics.ventesSemaine }}</p>
+          <p class="stat-label">{{ formatCurrency(statistics.revenusSemaine) }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon month">
+          <i class="mdi mdi-calendar-month"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Ce mois</h3>
+          <p class="stat-value">{{ statistics.ventesMois }}</p>
+          <p class="stat-label">{{ formatCurrency(statistics.revenusMois) }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="mdi mdi-chart-line"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Total</h3>
+          <p class="stat-value">{{ statistics.totalVentes }}</p>
+          <p class="stat-label">{{ formatCurrency(statistics.totalRevenu) }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenus Chart -->
+    <div class="chart-section" *ngIf="revenusParJour.length > 0">
+      <h3>
+        <i class="mdi mdi-chart-bar"></i>
+        Revenus des 7 derniers jours
+      </h3>
+      <div class="chart-container">
+        <div class="chart-bar" *ngFor="let jour of revenusParJour">
+          <div class="bar-wrapper">
+            <div class="bar-fill" [style.height.%]="getBarHeight(jour.revenu)">
+              <span class="bar-value">{{ formatCurrency(jour.revenu) }}</span>
+            </div>
+          </div>
+          <div class="bar-label">{{ formatDateShort(jour.date) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two columns layout -->
+    <div class="dashboard-grid">
+
+      <!-- Top Produits -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3>
+            <i class="mdi mdi-star"></i>
+            Produits les plus vendus
+          </h3>
+          <button class="btn-link" (click)="goToProduits()">
+            Voir tout <i class="mdi mdi-arrow-right"></i>
+          </button>
+        </div>
+
+        <div class="produits-list" *ngIf="topProduits.length > 0">
+          <div class="produit-item" *ngFor="let produit of topProduits">
+            <div class="produit-image">
+              <img *ngIf="produit.imagepath" [src]="urlHelper.getProductImageUrl(produit.imagepath)" [alt]="produit.nom">
+              <div *ngIf="!produit.imagepath" class="produit-placeholder">
+                <i class="mdi mdi-package-variant"></i>
+              </div>
+            </div>
+            <div class="produit-info">
+              <p class="produit-nom">{{ produit.nom }}</p>
+              <p class="produit-stats">
+                <span class="quantite">{{ produit.totalVendu }} vendus</span>
+                <span class="revenu">{{ formatCurrency(produit.revenu) }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="topProduits.length === 0">
+          <i class="mdi mdi-package-variant-closed"></i>
+          <p>Aucune vente pour le moment</p>
+        </div>
+      </div>
+
+      <!-- Ventes récentes -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3>
+            <i class="mdi mdi-history"></i>
+            Ventes récentes
+          </h3>
+          <!-- <button class="btn-link" (click)="goToVentes()">
+            Voir tout <i class="mdi mdi-arrow-right"></i>
+          </button> -->
+        </div>
+
+        <div class="ventes-list" *ngIf="ventesRecentes.length > 0">
+          <div class="vente-item" *ngFor="let vente of ventesRecentes">
+            <div class="vente-icon">
+              <i class="mdi mdi-cart"></i>
+            </div>
+            <div class="vente-info">
+              <p class="vente-produit">{{ vente.produit.nom }}</p>
+              <p class="vente-details">
+                <span class="quantite">× {{ vente.quantite }}</span>
+                <span class="prix">{{ formatCurrency(vente.produit.prix_vente * vente.quantite) }}</span>
+              </p>
+            </div>
+            <div class="vente-date">
+              {{ formatDate(vente.date_mouvement) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="ventesRecentes.length === 0">
+          <i class="mdi mdi-cart-off"></i>
+          <p>Aucune vente récente</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <h3>
+        <i class="mdi mdi-flash"></i>
+        Actions rapides
+      </h3>
+      <div class="actions-grid">
+        <button class="action-card" (click)="goToProduits()">
+          <i class="mdi mdi-package-variant"></i>
+          <span>Gérer les produits</span>
+        </button>
+        <!-- <button class="action-card" (click)="goToStock()">
+          <i class="mdi mdi-cube"></i>
+          <span>Gérer le stock</span>
+        </button>
+        <button class="action-card" (click)="goToVentes()">
+          <i class="mdi mdi-receipt"></i>
+          <span>Historique des ventes</span>
+        </button> -->
+      </div>
+    </div>
+
+  </div>
+
+</div>
+

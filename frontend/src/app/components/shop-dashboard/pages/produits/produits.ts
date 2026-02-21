@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../services/auth';
 import { ProduitsService } from '../../../../services/produits';
-import { ContratService } from '../../../../services/contrat';
+import { ContratService } from '../../../../services/contrat.service';
 import { Produit, Categorie } from '../../../../models/produit';
 import { Router } from '@angular/router';
 

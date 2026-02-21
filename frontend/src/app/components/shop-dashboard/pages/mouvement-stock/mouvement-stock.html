@@ -28,7 +28,6 @@
         <label>Quantité</label>
         <div class="quantite-wrapper">
           <input type="number" [(ngModel)]="quantite" min="1" placeholder="0">
-          <span class="quantite-unit">unités</span>
         </div>
       </div>
   
@@ -39,11 +38,11 @@
           <span class="preview-value"
             [class.entree]="['achat','retour'].includes(typeMouvementNom)"
             [class.neutre]="!['achat','retour'].includes(typeMouvementNom)">
-            +{{ ['achat','retour'].includes(typeMouvementNom) ? quantite : 0 }}
+            +{{ ['achat','retour'].includes(typeMouvementNom) ? quantite : 0 }} 
           </span>
         </div>
         <div class="preview-item">
-          <span class="preview-label">Sortie</span>
+          <span class="preview-label"> Sortie</span>
           <span class="preview-value"
             [class.sortie]="typeMouvementNom === 'vente'"
             [class.neutre]="typeMouvementNom !== 'vente'">

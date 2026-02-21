@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ContratService } from '../../services/contrat';
+import { ContratService } from '../../services/contrat.service';
 import { CommonModule } from '@angular/common';
 import { ProduitsService } from '../../services/produits';
 import { FormsModule } from '@angular/forms';

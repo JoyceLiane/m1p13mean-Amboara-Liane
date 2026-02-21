@@ -4,8 +4,8 @@ const cors = require('cors');
 require('dotenv').config(); 
 const app = express(); 
 const PORT = process.env.PORT || 5000; 
-// Middleware 
-// Middleware 
+const shopStatisticsRoutes = require('./routes/shop-statistics');
+
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
@@ -41,4 +41,5 @@ app.use('/supermarche', require('./routes/supermarcheRoutes'));
 app.use('/urgenceMaintenance', require('./routes/urgenceMaintenanceRoutes'));
 app.use('/menus', require('./routes/menuRoutes'));
 app.use('/uploads', express.static('uploads'));
+app.use('/shop-statistics', shopStatisticsRoutes);
 app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));

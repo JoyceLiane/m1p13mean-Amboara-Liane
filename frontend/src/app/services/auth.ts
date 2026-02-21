@@ -187,7 +187,7 @@ export class AuthService {
     switch(role) {
       case 'admin': return '/admin-dashboard';
       case 'client': return '/client-dashboard';
-      case 'shop':
+      case 'shop': return '/shop-dashboard';
       case 'boutique': return '/shop-dashboard';
       default: return '/login';
     }

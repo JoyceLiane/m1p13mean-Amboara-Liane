@@ -132,3 +132,11 @@
       margin-top: 16px;
     }
   }
+
+  .preview-item{
+    opacity: 25%;
+    padding: 5px;
+  }
+  .mouvement-preview{
+    display: flex;
+  }

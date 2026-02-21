@@ -345,4 +345,10 @@ export class ContratService {
       expire: this.estExpire(contrat.date_fin)
     };
   }
+  getContrats(): Observable<any> {
+    return this.http.get(this.apiUrl);
+  }
+  getContratActifByUser(userId: string) {
+  return this.http.get<any[]>(`${this.apiUrl}/user/${userId}`);
+}
 }

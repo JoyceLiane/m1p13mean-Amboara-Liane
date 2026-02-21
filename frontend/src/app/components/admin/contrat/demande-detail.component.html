@@ -31,7 +31,7 @@
           <div class="info-item">
             <span class="label">Statut:</span>
             <span class="value">
-              <span class="statut-badge" [style.backgroundColor]="demande.status_id?.couleur">
+              <span class="statut-badge" [style.backgroundColor]="demande.status_id.couleur">
                 {{ demande.status_id?.nom }}
               </span>
             </span>
@@ -54,11 +54,11 @@
             <span class="label">Nom:</span>
             <span class="value">{{ demande.nom_magasin }}</span>
           </div>
-          <div class="info-item" *ngIf="demande.id_magasin?.superficie">
+          <div class="info-item" *ngIf="demande.id_magasin.superficie">
             <span class="label">Superficie:</span>
             <span class="value">{{ demande.id_magasin.superficie }} m²</span>
           </div>
-          <div class="info-item" *ngIf="demande.id_magasin?.etage">
+          <div class="info-item" *ngIf="demande.id_magasin.etage">
             <span class="label">Étage:</span>
             <span class="value">{{ demande.id_magasin.etage }} eme</span>
           </div>

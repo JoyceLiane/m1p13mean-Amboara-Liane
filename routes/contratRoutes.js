@@ -26,11 +26,15 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const contrats = await Contrat.find({ deleted_at: null })
-      .populate('id_magasin', 'nom superficie etage')
-      .populate('locataire_id', 'nom email telephone')
-      .populate('status_id', 'nom couleur')
-      .populate('contrat_parent_id', 'id date_debut date_fin')
-      .sort({ created_at: -1 });
+  .populate({
+    path: 'id_magasin',
+    populate: { path: 'etage' }
+  })
+  .populate('locataire_id', 'nom email telephone')
+  .populate('status_id', 'nom couleur')
+  .populate('contrat_parent_id', 'id date_debut date_fin')
+  .sort({ created_at: -1 });
+
 
     res.json(contrats);
   } catch (err) {
@@ -38,31 +42,50 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET uniquement les contrats actifs
+router.get('/actifs', async (req, res) => {
+  try {
+    const contratsActifs = await Contrat.find({ deleted_at: null })
+      .populate({
+        path: 'id_magasin',
+        populate: { path: 'etage' }   
+      })
+      .populate('locataire_id', 'nom email telephone')
+      .populate('status_id', 'nom couleur')
+      .populate('contrat_parent_id', 'id date_debut date_fin')
+      .sort({ created_at: -1 });
+    const actifs = contratsActifs.filter(c => c.status_id?.nom === 'ACTIF');
+
+    res.json(actifs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // ==================== ROUTES SPÉCIFIQUES ====================
 
 // GET toutes les demandes de renouvellement
 router.get('/renouvellements', async (req, res) => {
   try {
     const { status, recherche, page = 1, limit = 10 } = req.query;
-    
+
     let query = {
       type_contrat: 'DEMANDE_RENOUVELLEMENT',
       deleted_at: null
     };
-    
+
     // Filtrer par statut via status_id (pas statut_demande)
     if (status && status !== 'all' && status !== 'undefined') {
       query.status_id = status; // Filtrer par l'ID du statut
     }
-    
+
     if (recherche) {
       query.$or = [
         { nom_magasin: { $regex: recherche, $options: 'i' } }
       ];
     }
-    
+
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    
+
     const demandes = await Contrat.find(query)
       .populate('id_magasin', 'nom superficie etage')
       .populate('locataire_id', 'nom email telephone')
@@ -71,9 +94,9 @@ router.get('/renouvellements', async (req, res) => {
       .sort({ created_at: -1 })
       .skip(skip)
       .limit(parseInt(limit));
-    
+
     const total = await Contrat.countDocuments(query);
-    
+
     res.json({
       demandes,
       total,
@@ -92,7 +115,7 @@ router.get('/renouvellements/stats', async (req, res) => {
     const statusEnAttente = await StatusContrat.findOne({ nom: 'EN_ATTENTE' });
     const statusApprouve = await StatusContrat.findOne({ nom: 'APPROUVEE' });
     const statusRefuse = await StatusContrat.findOne({ nom: 'REFUSEE' });
-    
+
     const result = {
       enAttente: 0,
       approuvees: 0,
@@ -100,7 +123,7 @@ router.get('/renouvellements/stats', async (req, res) => {
       total: 0,
       ceMois: 0
     };
-    
+
     if (statusEnAttente) {
       result.enAttente = await Contrat.countDocuments({
         type_contrat: 'DEMANDE_RENOUVELLEMENT',
@@ -108,7 +131,7 @@ router.get('/renouvellements/stats', async (req, res) => {
         deleted_at: null
       });
     }
-    
+
     if (statusApprouve) {
       result.approuvees = await Contrat.countDocuments({
         type_contrat: 'DEMANDE_RENOUVELLEMENT',
@@ -116,7 +139,7 @@ router.get('/renouvellements/stats', async (req, res) => {
         deleted_at: null
       });
     }
-    
+
     if (statusRefuse) {
       result.refusees = await Contrat.countDocuments({
         type_contrat: 'DEMANDE_RENOUVELLEMENT',
@@ -124,23 +147,23 @@ router.get('/renouvellements/stats', async (req, res) => {
         deleted_at: null
       });
     }
-    
+
     result.total = result.enAttente + result.approuvees + result.refusees;
-    
+
     // Demandes du mois en cours
     const debutMois = new Date();
     debutMois.setDate(1);
     debutMois.setHours(0, 0, 0, 0);
-    
+
     const finMois = new Date(debutMois);
     finMois.setMonth(finMois.getMonth() + 1);
-    
+
     result.ceMois = await Contrat.countDocuments({
       type_contrat: 'DEMANDE_RENOUVELLEMENT',
       created_at: { $gte: debutMois, $lt: finMois },
       deleted_at: null
     });
-    
+
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -151,11 +174,11 @@ router.get('/renouvellements/stats', async (req, res) => {
 router.get('/renouvellements/en-attente', async (req, res) => {
   try {
     const statusEnAttente = await StatusContrat.findOne({ nom: 'EN_ATTENTE' });
-    
+
     if (!statusEnAttente) {
       return res.status(500).json({ error: 'Statut EN_ATTENTE non trouvé' });
     }
-    
+
     const demandes = await Contrat.find({
       type_contrat: 'DEMANDE_RENOUVELLEMENT',
       status_id: statusEnAttente._id,
@@ -280,7 +303,7 @@ router.post('/:id/renouvellement', async (req, res) => {
 
     // Récupérer le statut "EN_ATTENTE"
     const statusEnAttente = await StatusContrat.findOne({ nom: 'EN_ATTENTE' });
-    
+
     if (!statusEnAttente) {
       return res.status(500).json({ error: 'Statut EN_ATTENTE non trouvé' });
     }
@@ -322,7 +345,7 @@ router.patch('/:id/approuver', async (req, res) => {
 
     // Récupérer le statut "APPROUVEE"
     const statusApprouve = await StatusContrat.findOne({ nom: 'APPROUVEE' });
-    
+
     if (!statusApprouve) {
       return res.status(500).json({ error: 'Statut APPROUVEE non trouvé' });
     }
@@ -359,7 +382,7 @@ router.patch('/:id/refuser', async (req, res) => {
   try {
     // Récupérer le statut "REFUSEE"
     const statusRefuse = await StatusContrat.findOne({ nom: 'REFUSEE' });
-    
+
     if (!statusRefuse) {
       return res.status(500).json({ error: 'Statut REFUSEE non trouvé' });
     }

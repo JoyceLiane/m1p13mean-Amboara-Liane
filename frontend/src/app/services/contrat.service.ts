@@ -52,7 +52,7 @@ export class ContratService {
   constructor(
     private http: HttpClient,
     private authService: AuthService
-  ) {}
+  ) { }
 
   getAllContrats(): Observable<Contrat[]> {
     return this.http.get<Contrat[]>(this.apiUrl);
@@ -68,14 +68,14 @@ export class ContratService {
    */
   createContrat(contrat: Partial<Contrat>): Observable<Contrat> {
     const currentUser = this.authService.getCurrentUser();
-    
+
     if (!currentUser?._id) {
       return new Observable(subscriber => {
         this.authService.fetchCurrentUser().subscribe({
           next: (user) => {
-            this.http.post<Contrat>(this.apiUrl, { 
-              ...contrat, 
-              created_by: user._id 
+            this.http.post<Contrat>(this.apiUrl, {
+              ...contrat,
+              created_by: user._id
             }).subscribe({
               next: (result) => {
                 subscriber.next(result);
@@ -88,10 +88,10 @@ export class ContratService {
         });
       });
     }
-    
-    return this.http.post<Contrat>(this.apiUrl, { 
-      ...contrat, 
-      created_by: currentUser._id 
+
+    return this.http.post<Contrat>(this.apiUrl, {
+      ...contrat,
+      created_by: currentUser._id
     });
   }
 
@@ -134,7 +134,7 @@ export class ContratService {
 
   demanderRenouvellement(contratId: string): Observable<Contrat> {
     const currentUser = this.authService.getCurrentUser();
-    
+
     if (!currentUser?._id) {
       return new Observable(subscriber => {
         this.authService.fetchCurrentUser().subscribe({
@@ -154,7 +154,7 @@ export class ContratService {
         });
       });
     }
-    
+
     return this.http.post<Contrat>(`${this.apiUrl}/${contratId}/renouvellement`, {
       locataire_id: currentUser._id,
       status_id: '698cd76f79c982fc6c706ac2' // Statut "EN_ATTENTE_RENOUVELLEMENT"
@@ -195,16 +195,16 @@ export class ContratService {
   }): Observable<{ demandes: Contrat[], total: number }> {
     let url = `${this.apiUrl}/renouvellements`;
     const queryParams: string[] = [];
-    
+
     if (params?.statut) queryParams.push(`statut_demande=${params.statut}`);
     if (params?.recherche) queryParams.push(`recherche=${params.recherche}`);
     if (params?.page) queryParams.push(`page=${params.page}`);
     if (params?.limit) queryParams.push(`limit=${params.limit}`);
-    
+
     if (queryParams.length > 0) {
       url += '?' + queryParams.join('&');
     }
-    
+
     return this.http.get<{ demandes: Contrat[], total: number }>(url);
   }
 
@@ -302,14 +302,14 @@ export class ContratService {
    */
   calculerProgression(dateDebut?: Date, dateFin?: Date): number {
     if (!dateDebut || !dateFin) return 0;
-    
+
     const debut = new Date(dateDebut).getTime();
     const fin = new Date(dateFin).getTime();
     const maintenant = new Date().getTime();
-    
+
     if (maintenant >= fin) return 100;
     if (maintenant <= debut) return 0;
-    
+
     const total = fin - debut;
     const ecoule = maintenant - debut;
     return (ecoule / total) * 100;
@@ -348,7 +348,12 @@ export class ContratService {
   getContrats(): Observable<any> {
     return this.http.get(this.apiUrl);
   }
+  // src/app/services/contrat.service.ts
+  getContratsActifs(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/contrat/actifs`);
+  }
+
   getContratActifByUser(userId: string) {
-  return this.http.get<any[]>(`${this.apiUrl}/user/${userId}`);
-}
+    return this.http.get<any[]>(`${this.apiUrl}/user/${userId}`);
+  }
 }

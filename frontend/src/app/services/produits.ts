@@ -29,7 +29,10 @@ export class ProduitsService {
     return this.http.get<Produit>(`${this.apiUrl}/${id}`);
     //                             ^ manquait la parenthèse
   }
-
+  getProduitsActifs(): Observable<Produit[]> {
+    return this.http.get<Produit[]>(`${this.apiUrl}/actifs`);
+  }
+  
   createProduit(data: Partial<Produit>): Observable<Produit> {
     return this.http.post<Produit>(this.apiUrl, data);
   }

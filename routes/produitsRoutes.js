@@ -3,6 +3,7 @@ const router = express.Router();
 const Produits = require('../models/Produits');
 const mongoose = require('mongoose');
 const MouvementStock = require('../models/MouvementStock');
+const Contrat = require('../models/Contrat');
 
 router.post('/', async (req, res) => {
   try {
@@ -57,6 +58,25 @@ router.get('/', async (req, res) => {
     res.json(produitsAvecStock);
   } catch (err) {
     console.error('Erreur lors du calcul des stocks:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+// GET produits liés uniquement aux contrats actifs
+router.get('/actifs', async (req, res) => {
+  try {
+    const contratsActifs = await Contrat.find({ deleted_at: null })
+      .populate('status_id', 'nom');
+
+    const actifsIds = contratsActifs
+      .filter(c => c.status_id?.nom === 'ACTIF')
+      .map(c => c._id);
+
+    const produits = await Produits.find({ id_vendeur: { $in: actifsIds } })
+      .populate('id_categorie')
+      .populate('id_vendeur');
+
+    res.json(produits);
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });

@@ -91,7 +91,7 @@
 .statut-badge {
   padding: 6px 16px;
   border-radius: 20px;
-  color: white;
+  color: rgb(3, 3, 3);
   font-size: 13px;
   font-weight: 500;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

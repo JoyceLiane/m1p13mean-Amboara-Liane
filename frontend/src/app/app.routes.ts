@@ -37,7 +37,7 @@ export const routes: Routes = [
       // Client uniquement
       {
         path: 'client-dashboard',
-        loadComponent: () => import('./components/client-dashboard/client-dashboard').then(m => m.ClientDashboardComponent),
+        loadComponent: () => import('./components/carte-supermarche/carte-supermarche').then(m => m.CarteSupermarcheComponent),
         canActivate: [RoleGuard],
         data: { roles: ['client'] }
       },

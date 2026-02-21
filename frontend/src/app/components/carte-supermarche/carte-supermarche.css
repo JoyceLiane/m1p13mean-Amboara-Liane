@@ -54,7 +54,7 @@ h3 {
   color: #1e1e2f;
 }
 
-.filter-bar select {
+.filter-bar select , input {
   min-width: 240px;
   padding: 10px 15px;
   font-size: 14px;
@@ -249,6 +249,7 @@ h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-align: center;
   margin-bottom: 30px;
   padding: 16px 24px;
   background: white;

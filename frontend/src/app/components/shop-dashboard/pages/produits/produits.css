@@ -42,7 +42,27 @@ h2 {
 .btn-delete { color: #d32f2f; }
 .btn-save { color: #2e7d32; }
 .btn-cancel { color: #757575; }
+.new-btn {
+  width: 15%;
+  height: 100%;
+  padding: 12px;
+  background: #7c4dff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  position: relative;
+}
 
+.new-btn:hover:not(:disabled) {
+  background: #6b3f8a;
+  box-shadow: 0 4px 12px rgba(124, 77, 255, 0.3);
+  transform: translateY(-2px);
+}
 .rupture {
   color: red;
   font-weight: bold;

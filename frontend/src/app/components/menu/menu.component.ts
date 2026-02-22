@@ -31,16 +31,25 @@ export class MenuComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Abonnement aux changements de user
+    // 1. Abonnement aux menus dynamiques
+    this.subscriptions.push(
+      this.menuService.menus$.subscribe(menus => {
+        this.menus = menus;
+        this.isLoading = false;
+        console.log('✅ Menus chargés:', menus);
+      })
+    );
+
+    // 2. Abonnement aux changements de user (CORRIGÉ)
     this.subscriptions.push(
       this.authService.currentUser$.subscribe(user => {
         this.currentUser = user;
-        this.isLoggedIn = !!user;
-  
+        this.isLoggedIn = !!user; // ← true si user existe, false sinon
+        
         if (user) {
           console.log('👤 Utilisateur connecté:', user.prenom);
           this.isLoading = true;
-          this.menuService.refreshMenu(); // ← fetch uniquement si connecté
+          this.menuService.refreshMenu();
         } else {
           console.log('👤 Utilisateur déconnecté');
           this.menus = [];
@@ -50,8 +59,24 @@ export class MenuComponent implements OnInit, OnDestroy {
         }
       })
     );
-  
-    // Ne pas charger le menu si pas de token
+
+    // 3. Abonnement au menu collapse
+    this.subscriptions.push(
+      this.menuService.isCollapsed$.subscribe(collapsed => {
+        this.isCollapsed = collapsed;
+        if (collapsed) {
+          this.expandedMenus = {};
+        }
+      })
+    );
+
+    // 4. Thème
+    this.isDarkMode = localStorage.getItem('theme') === 'dark';
+    if (this.isDarkMode) {
+      document.body.classList.add('dark-mode');
+    }
+
+    // 5. Chargement initial si utilisateur déjà connecté
     const token = localStorage.getItem('token');
     if (token && !this.currentUser) {
       console.log('🔄 Token trouvé, chargement du menu...');
@@ -59,7 +84,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.menuService.refreshMenu();
     }
   }
-  
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());

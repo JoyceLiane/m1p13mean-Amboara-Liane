@@ -16,6 +16,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/register/register')
       .then(m => m.RegisterComponent)
   },
+  {
+    path: 'create-produit',
+    loadComponent: () => import('./components/shop-dashboard/pages/create-produit/create-produit')
+      .then(m => m.CreateProduitComponent)
+  },
   // Page non autorisée (optionnelle)
   {
     path: 'non-autorise',

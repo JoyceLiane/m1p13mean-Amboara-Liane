@@ -146,7 +146,7 @@ export class ShopDashboard implements OnInit {
       currency: 'MGA'
     }).format(value);
   }
-  
+
 
   formatDate(date: Date | string): string {
     return new Date(date).toLocaleDateString('fr-FR', {

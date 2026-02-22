@@ -6,11 +6,11 @@ const MouvementStock = require('../models/MouvementStock');
 const Contrat = require('../models/Contrat');
 const upload = require('../middleware/upload');
 
-router.post('/produits', upload.single('image'), async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
   try {
     const data = req.body;
     if (req.file) {
-      data.image = `${req.file.filename}`;
+      data.imagepath = `${req.file.filename}`;
     }
     const produit = new Produits(req.body);
     await produit.save();

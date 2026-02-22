@@ -1,0 +1,54 @@
+<div class="create-produit-container">
+  <div class="create-produit-card">
+    <h2>Créer un produit</h2>
+
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+    <form (ngSubmit)="onCreateProduit()">
+      <div class="input-group">
+        <input type="text" [(ngModel)]="nom" name="nom" placeholder=" " required />
+        <label>Nom du produit</label>
+      </div>
+
+      <!-- Select pour catégorie -->
+      <div class="input-group">
+        <select [(ngModel)]="id_categorie" name="id_categorie" required>
+          <option value="" disabled selected>Choisir une catégorie</option>
+          <option *ngFor="let cat of categories" [value]="cat._id">
+            {{ cat.nom }}
+          </option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <select [(ngModel)]="id_vendeur" name="id_vendeur" required>
+          <option value="" disabled selected>Choisir un contrat</option>
+          <option *ngFor="let contrat of contrats" [value]="contrat._id">
+            {{ contrat.nom_magasin }}
+          </option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <input type="number" [(ngModel)]="prix" name="prix" placeholder=" " />
+        <label>Prix (Ariary)</label>
+      </div>
+
+      <div class="input-group">
+        <textarea [(ngModel)]="description" name="description" placeholder=" " required></textarea>
+        <label>Description</label>
+      </div>
+
+
+      <div class="input-group">
+        <input type="file" (change)="onFileSelected($event)" />
+        <label>Image du produit</label>
+      </div>
+
+      <button type="submit" class="create-button" [disabled]="loading">
+        {{ loading ? 'Création...' : 'Créer le produit' }}
+      </button>
+    </form>
+  </div>
+</div>

@@ -150,4 +150,8 @@ export class ProduitsPageComponent implements OnInit {
         error: (err) => console.error('Erreur mise à jour:', err)
       });
   }
+  newProduit()
+  {
+    this.router.navigate(['/create-produit']);
+  }
 }

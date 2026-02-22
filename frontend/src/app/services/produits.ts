@@ -32,10 +32,13 @@ export class ProduitsService {
   getProduitsActifs(): Observable<Produit[]> {
     return this.http.get<Produit[]>(`${this.apiUrl}/actifs`);
   }
-  
-  createProduit(data: Partial<Produit>): Observable<Produit> {
-    return this.http.post<Produit>(this.apiUrl, data);
+  createProduit(data: FormData) {
+    return this.http.post(`${this.apiUrl}`, data);
   }
+  
+  // createProduit(data: Partial<Produit>): Observable<Produit> {
+  //   return this.http.post<Produit>(this.apiUrl, data);
+  // }
   
   updateProduit(id: string, data: Partial<Produit>): Observable<Produit> {
     return this.http.put<Produit>(`${this.apiUrl}/${id}`, data);

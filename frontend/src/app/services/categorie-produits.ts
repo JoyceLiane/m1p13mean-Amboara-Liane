@@ -14,7 +14,7 @@ export interface CategorieProduit {
   providedIn: 'root'
 })
 export class CategorieProduitsService {
-  private apiUrl = `${environment.apiUrl}/categorie_produits`;
+  private apiUrl = `${environment.apiUrl}/categorieProduits`;
 
   constructor(private http: HttpClient) {}
 

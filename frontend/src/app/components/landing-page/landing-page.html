@@ -1,0 +1,87 @@
+<div class="landing-cover">
+  <img [src]="urlHelper.getProfilUrl('landing.jpg')" alt="Image de couverture">
+  
+  <!-- Overlay sombre -->
+  <div class="overlay"></div>
+  
+  <div class="landing-text">
+    <h1>Bienvenue chez <span>Supermarché MEAN</span></h1>
+    <p>Découvrez nos magasins et nos produits</p>
+    <div class="landing-buttons">
+      <button class="landing-btn">S'inscrire</button>
+      <button class="landing-btn2" (click)="goTologin()">Se connecter</button>
+    </div>
+  </div>
+</div>
+<h1>Découvrez nos magasins et nos produits</h1>
+
+<!-- BARRE DE FILTRES -->
+<div class="filter-bar">
+  <!-- Recherche produit globale -->
+  <input type="text" [(ngModel)]="searchTerm" (input)="searchProduitsGlobaux()" placeholder="Rechercher un produit...">
+  <!-- Filtre par étage -->
+  <select [(ngModel)]="selectedEtage" (change)="filterByEtage()">
+    <option value="">Tous les étages</option>
+    <option *ngFor="let etage of etages" [value]="etage">
+      {{ etage }}
+    </option>
+  </select>
+  <!-- Filtre par catégorie (toujours visible, mais appliqué différemment si magasin sélectionné ou non) -->
+  <select [(ngModel)]="selectedCategorie" (change)="filterByCategorie()">
+    <option value="">Toutes les catégories</option>
+    <option *ngFor="let cat of categoriesMagasin" [value]="cat._id">
+      {{ cat.nom }}
+    </option>
+  </select>
+</div>
+
+<!-- LISTE DES MAGASINS -->
+<div *ngFor="let etage of etages">
+  <h3>Étage : {{ etage }}</h3>
+  <div class="etage-row">
+    <div *ngFor="let contrat of contratsParEtage[etage]" 
+         class="magasin-card"
+         (click)="selectMagasin(contrat)">
+      <p><strong>{{ contrat.nom_magasin }}</strong></p>
+      <p>{{ contrat.description || '' }}</p>
+      <img class="magasin-img"
+           *ngIf="contrat.imagepath"
+           alt="Image du magasin"
+           [src]="urlHelper.getMagasinImageUrl(contrat.imagepath)" />
+    </div>
+  </div>
+</div>
+
+<!-- SECTION PRODUITS -->
+<div class="produits-section">
+  <div class="produits-header">
+    <h2 *ngIf="selectedMagasin">Produits de {{ selectedMagasin.nom_magasin }}</h2>
+    <h2 *ngIf="!selectedMagasin">Tous les produits</h2>
+  </div>
+
+
+  <!-- PRODUITS -->
+  <div class="produits-grid">
+    <div *ngFor="let produit of filteredProduits" class="produit-card">
+      <img *ngIf="produit.imagepath" 
+           class="produit-img"
+           [src]="urlHelper.getProductImageUrl(produit.imagepath)"
+           [alt]="produit.nom" />
+      <div class="produit-content">
+        <p class="produit-nom">{{ produit.nom }}</p>
+        <p class="produit-description">{{ produit.description }}</p>
+        <div class="produit-footer">
+          <p *ngIf="produit.prix" class="produit-prix">{{ produit.prix }} Ar</p>
+          <p class="produit-stock" [class.stock-low]="produit.stock < 5" [class.stock-out]="produit.stock === 0">
+            {{ produit.stock > 0 ? 'Stock: ' + produit.stock : 'Rupture' }}
+          </p>
+        </div>
+        <button class="btn-ajouter-panier" 
+                (click)="goTologin()"
+                [disabled]="produit.stock === 0">
+          {{ produit.stock > 0 ? '+ Ajouter au panier' : 'Rupture de stock' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     
     // Vérifier si l'utilisateur est authentifié
     if (!this.authService.isAuthenticated()) {
-      return this.router.createUrlTree(['/login']);
+      return this.router.createUrlTree(['/landing']);
     }
 
     // Vérifier les rôles requis (si spécifiés dans les data de la route)
@@ -57,7 +57,7 @@ export class AuthGuard implements CanActivate {
       case 'boutique':
         return this.router.createUrlTree(['/shop-dashboard']);
       default:
-        return this.router.createUrlTree(['/login']);
+        return this.router.createUrlTree(['/landing']);
     }
   }
 }

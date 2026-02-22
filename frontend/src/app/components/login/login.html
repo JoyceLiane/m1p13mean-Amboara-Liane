@@ -1,47 +1,41 @@
 <div class="login-container">
   <div class="login-card">
-    <h2>Connexion</h2>
+    <button class="retour-btn" (click)="goToLanding()">
+      <i class="mdi mdi-arrow-left">Retour</i>
+    </button>
 
-    <!-- Message d'erreur -->
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-
-    <form (ngSubmit)="onLogin()">
-      <div class="input-group">
-        <input
-          type="email"
-          [(ngModel)]="email"
-          name="email"
-          placeholder=" "
-          required
-        />
-        <label>Email</label>
+    <div class="login-content">
+      <div class="login-image">
+        <img [src]="urlHelper.getProfilUrl('login.jpg')" alt="Image décorative">
       </div>
 
-      <div class="input-group">
-        <input
-          type="password"
-          [(ngModel)]="mdp"
-          name="mdp"
-          placeholder=" "
-          required
-        />
-        <label>Mot de passe</label>
+      <div class="login-form">
+        <h2>Connectez-vous pour plus de possibilité</h2>
+
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+
+        <form (ngSubmit)="onLogin()">
+          <div class="input-group">
+            <input type="email" [(ngModel)]="email" name="email" placeholder=" " required />
+            <label>Email</label>
+          </div>
+
+          <div class="input-group">
+            <input type="password" [(ngModel)]="mdp" name="mdp" placeholder=" " required />
+            <label>Mot de passe</label>
+          </div>
+
+          <button type="submit" class="login-button" [class.loading]="loading" [disabled]="loading">
+            {{ loading ? '' : 'Se connecter' }}
+          </button>
+        </form>
+
+        <div class="login-footer">
+          <p>Pas encore de compte ? <a href="#">S'inscrire</a></p>
+        </div>
       </div>
-
-      <button 
-        type="submit" 
-        class="login-button"
-        [class.loading]="loading"
-        [disabled]="loading"
-      >
-        {{ loading ? '' : 'Se connecter' }}
-      </button>
-    </form>
-
-    <div class="login-footer">
-      <p>Mot de passe oublié ? <a href="#">Réinitialiser</a></p>
     </div>
   </div>
 </div>

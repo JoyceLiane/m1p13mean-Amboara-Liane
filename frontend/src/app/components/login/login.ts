@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { UrlHelper } from '../../services/url.helper';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
+    public urlHelper: UrlHelper,
     private router: Router
   ) {}
 
@@ -45,5 +47,9 @@ export class LoginComponent {
         this.errorMessage = err.error?.error || 'Erreur de connexion';
       }
     });
+  }
+  goToLanding()
+  {
+    this.router.navigate(['/landing']);
   }
 }

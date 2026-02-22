@@ -3,11 +3,15 @@ import { LoginComponent } from './components/login/login';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { PanierComponent } from './components/panier/panier';
-
 export const routes: Routes = [
   // Page de login (publique)
   { path: 'login', component: LoginComponent },
-
+  {
+    path: 'landing',
+    loadComponent: () => import('./components/landing-page/landing-page')
+      .then(m => m.LandingPage)
+  },
+  
   // Page non autorisée (optionnelle)
   {
     path: 'non-autorise',
@@ -188,7 +192,7 @@ export const routes: Routes = [
   },
 
   // Redirection racine
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/landing', pathMatch: 'full' },
 
   // Wildcard (404)
   {

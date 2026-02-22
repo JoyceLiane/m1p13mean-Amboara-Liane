@@ -165,7 +165,9 @@ export class LandingPage {
   goTologin() {
     this.router.navigate(['/login']);
   }
-
+  goToregister() {
+    this.router.navigate(['/register']);
+  }
   organiserParEtage() {
     this.contratsParEtage = {};
   

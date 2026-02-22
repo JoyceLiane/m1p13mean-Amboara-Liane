@@ -11,7 +11,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/landing-page/landing-page')
       .then(m => m.LandingPage)
   },
-  
+  {
+    path: 'register',
+    loadComponent: () => import('./components/register/register')
+      .then(m => m.RegisterComponent)
+  },
   // Page non autorisée (optionnelle)
   {
     path: 'non-autorise',

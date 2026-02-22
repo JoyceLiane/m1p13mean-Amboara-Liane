@@ -1,9 +1,19 @@
 const multer = require('multer');
 const path = require('path');
 
+// Fonction pour choisir le dossier selon la route
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/magasins'); // ou profils / produits
+    let folder = 'uploads/profils'; // valeur par défaut
+
+    // Exemple : on regarde l'URL ou un champ du body
+    if (req.baseUrl.includes('/magasins')) {
+      folder = 'uploads/magasins';
+    } else if (req.baseUrl.includes('/produits')) {
+      folder = 'uploads/produits';
+    }
+
+    cb(null, folder);
   },
   filename: (req, file, cb) => {
     const uniqueName = Date.now() + path.extname(file.originalname);

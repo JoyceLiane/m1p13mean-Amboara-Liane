@@ -1,0 +1,52 @@
+<div class="register-container">
+    <div class="register-card">
+        <button class="retour-btn" (click)="goToLanding()">
+            <i class="mdi mdi-home"></i>
+          </button>
+      <h2>Créer un compte</h2>
+  
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  
+      <form (ngSubmit)="onRegister()">
+        <div class="input-group">
+          <input type="text" [(ngModel)]="prenom" name="prenom" placeholder=" " required />
+          <label>Prénom</label>
+        </div>
+  
+        <div class="input-group">
+          <input type="text" [(ngModel)]="nom" name="nom" placeholder=" " required />
+          <label>Nom</label>
+        </div>
+  
+        <div class="input-group">
+          <input type="email" [(ngModel)]="email" name="email" placeholder=" " required />
+          <label>Email</label>
+        </div>
+  
+        <div class="input-group">
+          <input type="password" [(ngModel)]="mdp" name="mdp" placeholder=" " required />
+          <label>Mot de passe</label>
+        </div>
+  
+        <div class="input-group">
+          <input type="text" [(ngModel)]="phone" name="phone" placeholder=" " />
+          <label>Téléphone</label>
+        </div>
+  
+        <div class="input-group">
+          <input type="text" [(ngModel)]="adresse" name="adresse" placeholder=" " />
+          <label>Adresse</label>
+        </div>
+  
+        <div class="input-group">
+          <input type="file" (change)="onFileSelected($event)" />
+          <label>Photo de profil</label>
+        </div>
+  
+        <button type="submit" class="register-button" [disabled]="loading">
+          {{ loading ? 'Inscription...' : 'S’inscrire' }}
+        </button>
+      </form>
+    </div>
+  </div>
+  

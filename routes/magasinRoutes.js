@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Magasin = require('../models/Magasin');
+const upload = require('../middleware/upload');
 
 // CREATE
-router.post('/', async (req, res) => {
+router.post('/magasins', upload.single('image'), async (req, res) => {
   try {
+    const data = req.body;
+  if (req.file) {
+    data.image = `${req.file.filename}`;
+  }  
     const magasin = new Magasin(req.body);
     await magasin.save();
     res.status(201).json(magasin);

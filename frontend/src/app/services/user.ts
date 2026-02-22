@@ -35,4 +35,8 @@ export class UserService {
 
     return this.http.put(`${this.apiUrl}/profile`, data, { headers });
   }
+  createUser(data: FormData) {
+    return this.http.post(`${this.apiUrl}`, data);
+  }
+  
 }

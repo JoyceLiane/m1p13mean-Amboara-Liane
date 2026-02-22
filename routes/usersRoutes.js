@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 const authorizeRoles = require('../middleware/role');
+const upload = require('../middleware/upload');
 
 // ============================================
 // ROUTES ADMIN - DOIVENT ÊTRE EN PREMIER !
@@ -219,7 +220,6 @@ router.get('/profile', auth, async (req, res) => {
   }
 });
 
-// Modifier le profil de l'utilisateur connecté
 router.put('/profile', auth, async (req, res) => {
   try {
     const { prenom, nom, phone, adresse, pdp } = req.body;
@@ -251,19 +251,27 @@ router.put('/profile', auth, async (req, res) => {
   }
 });
 
-// ============================================
-// ROUTES CRUD GÉNÉRIQUES - EN DERNIER !
-// ============================================
-
-router.post('/', async (req, res) => {
+router.post('/', upload.single('pdp'), async (req, res) => {
   try {
-    const user = new Users(req.body);
+    const userData = req.body;
+
+    if (userData.mdp) {
+      const saltRounds = 10; 
+      userData.mdp = await bcrypt.hash(userData.mdp, saltRounds);
+    }
+    if (req.file) {
+      userData.pdp = `${req.file.filename}`;
+    }
+
+    const user = new Users(userData);
     await user.save();
+
     res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
 
 router.get('/', async (req, res) => {
   try {
@@ -274,7 +282,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ⚠️ CETTE ROUTE DOIT ÊTRE EN DERNIER car elle capture tout /:id
 router.get('/:id', async (req, res) => {
   try {
     const user = await Users.findById(req.params.id);

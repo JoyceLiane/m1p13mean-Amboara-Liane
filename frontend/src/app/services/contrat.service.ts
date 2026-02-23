@@ -41,6 +41,7 @@ export interface Contrat {
   created_at: Date;
   updated_at: Date;
   deleted_at?: Date;
+  imagepath?:string
 }
 
 @Injectable({
@@ -68,13 +69,20 @@ export class ContratService {
    */
   createContrat(contrat: Partial<Contrat>): Observable<Contrat> {
     const currentUser = this.authService.getCurrentUser();
-
+  
+    // ⚠️ Ajout obligatoire de status_id
+    const payload = {
+      ...contrat,
+      created_by: currentUser?._id,
+      status_id: '698cd76f79c982fc6c706ac2' 
+    };
+  
     if (!currentUser?._id) {
       return new Observable(subscriber => {
         this.authService.fetchCurrentUser().subscribe({
           next: (user) => {
             this.http.post<Contrat>(this.apiUrl, {
-              ...contrat,
+              ...payload,
               created_by: user._id
             }).subscribe({
               next: (result) => {
@@ -88,12 +96,10 @@ export class ContratService {
         });
       });
     }
-
-    return this.http.post<Contrat>(this.apiUrl, {
-      ...contrat,
-      created_by: currentUser._id
-    });
+  
+    return this.http.post<Contrat>(this.apiUrl, payload);
   }
+  
 
   /**
    * Met à jour un contrat

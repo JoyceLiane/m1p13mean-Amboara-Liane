@@ -1,0 +1,78 @@
+.inscription-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fafbff;
+  min-height: 100vh;
+}
+
+.inscription-card {
+  background: white;
+  padding: 2rem;
+  width: 480px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(124, 77, 255, 0.08);
+}
+
+.inscription-card h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  color: #1e1e2f;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+  padding: 10px;
+  border: 1px solid #e0e0ed;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.inscrire-button,
+.retour-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.inscrire-button {
+  background: #7c4dff;
+  color: white;
+}
+
+.inscrire-button:hover {
+  background: #6b3f8a;
+}
+
+.retour-button {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}

@@ -7,6 +7,11 @@ export const routes: Routes = [
   // Page de login (publique)
   { path: 'login', component: LoginComponent },
   {
+    path: 'new-boutique',
+    loadComponent: () => import('./components/inscription-boutique/inscription-boutique')
+      .then(m => m.InscriptionBoutiqueComponent)
+  },
+  {
     path: 'landing',
     loadComponent: () => import('./components/landing-page/landing-page')
       .then(m => m.LandingPage)
@@ -74,7 +79,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: ['shop', 'boutique'] }
       },
-
+     
       // ROUTES DE MAINTENANCE POUR LES BOUTIQUES
       {
         path: 'maintenance',

@@ -2,6 +2,32 @@ const express = require('express');
 const router = express.Router();
 const Magasin = require('../models/Magasin');
 const upload = require('../middleware/upload');
+const Contrat = require('../models/Contrat');
+
+router.get('/disponibles', async (req, res) => {
+  try {
+    // 1. Récupérer tous les contrats actifs
+    const contratsActifs = await Contrat.find({ deleted_at: null })
+      .populate('id_magasin')
+      .populate('status_id', 'nom');
+
+    // 2. Extraire les magasins occupés
+    const magasinsOccupes = contratsActifs
+      .filter(c => c.status_id?.nom === 'ACTIF')
+      .map(c => c.id_magasin?._id?.toString());
+
+    // 3. Récupérer tous les magasins non supprimés
+    const tousMagasins = await Magasin.find({ deleted_at: null }).populate('etage');
+
+    // 4. Filtrer ceux qui ne sont pas occupés
+    const magasinsDisponibles = tousMagasins.filter(m => !magasinsOccupes.includes(m._id.toString()));
+
+    res.json(magasinsDisponibles);
+  } catch (err) {
+    console.error('Erreur récupération magasins disponibles:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // CREATE
 router.post('/magasins', upload.single('image'), async (req, res) => {

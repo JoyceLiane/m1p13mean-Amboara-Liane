@@ -1,0 +1,40 @@
+<div class="inscription-container">
+  <div class="inscription-card">
+    <h2>Inscrire une boutique</h2>
+
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+    <form (ngSubmit)="onInscrireBoutique()">
+      <div class="input-group">
+        <input type="text" [(ngModel)]="nom_magasin" name="nom_magasin" placeholder=" " required />
+        <label>Nom de la boutique</label>
+      </div>
+
+      <div class="input-group">
+        <select [(ngModel)]="selectedMagasin" name="id_magasin" required>
+          <option value="" disabled selected>Choisir un magasin disponible</option>
+          <option *ngFor="let m of magasins" [value]="m._id">
+            Magasin #{{ m.id }} - {{ m.superficie }} m² (Étage {{ m.etage?.nom }})
+          </option>
+        </select>
+        <label>Magasin</label>
+      </div>
+
+      <div class="input-group">
+        <textarea [(ngModel)]="description" name="description" placeholder=" "></textarea>
+        <label>Description</label>
+      </div>
+
+      <div class="input-group">
+        <input type="file" (change)="onFileSelected($event)" />
+        <label>Image de la boutique</label>
+      </div>
+
+      <button type="submit" class="inscrire-button" [disabled]="envoiEnCours">
+        {{ envoiEnCours ? 'Inscription...' : 'S’inscrire' }}
+      </button>
+      <button type="button" class="retour-button" (click)="retour()">Retour</button>
+    </form>
+  </div>
+</div>

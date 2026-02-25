@@ -251,16 +251,22 @@ router.put('/profile', auth, async (req, res) => {
   }
 });
 
-router.post('/', upload.single('pdp'), async (req, res) => {
+const path = require('path');
+const { uploadProfils } = require('../middleware/upload'); 
+
+router.post('/', uploadProfils.single('pdp'), async (req, res) => {
   try {
     const userData = req.body;
 
+    // Hash du mot de passe
     if (userData.mdp) {
       const saltRounds = 10; 
       userData.mdp = await bcrypt.hash(userData.mdp, saltRounds);
     }
+
+    // Gestion de l'image de profil
     if (req.file) {
-      userData.pdp = `${req.file.filename}`;
+      userData.pdp = path.join(req.file.destination, req.file.filename);
     }
 
     const user = new Users(userData);
@@ -268,6 +274,7 @@ router.post('/', upload.single('pdp'), async (req, res) => {
 
     res.status(201).json(user);
   } catch (err) {
+    console.error(err);
     res.status(400).json({ error: err.message });
   }
 });

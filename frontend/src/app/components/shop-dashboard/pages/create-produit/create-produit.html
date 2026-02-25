@@ -1,9 +1,11 @@
-<div class="create-produit-container">
-  <div class="create-produit-card">
-    <h2>Créer un produit</h2>
-
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+<div class="create-produit-container"> <div class="create-produit-card"> 
+  <h2>Créer un produit</h2>
+   <div *ngIf="demandeEnCours; else formulaire"> 
+    <p>Votre demande de boutique est en cours de validation. Vous pourrez créer des produits une fois qu’elle sera acceptée.</p> 
+  </div> 
+  <ng-template #formulaire>
+     <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
 
     <form (ngSubmit)="onCreateProduit()">
       <div class="input-group">
@@ -50,5 +52,4 @@
         {{ loading ? 'Création...' : 'Créer le produit' }}
       </button>
     </form>
-  </div>
-</div>
+  </ng-template> </div> </div>

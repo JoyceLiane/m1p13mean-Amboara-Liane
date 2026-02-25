@@ -4,18 +4,24 @@ const Produits = require('../models/Produits');
 const mongoose = require('mongoose');
 const MouvementStock = require('../models/MouvementStock');
 const Contrat = require('../models/Contrat');
-const upload = require('../middleware/upload');
+const path = require('path');
+const { uploadProduits } = require('../middleware/upload');
 
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', uploadProduits.single('image'), async (req, res) => {
   try {
     const data = req.body;
+
+    // Gestion de l'image produit
     if (req.file) {
-      data.imagepath = `${req.file.filename}`;
+      data.imagepath = path.join(req.file.destination, req.file.filename);
     }
-    const produit = new Produits(req.body);
+
+    const produit = new Produits(data);
     await produit.save();
+
     res.status(201).json(produit);
   } catch (err) {
+    console.error(err);
     res.status(400).json({ error: err.message });
   }
 });

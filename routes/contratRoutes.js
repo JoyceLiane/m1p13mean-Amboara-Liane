@@ -3,6 +3,29 @@ const router = express.Router();
 const Contrat = require('../models/Contrat');
 const mongoose = require('mongoose');
 const StatusContrat = require('../models/StatusContrat');
+const { uploadMagasins} = require('../middleware/upload');
+
+router.post('/', uploadMagasins.single('image'), async (req, res) => {
+  try {
+    const data = req.body;
+
+    if (req.file) {
+      data.imagepath = `${req.file.filename}`;
+    }
+
+    if (!data.id) {
+      data.id = Date.now().toString();
+    }
+
+    const contrat = new Contrat(data);
+    await contrat.save();
+
+    res.status(201).json(contrat);
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: err.message });
+  }
+});
 
 // CREATE
 router.post('/', async (req, res) => {

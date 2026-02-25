@@ -37,30 +37,31 @@ export class CreateProduitComponent implements OnInit {
     private contratService: ContratService,
     private authService: AuthService
   ) {}
+  demandeEnCours = false;
 
   ngOnInit() {
-    // Charger les catégories
-    this.categorieService.getAllCategories().subscribe({
-      next: (cats) => this.categories = cats,
-      error: (err) => console.error('Erreur chargement catégories:', err)
-    });
-
-    // Charger les contrats de l’utilisateur connecté
     const currentUser = this.authService.getCurrentUser();
     if (currentUser?._id) {
-      this.contratService.getContratActifByUser(currentUser._id).subscribe({
+      this.contratService.getContratsByUser(currentUser._id).subscribe({
         next: (contrats) => {
-          this.contrats = contrats.filter(c =>
+          this.contrats = contrats;
+          console.log('Contrats reçus:', contrats);
+          this.demandeEnCours = contrats.some(c =>
             c.locataire_id?._id === currentUser._id &&
             !c.deleted_at &&
-            (c.type_contrat === 'INITIAL' || c.type_contrat === 'RENOUVELLEMENT_ACTIF')
+            (
+              (typeof c.status_id === 'object' && c.status_id?.nom === 'EN_ATTENTE') ||
+              (typeof c.status_id === 'string' && c.status_id === 'EN_ATTENTE') // au cas où
+            )
           );
+          
         },
         error: (err) => console.error('Erreur chargement contrats:', err)
       });
     }
   }
-
+  
+  
   onFileSelected(event: any) {
     this.imageFile = event.target.files[0];
   }

@@ -67,40 +67,43 @@ export class ContratService {
   /**
    * Crée un nouveau contrat
    */
-  createContrat(contrat: Partial<Contrat>): Observable<Contrat> {
+  createContrat(contrat: Partial<Contrat>, imageFile?: File): Observable<Contrat> {
     const currentUser = this.authService.getCurrentUser();
   
-    // ⚠️ Ajout obligatoire de status_id
-    const payload = {
-      ...contrat,
-      created_by: currentUser?._id,
-      status_id: '698cd76f79c982fc6c706ac2' 
-    };
+    const formData = new FormData();
+    formData.append('created_by', currentUser?._id || '');
+    formData.append('status_id', '698cd76f79c982fc6c706ac2');
   
-    if (!currentUser?._id) {
-      return new Observable(subscriber => {
-        this.authService.fetchCurrentUser().subscribe({
-          next: (user) => {
-            this.http.post<Contrat>(this.apiUrl, {
-              ...payload,
-              created_by: user._id
-            }).subscribe({
-              next: (result) => {
-                subscriber.next(result);
-                subscriber.complete();
-              },
-              error: (err) => subscriber.error(err)
-            });
-          },
-          error: (err) => subscriber.error(new Error('Utilisateur non connecté'))
-        });
-      });
+    if (contrat.id) {
+      formData.append('id', contrat.id);
     }
   
-    return this.http.post<Contrat>(this.apiUrl, payload);
+    // ⚠️ envoyer uniquement les ObjectId
+    if (contrat.id_magasin?._id) {
+      formData.append('id_magasin', contrat.id_magasin._id);
+    }
+    if (contrat.locataire_id?._id) {
+      formData.append('locataire_id', contrat.locataire_id._id);
+    }
+  
+    if (contrat.nom_magasin) {
+      formData.append('nom_magasin', contrat.nom_magasin);
+    }
+    if (contrat.description) {
+      formData.append('description', contrat.description);
+    }
+    if (contrat.type_contrat) {
+      formData.append('type_contrat', contrat.type_contrat);
+    }
+  
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+  
+    return this.http.post<Contrat>(this.apiUrl, formData);
   }
   
-
+  
   /**
    * Met à jour un contrat
    */

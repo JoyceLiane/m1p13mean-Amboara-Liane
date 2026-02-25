@@ -7,28 +7,28 @@
 
     <form (ngSubmit)="onInscrireBoutique()">
       <div class="input-group">
-        <input type="text" [(ngModel)]="nom_magasin" name="nom_magasin" placeholder=" " required />
         <label>Nom de la boutique</label>
+        <input type="text" [(ngModel)]="nom_magasin" name="nom_magasin" placeholder=" " required />
       </div>
 
       <div class="input-group">
+        <label>Magasin</label>
         <select [(ngModel)]="selectedMagasin" name="id_magasin" required>
           <option value="" disabled selected>Choisir un magasin disponible</option>
           <option *ngFor="let m of magasins" [value]="m._id">
             Magasin #{{ m.id }} - {{ m.superficie }} m² (Étage {{ m.etage?.nom }})
           </option>
         </select>
-        <label>Magasin</label>
       </div>
 
       <div class="input-group">
-        <textarea [(ngModel)]="description" name="description" placeholder=" "></textarea>
         <label>Description</label>
+        <textarea [(ngModel)]="description" name="description" placeholder=" "></textarea>
       </div>
 
       <div class="input-group">
-        <input type="file" (change)="onFileSelected($event)" />
         <label>Image de la boutique</label>
+        <input type="file" (change)="onFileSelected($event)" />
       </div>
 
       <button type="submit" class="inscrire-button" [disabled]="envoiEnCours">

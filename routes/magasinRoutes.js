@@ -29,20 +29,6 @@ router.get('/disponibles', async (req, res) => {
   }
 });
 
-// CREATE
-router.post('/magasins', upload.single('image'), async (req, res) => {
-  try {
-    const data = req.body;
-  if (req.file) {
-    data.image = `${req.file.filename}`;
-  }  
-    const magasin = new Magasin(req.body);
-    await magasin.save();
-    res.status(201).json(magasin);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
 
 // READ ALL
 router.get('/', async (req, res) => {

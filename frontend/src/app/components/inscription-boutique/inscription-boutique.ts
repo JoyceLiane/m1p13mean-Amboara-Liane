@@ -20,7 +20,7 @@ export class InscriptionBoutiqueComponent implements OnInit {
   magasins: any[] = [];
   selectedMagasin = '';
 
-  imageFile: File | null = null; // ✅ ajout pour gérer l'image
+  imageFile: File | undefined = undefined; 
 
   envoiEnCours = false;
   errorMessage = '';
@@ -48,7 +48,6 @@ export class InscriptionBoutiqueComponent implements OnInit {
     });
   }
 
-  // ✅ méthode pour récupérer le fichier sélectionné
   onFileSelected(event: any) {
     this.imageFile = event.target.files[0];
   }
@@ -58,7 +57,7 @@ export class InscriptionBoutiqueComponent implements OnInit {
     this.envoiEnCours = true;
     this.errorMessage = '';
     this.successMessage = '';
-
+  
     if (!this.nom_magasin.trim()) {
       this.errorMessage = 'Le nom de la boutique est obligatoire';
       this.envoiEnCours = false;
@@ -69,7 +68,7 @@ export class InscriptionBoutiqueComponent implements OnInit {
       this.envoiEnCours = false;
       return;
     }
-
+  
     try {
       const currentUser = this.authService.getCurrentUser();
       if (!currentUser?._id) {
@@ -77,19 +76,19 @@ export class InscriptionBoutiqueComponent implements OnInit {
         this.envoiEnCours = false;
         return;
       }
-
+  
       const contrat: Partial<Contrat> = {
         id: Date.now().toString(),
         id_magasin: { _id: this.selectedMagasin, nom: this.nom_magasin },
         nom_magasin: this.nom_magasin,
         locataire_id: { _id: currentUser._id, nom: currentUser.nom, email: currentUser.email },
         description: this.description,
-        type_contrat: 'INITIAL',
-        status_id: { _id: '698cd76f79c982fc6c706ac2', nom: 'EN_ATTENTE', couleur: 'gris' },
-        imagepath: this.imageFile ? this.imageFile.name : undefined 
+        type_contrat: 'INITIAL'
       };
-
-      await this.contratService.createContrat(contrat).toPromise();
+  
+      // ⚠️ Envoi du contrat avec fichier
+      await this.contratService.createContrat(contrat, this.imageFile).toPromise();
+  
       alert("Demande d'inscription boutique effectuée avec succès !");
       this.router.navigate(['/client-dashboard']);
     } catch (error) {
@@ -98,6 +97,7 @@ export class InscriptionBoutiqueComponent implements OnInit {
       this.envoiEnCours = false;
     }
   }
+  
 
   retour() {
     this.location.back();

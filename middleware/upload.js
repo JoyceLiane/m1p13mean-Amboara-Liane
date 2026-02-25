@@ -1,35 +1,34 @@
 const multer = require('multer');
 const path = require('path');
 
-// Fonction pour choisir le dossier selon la route
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let folder = 'uploads/profils'; // valeur par défaut
-
-    // Exemple : on regarde l'URL ou un champ du body
-    if (req.baseUrl.includes('/magasins')) {
-      folder = 'uploads/magasins';
-    } else if (req.baseUrl.includes('/produits')) {
-      folder = 'uploads/produits';
+function makeStorage(folder) {
+  return multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, folder);
+    },
+    filename: (req, file, cb) => {
+      const uniqueName = Date.now() + path.extname(file.originalname);
+      cb(null, uniqueName);
     }
+  });
+}
 
-    cb(null, folder);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + path.extname(file.originalname);
-    cb(null, uniqueName);
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
-      cb(new Error('Fichier non valide'), false);
+function makeUploader(folder) {
+  return multer({
+    storage: makeStorage(folder),
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+      if (!file.mimetype.startsWith('image/')) {
+        return cb(new Error('Fichier non valide'), false);
+      }
+      cb(null, true);
     }
-    cb(null, true);
-  }
-});
+  });
+}
 
-module.exports = upload;
+// Exporter des uploaders spécifiques
+const uploadMagasins = makeUploader('uploads/magasins');
+const uploadProduits = makeUploader('uploads/produits');
+const uploadProfils = makeUploader('uploads/profils');
+
+module.exports = { uploadMagasins, uploadProduits, uploadProfils };

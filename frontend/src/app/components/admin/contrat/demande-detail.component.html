@@ -126,7 +126,7 @@
 
 
     <!-- Actions -->
-    <div class="actions-footer" *ngIf="demande.statut_demande.nom === 'EN_ATTENTE'">
+    <div class="actions-footer" *ngIf="demande.status_id.nom === 'EN_ATTENTE'">
       <button class="btn-secondary" (click)="retour()">Retour</button>
       <div class="actions-droite">
         <button class="btn-warning" (click)="refuser()">
@@ -138,7 +138,7 @@
       </div>
     </div>
 
-    <div class="actions-footer" *ngIf="demande.statut_demande.nom !== 'EN_ATTENTE'">
+    <div class="actions-footer" *ngIf="demande.status_id.nom !== 'EN_ATTENTE'">
       <button class="btn-secondary" (click)="retour()">Retour</button>
     </div>
   </div>

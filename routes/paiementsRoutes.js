@@ -482,11 +482,11 @@ router.post('/payer-multi-mois', async (req, res) => {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
     
-    // Vérifier le montant (protéger contre les erreurs)
-    const loyerMensuel = contrat.id_magasin?.loyer_mensuel || 0;
+    // Calculer le loyer mensuel à partir du prix_m2 et de la superficie
+    const loyerMensuel = contrat.id_magasin?.prix_m2 * contrat.id_magasin?.superficie || 0;
     const montantAttendu = loyerMensuel * nombre_mois;
     
-    if (Math.abs(montant_total - montantAttendu) > 1) { // Tolérance de 1 FCFA
+    if (Math.abs(montant_total - montantAttendu) > 1) {
       return res.status(400).json({ 
         error: 'Montant incorrect',
         attendu: montantAttendu,
@@ -500,23 +500,19 @@ router.post('/payer-multi-mois', async (req, res) => {
     
     let debutPeriode;
     if (dateDernierPaiement) {
-      // Commencer après le dernier mois payé
       debutPeriode = new Date(dateDernierPaiement.mois_concerne_fin);
       debutPeriode.setMonth(debutPeriode.getMonth() + 1);
     } else {
-      // Premier paiement : commencer à la date de début du contrat
       debutPeriode = new Date(contrat.date_debut);
       debutPeriode.setDate(1);
       debutPeriode.setHours(0, 0, 0, 0);
     }
     
-    // Calculer la fin de la période
     const finPeriode = new Date(debutPeriode);
     finPeriode.setMonth(finPeriode.getMonth() + (nombre_mois - 1));
-    finPeriode.setDate(1); // Premier jour du dernier mois
+    finPeriode.setDate(1);
     finPeriode.setHours(0, 0, 0, 0);
     
-    // Vérifier que ça ne dépasse pas la fin du contrat
     if (finPeriode > new Date(contrat.date_fin)) {
       return res.status(400).json({ 
         error: 'La période dépasse la fin du contrat',
@@ -525,7 +521,6 @@ router.post('/payer-multi-mois', async (req, res) => {
       });
     }
     
-    // Créer le paiement
     const nouveauPaiement = new Paiement({
       contrat_id,
       montant: montant_total,
@@ -538,7 +533,6 @@ router.post('/payer-multi-mois', async (req, res) => {
     
     await nouveauPaiement.save();
     
-    // Populer et retourner
     const paiementPopulated = await Paiement.findById(nouveauPaiement._id)
       .populate({
         path: 'contrat_id',
@@ -551,6 +545,7 @@ router.post('/payer-multi-mois', async (req, res) => {
     res.status(201).json(paiementPopulated);
     
   } catch (err) {
+    console.error('Erreur dans /payer-multi-mois:', err);
     res.status(400).json({ error: err.message });
   }
 });
@@ -569,13 +564,14 @@ router.get('/situation/:contratId', async (req, res) => {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
     
+    // Calculer le loyer mensuel
+    const loyerMensuel = contrat.id_magasin?.prix_m2 * contrat.id_magasin?.superficie || 0;
+    
     // Récupérer tous les paiements du contrat
     const paiements = await Paiement.find({ 
       contrat_id: req.params.contratId 
     }).sort({ mois_concerne_debut: 1 });
     
-    // Calculer la situation
-    const loyerMensuel = contrat.id_magasin?.loyer_mensuel || 0;
     const dateDebut = new Date(contrat.date_debut);
     dateDebut.setDate(1);
     const dateFin = new Date(contrat.date_fin);
@@ -588,7 +584,6 @@ router.get('/situation/:contratId', async (req, res) => {
       dernierMoisPaye = paiements[paiements.length - 1].mois_concerne_fin;
       totalPaye = paiements.reduce((sum, p) => sum + p.montant, 0);
       
-      // Générer la liste des mois payés
       paiements.forEach(p => {
         let current = new Date(p.mois_concerne_debut);
         while (current <= p.mois_concerne_fin) {
@@ -598,7 +593,6 @@ router.get('/situation/:contratId', async (req, res) => {
       });
     }
     
-    // Mois à venir
     const moisAVenir = [];
     const aujourdhui = new Date();
     let prochainMois = dernierMoisPaye 
@@ -609,7 +603,6 @@ router.get('/situation/:contratId', async (req, res) => {
       prochainMois.setMonth(prochainMois.getMonth() + 1);
     }
     
-    // Proposer les 6 prochains mois maximum
     for (let i = 0; i < 6; i++) {
       if (prochainMois <= dateFin) {
         moisAVenir.push({
@@ -642,6 +635,7 @@ router.get('/situation/:contratId', async (req, res) => {
     });
     
   } catch (err) {
+    console.error('Erreur dans /situation/:contratId:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -655,16 +649,17 @@ router.get('/prochains-mois/:contratId', async (req, res) => {
       return res.status(404).json({ error: 'Contrat non trouvé' });
     }
     
+    // Calculer le loyer mensuel à partir du prix_m2 et de la superficie
+    const loyerMensuel = contrat.id_magasin?.prix_m2 * contrat.id_magasin?.superficie || 0;
+    
     // Récupérer le dernier paiement
     const dernierPaiement = await Paiement.findOne({ 
       contrat_id: req.params.contratId 
     }).sort({ mois_concerne_fin: -1 });
     
-    const loyerMensuel = contrat.id_magasin?.loyer_mensuel || 0;
     const dateDebut = new Date(contrat.date_debut);
     dateDebut.setDate(1);
     const dateFin = new Date(contrat.date_fin);
-    const aujourdhui = new Date();
     
     // Déterminer le prochain mois à payer
     let prochainMois;
@@ -698,12 +693,13 @@ router.get('/prochains-mois/:contratId', async (req, res) => {
     res.json({
       contrat_id: contrat._id,
       magasin_nom: contrat.nom_magasin,
-      loyer_mensuel,
+      loyer_mensuel: loyerMensuel,
       prochain_mois: prochainMois,
       options
     });
     
   } catch (err) {
+    console.error('Erreur dans /prochains-mois:', err);
     res.status(500).json({ error: err.message });
   }
 });

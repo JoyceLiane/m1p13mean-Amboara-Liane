@@ -14,4 +14,8 @@ export class MagasinService {
   getMagasinsDisponibles(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/disponibles`);
   }
+  getMagasinsByProprietaire(proprietaireId: string | number): Observable<any[]> {
+  const id = proprietaireId.toString();
+  return this.http.get<any[]>(`${this.apiUrl}/proprietaire/${id}`);
+}
 }

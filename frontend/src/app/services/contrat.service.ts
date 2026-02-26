@@ -167,7 +167,9 @@ export class ContratService {
     return this.http.get<Contrat[]>(`${this.apiUrl}/renouvellements/en-attente`);
   }
 
-
+   getContratsByMagasins(magasinIds: string[]): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/by-magasins`, { magasinIds });
+  }
   getToutesDemandesRenouvellement(params?: {
     statut?: string;
     recherche?: string;

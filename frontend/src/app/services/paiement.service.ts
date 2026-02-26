@@ -96,7 +96,7 @@ export interface OptionPaiement {
 export class PaiementService {
   private apiUrl = `${environment.apiUrl}/paiements`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // CRUD de base
   getAllPaiements(): Observable<Paiement[]> {
@@ -123,7 +123,10 @@ export class PaiementService {
   getPaiementsByContrat(contratId: string): Observable<Paiement[]> {
     return this.http.get<Paiement[]>(`${this.apiUrl}/contrat/${contratId}`);
   }
-
+  // Ajoutez cette méthode
+  getPaiementsByContrats(contratIds: string[]): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/contrat`, { contratIds });
+  }
   getPaiementsByPeriode(annee: number, mois: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/periode/${annee}/${mois}`);
   }
@@ -139,7 +142,6 @@ export class PaiementService {
   getPaiementsRecents(limit: number = 10): Observable<Paiement[]> {
     return this.http.get<Paiement[]>(`${this.apiUrl}/recent?limit=${limit}`);
   }
-
   // Routes pour paiements mensuels
   getEcheances(annee: number, mois: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/echeances/${annee}/${mois}`);

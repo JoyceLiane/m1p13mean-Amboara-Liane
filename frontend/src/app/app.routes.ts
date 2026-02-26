@@ -194,6 +194,21 @@ export const routes: Routes = [
           }
         ]
       },
+      {
+        path: 'owner/paiements',
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] },
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./components/boutique/paiement/paiement-list-owner.component').then(m => m.PaiementListOwnerComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./components/boutique/paiement/paiement-detail-owner.component').then(m => m.PaiementDetailOwnerComponent)
+          }
+        ]
+      },
 
       // ROUTES ADMIN POUR LA GESTION DES MAINTENANCES
       {

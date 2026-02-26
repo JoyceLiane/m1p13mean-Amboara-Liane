@@ -1,0 +1,163 @@
+<div class="paiement-list-container">
+  <!-- Header -->
+  <div class="list-header">
+    <div class="header-left">
+      <h1>
+        <i class="mdi mdi-credit-card-multiple"></i>
+        Paiements reçus
+      </h1>
+      <p class="subtitle">Consultez l'historique de vos paiements </p>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon total">
+        <i class="mdi mdi-cash-multiple"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total perçu</span>
+        <span class="stat-value">{{ formatNumber(totalMontant) }} Ariary</span>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon month">
+        <i class="mdi mdi-calendar-month"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Paiements ce mois</span>
+        <span class="stat-value">{{ stats.ceMois }}</span>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon late">
+        <i class="mdi mdi-alert-circle"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">En retard</span>
+        <span class="stat-value">{{ stats.enRetard }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="mdi mdi-magnify"></i>
+      <input 
+        type="text" 
+        placeholder="Rechercher par magasin..." 
+        (keyup)="onSearch($event)"
+      >
+    </div>
+    
+    <div class="filter-box">
+      <i class="mdi mdi-calendar-filter"></i>
+      <select (change)="onPeriodeChange($event)">
+        <option value="tout">Toutes les périodes</option>
+        <option value="mois">Ce mois</option>
+        <option value="trimestre">Ce trimestre</option>
+        <option value="annee">Cette année</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement des paiements...</p>
+  </div>
+
+  <!-- Tableau -->
+  <div class="table-container" *ngIf="!loading">
+    <table class="paiement-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Magasin</th>
+          <th>Locataire</th>
+          <th>Période concernée</th>
+          <th>Montant</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let paiement of filteredPaiements | slice: currentPage * pageSize : (currentPage + 1) * pageSize">
+          <td>
+            <div class="cell-with-icon">
+              <i class="mdi mdi-calendar-clock"></i>
+              {{ formatDate(paiement.date_paiement) }}
+            </div>
+          </td>
+          <td>
+            <div class="cell-with-icon">
+              <i class="mdi mdi-store"></i>
+              <div>
+                <strong>{{ paiement.contrat_id?.nom_magasin }}</strong>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="cell-with-icon">
+              <i class="mdi mdi-account"></i>
+              {{ paiement.contrat_id?.locataire_id?.nom || 'N/A' }}
+            </div>
+          </td>
+          <td>
+            <div class="cell-with-icon">
+              <i class="mdi mdi-calendar-range"></i>
+              {{ getMoisConcerne(paiement) }}
+            </div>
+          </td>
+          <td class="montant">
+            <div class="cell-with-icon">
+              <i class="mdi mdi-currency-usd"></i>
+              <strong>{{ formatNumber(paiement.montant) }} Ariary</strong>
+            </div>
+          </td>
+          <td>
+            <span class="statut-badge" [style.backgroundColor]="getStatutColor(paiement.statut)">
+              <i class="mdi" [class]="getStatutIcon(paiement.statut)"></i>
+              {{ paiement.statut }}
+            </span>
+          </td>
+          <td>
+            <button class="btn-view" (click)="voirDetails(paiement._id)" title="Voir détails">
+              <i class="mdi mdi-eye"></i>
+              <span>Détails</span>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredPaiements.length === 0">
+          <td colspan="7" class="no-data">
+            <i class="mdi mdi-credit-card-off"></i>
+            <p>Aucun paiement trouvé</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="filteredPaiements.length > pageSize">
+      <button 
+        class="btn-pagination" 
+        [disabled]="currentPage === 0" 
+        (click)="previousPage()"
+      >
+        <i class="mdi mdi-chevron-left"></i>
+      </button>
+      <span class="page-info">Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+      <button 
+        class="btn-pagination" 
+        [disabled]="currentPage === totalPages - 1" 
+        (click)="nextPage()"
+      >
+        <i class="mdi mdi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

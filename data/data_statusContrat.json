@@ -1,6 +1,0 @@
-[
-  { "id": "STAT001", "nom": "actif" },
-  { "id": "STAT002", "nom": "resilie" },
-  { "id": "STAT003", "nom": "expulse" },
-  { "id": "STAT004", "nom": "en_attente_renouvellement" }
-]

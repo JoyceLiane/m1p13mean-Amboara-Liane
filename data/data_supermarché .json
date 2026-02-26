@@ -1,9 +1,0 @@
-[
-  {
-    "_id": { "$oid": "64f000000000000000000001" },
-    "id_user_admin": { "$oid": "66b100000000000000000001" },
-    "nom": "Supermarché Central",
-    "surface_totale": 1500,
-    "étages": 2
-  }
-]

@@ -59,7 +59,6 @@ export class ContratService {
     return this.http.get<Contrat[]>(this.apiUrl);
   }
 
-
   getContratById(id: string): Observable<Contrat> {
     return this.http.get<Contrat>(`${this.apiUrl}/${id}`);
   }

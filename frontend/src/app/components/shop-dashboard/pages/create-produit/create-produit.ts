@@ -37,16 +37,20 @@ export class CreateProduitComponent implements OnInit {
     private contratService: ContratService,
     private authService: AuthService
   ) {}
-  demandeEnCours = false;
 
   ngOnInit() {
+    // Charger les catégories
+    this.categorieService.getAllCategories().subscribe({
+      next: (cats) => this.categories = cats,
+      error: (err) => console.error('Erreur chargement catégories:', err)
+    });
+
+    // Charger les contrats de l’utilisateur connecté
     const currentUser = this.authService.getCurrentUser();
     if (currentUser?._id) {
-      this.contratService.getContratsByUser(currentUser._id).subscribe({
+      this.contratService.getContratActifByUser(currentUser._id).subscribe({
         next: (contrats) => {
-          this.contrats = contrats;
-          console.log('Contrats reçus:', contrats);
-          this.demandeEnCours = contrats.some(c =>
+          this.contrats = contrats.filter(c =>
             c.locataire_id?._id === currentUser._id &&
             !c.deleted_at &&
             (
@@ -60,6 +64,7 @@ export class CreateProduitComponent implements OnInit {
       });
     }
   }
+
   
   
   onFileSelected(event: any) {

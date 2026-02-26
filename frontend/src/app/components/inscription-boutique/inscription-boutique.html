@@ -1,40 +1,55 @@
 <div class="inscription-container">
   <div class="inscription-card">
-    <h2>Inscrire une boutique</h2>
+    <!-- Loading: vérification en cours -->
+    <div *ngIf="loadingCheck" class="loading-message">
+      Vérification en cours...
+    </div>
 
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-
-    <form (ngSubmit)="onInscrireBoutique()">
-      <div class="input-group">
-        <label>Nom de la boutique</label>
-        <input type="text" [(ngModel)]="nom_magasin" name="nom_magasin" placeholder=" " required />
-      </div>
-
-      <div class="input-group">
-        <label>Magasin</label>
-        <select [(ngModel)]="selectedMagasin" name="id_magasin" required>
-          <option value="" disabled selected>Choisir un magasin disponible</option>
-          <option *ngFor="let m of magasins" [value]="m._id">
-            Magasin #{{ m.id }} - {{ m.superficie }} m² (Étage {{ m.etage?.nom }})
-          </option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>Description</label>
-        <textarea [(ngModel)]="description" name="description" placeholder=" "></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>Image de la boutique</label>
-        <input type="file" (change)="onFileSelected($event)" />
-      </div>
-
-      <button type="submit" class="inscrire-button" [disabled]="envoiEnCours">
-        {{ envoiEnCours ? 'Inscription...' : 'S’inscrire' }}
-      </button>
+    <!-- Message si demande déjà en attente -->
+    <div *ngIf="!loadingCheck && hasPendingDemande" class="info-message">
+      <h3>Demande en attente</h3>
+      <p>Vous avez déjà une demande d'inscription en cours de traitement. Vous ne pouvez pas soumettre une nouvelle demande pour le moment.</p>
       <button type="button" class="retour-button" (click)="retour()">Retour</button>
-    </form>
+    </div>
+
+    <!-- Formulaire si pas de demande en attente -->
+    <div *ngIf="!loadingCheck && !hasPendingDemande">
+      <h2>Inscrire une boutique</h2>
+
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+      <form (ngSubmit)="onInscrireBoutique()">
+        <div class="input-group">
+          <label>Nom de la boutique</label>
+          <input type="text" [(ngModel)]="nom_magasin" name="nom_magasin" placeholder=" " required />
+        </div>
+
+        <div class="input-group">
+          <label>Magasin</label>
+          <select [(ngModel)]="selectedMagasin" name="id_magasin" required>
+            <option value="" disabled selected>Choisir un magasin disponible</option>
+            <option *ngFor="let m of magasins" [value]="m._id">
+              Magasin #{{ m.id }} - {{ m.superficie }} m² (Étage {{ m.etage?.nom }})
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="description" name="description" placeholder=" "></textarea>
+        </div>
+
+        <div class="input-group">
+          <label>Image de la boutique</label>
+          <input type="file" (change)="onFileSelected($event)" />
+        </div>
+
+        <button type="submit" class="inscrire-button" [disabled]="envoiEnCours">
+          {{ envoiEnCours ? 'Inscription...' : 'S’inscrire' }}
+        </button>
+        <button type="button" class="retour-button" (click)="retour()">Retour</button>
+      </form>
+    </div>
   </div>
 </div>

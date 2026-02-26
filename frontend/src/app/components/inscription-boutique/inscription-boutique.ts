@@ -26,6 +26,10 @@ export class InscriptionBoutiqueComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  // Variable pour vérifier si l'utilisateur a déjà une demande en attente
+  hasPendingDemande = false;
+  loadingCheck = true;
+
   constructor(
     private contratService: ContratService,
     private magasinService: MagasinService,
@@ -35,7 +39,35 @@ export class InscriptionBoutiqueComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.checkExistingDemande();
     this.chargerMagasinsDisponibles();
+  }
+
+  checkExistingDemande() {
+    const currentUser = this.authService.getCurrentUser();
+    
+    if (!currentUser?._id) {
+      this.loadingCheck = false;
+      return;
+    }
+
+    this.contratService.getContratsByUser(currentUser._id).subscribe({
+      next: (contrats) => {
+        // Vérifie si un contrat est en attente (EN_ATTENTE)
+        this.hasPendingDemande = contrats.some((c: any) => {
+          const status = c.status_id;
+          return (
+            !c.deleted_at &&
+            (status?.nom === 'EN_ATTENTE' || status === 'EN_ATTENTE')
+          );
+        });
+        this.loadingCheck = false;
+      },
+      error: (err) => {
+        console.error('Erreur vérification demande:', err);
+        this.loadingCheck = false;
+      }
+    });
   }
 
   chargerMagasinsDisponibles() {

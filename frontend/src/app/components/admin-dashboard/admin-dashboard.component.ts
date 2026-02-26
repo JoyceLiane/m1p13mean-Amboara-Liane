@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService, DashboardData } from '../../services/admin.service';
+import { UrlHelper } from '../../services/url.helper';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -34,6 +35,7 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
+    public urlHelper: UrlHelper,
     private router: Router
   ) {}
 

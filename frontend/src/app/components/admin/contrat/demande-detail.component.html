@@ -123,13 +123,11 @@
       </div>
     </div>
 
-
-
     <!-- Actions -->
     <div class="actions-footer" *ngIf="demande.status_id.nom === 'EN_ATTENTE'">
       <button class="btn-secondary" (click)="retour()">Retour</button>
       <div class="actions-droite">
-        <button class="btn-warning" (click)="refuser()">
+        <button class="btn-secondary" (click)="refuser()">
           <i class="mdi mdi-close"></i> Refuser
         </button>
         <button class="btn-primary" (click)="ouvrirModalApprobation()">

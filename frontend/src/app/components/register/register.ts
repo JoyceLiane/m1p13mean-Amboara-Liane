@@ -54,6 +54,7 @@ export class RegisterComponent {
         this.router.navigate(['/login']);
       },
       error: (err) => {
+        alert("Veuillez remplir tous les champs");
         this.errorMessage = 'Erreur lors de l’inscription';
       }
     });

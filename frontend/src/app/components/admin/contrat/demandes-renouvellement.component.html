@@ -104,8 +104,8 @@
             <strong>{{ demande.nom_magasin }}</strong>
           </td>
           <td>
-            <div>{{ demande.locataire_id?.nom }}</div>
-            <small>{{ demande.locataire_id?.email }}</small>
+            <div>{{ demande.locataire_id.nom }}</div>
+            <small>{{ demande.locataire_id.email }}</small>
           </td>
           <td>
             <span class="contrat-ref">{{ demande.contrat_parent_id?.id }}</span>
@@ -116,8 +116,8 @@
             </span>
           </td>
           <td>
-            <span class="statut-badge" [style.backgroundColor]="demande.status_id?.couleur">
-              {{ demande.status_id?.nom }}
+            <span class="statut-badge" [style.backgroundColor]="demande.status_id.couleur">
+              {{ demande.status_id.nom }}
             </span>
           </td>
           <td class="actions-cell">
@@ -167,7 +167,7 @@
         </div>
         <div class="resume-item">
           <span class="label">Locataire:</span>
-          <span class="value">{{ demandeSelectionnee.locataire_id?.nom }}</span>
+          <span class="value">{{ demandeSelectionnee.locataire_id.nom }}</span>
         </div>
         <div class="resume-item">
           <span class="label">Contrat actuel:</span>

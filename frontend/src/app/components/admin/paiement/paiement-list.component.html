@@ -1,0 +1,152 @@
+<div class="container">
+  <div class="header">
+    <h2>
+      <i class="mdi mdi-credit-card-multiple"></i>
+      Gestion des paiements
+    </h2>
+    <button class="btn-primary" routerLink="/paiements/new">
+      <i class="mdi mdi-credit-card-plus"></i> Nouveau paiement
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <div class="search-input">
+      <i class="mdi mdi-magnify"></i>
+      <input type="text" placeholder="Rechercher un paiement..." (keyup)="applyFilter($event)">
+    </div>
+  </div>
+
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="mdi mdi-counter"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total paiements</span>
+        <span class="stat-value">{{ dataSource.data.length }}</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="mdi mdi-currency-usd"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Montant total</span>
+        <!-- Utilisation de formatNumber au lieu du pipe -->
+        <span class="stat-value">{{ formatNumber(totalMontant) }} Ariary</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="content" *ngIf="!loading">
+    <!-- Tableau des paiements -->
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Magasin</th>
+            <th>Locataire</th>
+            <th>Période</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let paiement of dataSource.filteredData">
+            <td>
+              <i class="mdi mdi-calendar-clock"></i>
+              <!-- Utilisation de formatDate au lieu du pipe date -->
+              {{ formatDate(paiement.date_paiement, 'dd/MM/yyyy') }}
+            </td>
+            <td>
+              <div *ngIf="typeof paiement.contrat_id !== 'string'">
+                <i class="mdi mdi-store"></i>
+                {{ paiement.contrat_id.nom_magasin }}
+              </div>
+            </td>
+            <td>
+              <div *ngIf="typeof paiement.contrat_id !== 'string' && paiement.contrat_id.locataire_id">
+                <i class="mdi mdi-account"></i>
+                {{ paiement.contrat_id.locataire_id.nom }}
+              </div>
+            </td>
+            <td>
+              <i class="mdi mdi-calendar-range"></i>
+              {{ getMoisConcerne(paiement) }}
+            </td>
+            <td class="montant">
+              <i class="mdi mdi-currency-usd"></i>
+              <!-- Utilisation de formatNumber au lieu du pipe -->
+              {{ formatNumber(paiement.montant) }} Ariary
+            </td>
+            <td>
+              <span class="statut-badge" [style.backgroundColor]="getStatutColor(paiement.statut)">
+                <!-- Utilisation de [class] au lieu de [ngClass] -->
+                <i class="mdi" [class]="getStatutIcon(paiement.statut)"></i>
+                {{ paiement.statut }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon" (click)="voirDetails(paiement._id)" title="Voir détails">
+                <i class="mdi mdi-eye"></i>
+              </button>
+              <button class="btn-icon" (click)="modifierPaiement(paiement._id)" title="Modifier">
+                <i class="mdi mdi-pencil"></i>
+              </button>
+              <button class="btn-icon text-danger" (click)="supprimerPaiement(paiement._id)" title="Supprimer">
+                <i class="mdi mdi-delete"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="dataSource.filteredData.length === 0">
+            <td colspan="7" class="text-center">
+              <i class="mdi mdi-information" style="font-size: 48px; opacity: 0.5;"></i>
+              <p>Aucun paiement trouvé</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination simple -->
+    <div class="pagination" *ngIf="dataSource.data.length > pageSize">
+      <button class="btn-icon" [disabled]="currentPage === 0" (click)="previousPage()">
+        <i class="mdi mdi-chevron-left"></i>
+      </button>
+      <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+      <button class="btn-icon" [disabled]="currentPage === totalPages - 1" (click)="nextPage()">
+        <i class="mdi mdi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" *ngIf="modalSuppressionOuvert" (click)="fermerModalSuppression()">
+  <div class="modal-content small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="mdi mdi-alert-circle text-warning"></i>
+        Confirmer la suppression
+      </h3>
+      <button class="btn-close" (click)="fermerModalSuppression()">
+        <i class="mdi mdi-close"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Êtes-vous sûr de vouloir supprimer ce paiement ?</p>
+      <p class="text-muted">Cette action est irréversible.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="fermerModalSuppression()">Annuler</button>
+      <button class="btn-danger" (click)="confirmerSuppression()">
+        <i class="mdi mdi-delete"></i> Supprimer
+      </button>
+    </div>
+  </div>
+</div>

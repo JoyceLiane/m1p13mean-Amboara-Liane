@@ -79,7 +79,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: ['shop', 'boutique'] }
       },
-     
+
       // ROUTES DE MAINTENANCE POUR LES BOUTIQUES
       {
         path: 'maintenance',
@@ -168,6 +168,29 @@ export const routes: Routes = [
           {
             path: ':id',
             loadComponent: () => import('./components/admin/events/event-detail.component').then(m => m.EventDetailComponent)
+          }
+        ]
+      },
+      {
+        path: 'paiements',
+        canActivate: [RoleGuard],
+        data: { roles: ['admin'] },
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./components/admin/paiement/paiement-list.component').then(m => m.PaiementListAdminComponent)
+          },
+          {
+            path: 'new',
+            loadComponent: () => import('./components/admin/paiement/paiement-form.component').then(m => m.PaiementFormComponent)
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./components/admin/paiement/paiement-form.component').then(m => m.PaiementFormComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./components/admin/paiement/paiement-detail.component').then(m => m.PaiementDetailComponent)
           }
         ]
       },

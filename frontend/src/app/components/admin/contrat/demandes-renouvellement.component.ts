@@ -12,8 +12,7 @@ import { lastValueFrom } from 'rxjs';
     CommonModule,           // Pour ngIf, ngFor, date pipe, number pipe
     FormsModule,            // Pour ngModel
     ReactiveFormsModule,    // Pour formGroup, formControl
-    DatePipe,               // Pour le pipe date
-    DecimalPipe             // Pour le pipe number
+    DatePipe
   ],
   templateUrl: './demandes-renouvellement.component.html',
   styleUrls: ['./demandes-renouvellement.component.css']

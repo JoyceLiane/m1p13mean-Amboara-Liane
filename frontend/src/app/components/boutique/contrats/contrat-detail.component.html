@@ -36,13 +36,13 @@
             <span class="label">Référence:</span>
             <span class="value">{{ contrat.id }}</span>
           </div>
-          <div class="info-item" *ngIf="contrat.id_magasin?.superficie">
+          <div class="info-item" *ngIf="contrat.id_magasin.superficie">
             <span class="label">Superficie:</span>
-            <span class="value">{{ contrat.id_magasin?.superficie }} m²</span>
+            <span class="value">{{ contrat.id_magasin.superficie }} m²</span>
           </div>
-          <div class="info-item" *ngIf="contrat.id_magasin?.etage">
+          <div class="info-item" *ngIf="contrat.id_magasin.etage">
             <span class="label">Étage:</span>
-            <span class="value">{{ contrat.id_magasin?.etage }}</span>
+            <span class="value">{{ contrat.id_magasin.etage }}</span>
           </div>
         </div>
       </div>
@@ -123,8 +123,8 @@
               <i class="mdi mdi-file-document"></i>
               <div>
                 <strong>Demande du {{ item.created_at | date:'dd/MM/yyyy' }}</strong>
-                <span class="statut" [style.backgroundColor]="item.status_id?.couleur">
-                  {{ item.status_id?.nom }}
+                <span class="statut" [style.backgroundColor]="item.status_id.couleur">
+                  {{ item.status_id.nom }}
                 </span>
               </div>
             </div>

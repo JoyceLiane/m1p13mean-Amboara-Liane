@@ -1,0 +1,143 @@
+<div class="container">
+  <div class="header">
+    <button class="btn-icon" (click)="retour()">
+      <i class="mdi mdi-arrow-left"></i>
+    </button>
+    <h2>{{ isEditMode ? 'Modifier le paiement' : 'Nouveau paiement' }}</h2>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="content" *ngIf="!loading">
+    <form [formGroup]="paiementForm" (ngSubmit)="onSubmit()">
+      <!-- Sélection du contrat -->
+      <div class="carte">
+        <div class="carte-header">
+          <h3>
+            <i class="mdi mdi-file-document"></i>
+            Sélectionner un contrat
+          </h3>
+        </div>
+        <div class="carte-body">
+          <div class="form-group">
+            <label>
+              <i class="mdi mdi-store"></i>
+              Contrat <span class="required">*</span>
+            </label>
+            <select class="form-control" formControlName="contrat_id" (change)="onContratChange($event)">
+              <option value="">-- Sélectionnez un contrat --</option>
+              <option *ngFor="let contrat of contrats" [value]="contrat._id">
+                {{ contrat.nom_magasin }} - {{ contrat.id }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="paiementForm.get('contrat_id')?.invalid && paiementForm.get('contrat_id')?.touched">
+              Le contrat est requis
+            </div>
+          </div>
+
+          <!-- Informations du contrat sélectionné -->
+          <div class="info-grid" *ngIf="contratSelectionne">
+            <div class="info-item">
+              <span class="label">Magasin:</span>
+              <span class="value">{{ contratSelectionne.nom_magasin }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Loyer mensuel:</span>
+              <!-- Utilisation de la méthode formatNumber au lieu du pipe -->
+              <span class="value">{{ formatNumber(loyerMensuel) }} Ariary</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Prochain mois à payer:</span>
+              <span class="value">{{ prochainMois | date:'MMMM yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Détails du paiement -->
+      <div class="carte">
+        <div class="carte-header">
+          <h3>
+            <i class="mdi mdi-credit-card"></i>
+            Détails du paiement
+          </h3>
+        </div>
+        <div class="carte-body">
+          <!-- Nombre de mois -->
+          <div class="form-group">
+            <label>
+              <i class="mdi mdi-calendar-multiple"></i>
+              Nombre de mois <span class="required">*</span>
+            </label>
+           <select class="form-control" formControlName="nombre_mois" *ngIf="optionsPaiement.length > 0">
+  <option *ngFor="let option of optionsPaiement" [value]="option.nombre_mois">
+    {{ option.mois_concretes }} - {{ formatNumber(option.montant_total) }} Ariary
+  </option>
+</select>
+<div *ngIf="optionsPaiement.length === 0" class="text-muted">
+  Sélectionnez d'abord un contrat
+</div>
+            <div class="error-message" *ngIf="paiementForm.get('nombre_mois')?.invalid && paiementForm.get('nombre_mois')?.touched">
+              Le nombre de mois est requis
+            </div>
+          </div>
+
+          <!-- Montant total (auto-calculé) -->
+          <div class="form-group">
+            <label>
+              <i class="mdi mdi-currency-usd"></i>
+              Montant total
+            </label>
+            <div class="montant-display">
+              <!-- Utilisation de la méthode formatNumber -->
+              {{ formatNumber(paiementForm.get('montant_total')?.value) }} Ariary
+            </div>
+          </div>
+
+          <!-- Date de paiement -->
+          <div class="form-group">
+            <label>
+              <i class="mdi mdi-calendar"></i>
+              Date de paiement <span class="required">*</span>
+            </label>
+            <input type="date" class="form-control" formControlName="date_paiement">
+            <div class="error-message" *ngIf="paiementForm.get('date_paiement')?.invalid && paiementForm.get('date_paiement')?.touched">
+              La date de paiement est requise
+            </div>
+          </div>
+
+          <!-- Pénalité (optionnel) -->
+          <div class="form-group">
+            <label>
+              <i class="mdi mdi-alert-circle"></i>
+              Pénalité (optionnel)
+            </label>
+            <input type="number" class="form-control" formControlName="penalite" min="0">
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label>
+              <i class="mdi mdi-note-text"></i>
+              Notes (optionnel)
+            </label>
+            <textarea class="form-control" formControlName="notes" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions-footer">
+        <button type="button" class="btn-secondary" (click)="retour()">
+          <i class="mdi mdi-cancel"></i> Annuler
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="paiementForm.invalid || loading">
+          <i class="mdi {{ isEditMode ? 'mdi-pencil' : 'mdi-content-save' }}"></i>
+          {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,635 @@
+.container {
+  padding: 24px;
+  background: #fafbff;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding: 16px 24px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+  box-shadow: 0 2px 8px rgba(124, 77, 255, 0.05);
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: white;
+  color: #6b6b7a;
+  border: 1px solid #e0e0ed;
+  border-radius: 6px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-icon:hover {
+  background: #f5f3ff;
+  border-color: #7c4dff;
+  color: #7c4dff;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1e1e2f;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.header h2 i {
+  color: #7c4dff;
+  font-size: 28px;
+}
+
+/* Statut badge */
+.statut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+}
+
+.statut-badge i {
+  font-size: 16px;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+}
+
+.spinner {
+  border: 2px solid #f0f0fa;
+  border-top: 2px solid #7c4dff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Content */
+.content {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(124, 77, 255, 0.05);
+}
+
+/* Reçu card */
+.recu-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+  margin-bottom: 32px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(124, 77, 255, 0.1);
+}
+
+/* En-tête du reçu */
+.recu-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px dashed #e0e0ed;
+}
+
+.recu-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.recu-title i {
+  color: #7c4dff;
+}
+
+.recu-title h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #1e1e2f;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.recu-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #6b6b7a;
+  font-family: monospace;
+}
+
+.recu-number i {
+  color: #7c4dff;
+  font-size: 20px;
+}
+
+.recu-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b6b7a;
+}
+
+.recu-date i {
+  color: #7c4dff;
+}
+
+/* Section informations */
+.info-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Cartes */
+.carte {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0fa;
+  overflow: hidden;
+}
+
+.carte-header {
+  padding: 16px 20px;
+  background: #f8f9ff;
+  border-bottom: 1px solid #f0f0fa;
+}
+
+.carte-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #1e1e2f;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carte-header h3 i {
+  color: #7c4dff;
+  font-size: 20px;
+}
+
+.carte-body {
+  padding: 20px;
+}
+
+/* Grille d'informations */
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px dashed #f0f0fa;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item .label {
+  color: #6b6b7a;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.info-item .value {
+  color: #1e1e2f;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* Détails du paiement */
+.details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9ff;
+  border-radius: 6px;
+  border-left: 3px solid #7c4dff;
+}
+
+.detail-row .label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1e1e2f;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.detail-row .label i {
+  color: #7c4dff;
+  font-size: 18px;
+}
+
+.detail-row .value {
+  color: #1e1e2f;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.detail-row.total {
+  background: #7c4dff;
+  border-left-color: #6b6b7a;
+}
+
+.detail-row.total .label,
+.detail-row.total .label i,
+.detail-row.total .value {
+  color: white;
+}
+
+/* Notes */
+.notes {
+  margin-top: 24px;
+  padding: 20px;
+  background: #f8f9ff;
+  border-radius: 6px;
+  border-left: 3px solid #7c4dff;
+}
+
+.notes h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #1e1e2f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notes h4 i {
+  color: #7c4dff;
+}
+
+.notes p {
+  margin: 0;
+  color: #1e1e2f;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* Pied de page du reçu */
+.recu-footer {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px dashed #e0e0ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #6b6b7a;
+  font-size: 13px;
+}
+
+.recu-footer p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.recu-footer .signature {
+  font-style: italic;
+  color: #7c4dff;
+}
+
+.recu-footer i {
+  font-size: 16px;
+}
+
+/* Actions footer */
+.actions-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0fa;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-secondary {
+  background: white;
+  color: #6b6b7a;
+  border: 1px solid #e0e0ed;
+}
+
+.btn-secondary:hover {
+  background: #f5f3ff;
+  border-color: #7c4dff;
+  color: #7c4dff;
+}
+
+.btn-primary {
+  background: #7c4dff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #6b3f8a;
+  box-shadow: 0 4px 12px rgba(124, 77, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Impression */
+@media print {
+  .container {
+    padding: 0;
+    background: white;
+  }
+
+  .header,
+  .actions-footer,
+  .btn-icon,
+  .btn-primary,
+  .btn-secondary {
+    display: none !important;
+  }
+
+  .content {
+    padding: 0;
+    background: white;
+    box-shadow: none;
+    border: none;
+  }
+
+  .recu-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    padding: 20px;
+  }
+
+  .recu-footer {
+    border-top-color: #ddd;
+  }
+}
+
+/* Dark Mode */
+:host-context(body.dark-mode) .container {
+  background: #0a0a0f;
+}
+
+:host-context(body.dark-mode) .header,
+:host-context(body.dark-mode) .content,
+:host-context(body.dark-mode) .recu-card,
+:host-context(body.dark-mode) .carte,
+:host-context(body.dark-mode) .loading {
+  background: #16161d;
+  border-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .header h2,
+:host-context(body.dark-mode) .recu-title h1,
+:host-context(body.dark-mode) .carte-header h3,
+:host-context(body.dark-mode) .detail-row .label,
+:host-context(body.dark-mode) .detail-row .value,
+:host-context(body.dark-mode) .notes h4,
+:host-context(body.dark-mode) .notes p {
+  color: white;
+}
+
+:host-context(body.dark-mode) .btn-icon,
+:host-context(body.dark-mode) .btn-secondary {
+  background: #1e1e2a;
+  border-color: #3a3a48;
+  color: #a0a0b0;
+}
+
+:host-context(body.dark-mode) .btn-icon:hover {
+  background: #2a1e3a;
+  border-color: #9f7aea;
+  color: #9f7aea;
+}
+
+:host-context(body.dark-mode) .carte-header {
+  background: #1e1e2a;
+  border-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .carte-header h3 i {
+  color: #9f7aea;
+}
+
+:host-context(body.dark-mode) .info-item .label {
+  color: #a0a0b0;
+}
+
+:host-context(body.dark-mode) .info-item .value {
+  color: white;
+}
+
+:host-context(body.dark-mode) .info-item {
+  border-bottom-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .detail-row {
+  background: #1e1e2a;
+}
+
+:host-context(body.dark-mode) .detail-row.total {
+  background: #9f7aea;
+}
+
+:host-context(body.dark-mode) .notes {
+  background: #1e1e2a;
+}
+
+:host-context(body.dark-mode) .recu-header,
+:host-context(body.dark-mode) .recu-footer {
+  border-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .recu-number,
+:host-context(body.dark-mode) .recu-date,
+:host-context(body.dark-mode) .recu-footer {
+  color: #a0a0b0;
+}
+
+:host-context(body.dark-mode) .recu-footer .signature {
+  color: #9f7aea;
+}
+
+:host-context(body.dark-mode) .btn-secondary:hover {
+  background: #2a1e3a;
+  border-color: #9f7aea;
+  color: #9f7aea;
+}
+
+:host-context(body.dark-mode) .btn-primary {
+  background: #9f7aea;
+}
+
+:host-context(body.dark-mode) .btn-primary:hover {
+  background: #8b5cf6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
+    order: -1;
+    width: 100%;
+  }
+
+  .statut-badge {
+    margin-left: auto;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .recu-card {
+    padding: 16px;
+  }
+
+  .recu-title {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .recu-title h1 {
+    font-size: 22px;
+  }
+
+  .info-section {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .detail-row .label,
+  .detail-row .value {
+    width: 100%;
+  }
+
+  .detail-row .value {
+    text-align: left;
+  }
+
+  .recu-footer {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .actions-footer {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .recu-title i {
+    font-size: 36px;
+  }
+
+  .recu-title h1 {
+    font-size: 18px;
+  }
+
+  .recu-number {
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+
+  .info-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-item .value {
+    text-align: left;
+  }
+
+  .carte-body {
+    padding: 16px;
+  }
+
+  .detail-row .label i {
+    font-size: 16px;
+  }
+}

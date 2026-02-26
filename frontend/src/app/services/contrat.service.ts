@@ -64,9 +64,6 @@ export class ContratService {
     return this.http.get<Contrat>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * Crée un nouveau contrat
-   */
   createContrat(contrat: Partial<Contrat>, imageFile?: File): Observable<Contrat> {
     const currentUser = this.authService.getCurrentUser();
   
@@ -103,40 +100,26 @@ export class ContratService {
     return this.http.post<Contrat>(this.apiUrl, formData);
   }
   
-  
-  /**
-   * Met à jour un contrat
-   */
+
   updateContrat(id: string, contrat: Partial<Contrat>): Observable<Contrat> {
     return this.http.put<Contrat>(`${this.apiUrl}/${id}`, contrat);
   }
 
-  /**
-   * Supprime un contrat (soft delete)
-   */
+
   deleteContrat(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  // ==================== ROUTES SPÉCIFIQUES LOCATAIRE ====================
-
-  /**
-   * Récupère les contrats d'un locataire (sans filtre type_contrat)
-   */
   getContratsByLocataire(locataireId: string): Observable<Contrat[]> {
     return this.http.get<Contrat[]>(`${this.apiUrl}/locataire/${locataireId}`);
   }
 
-  /**
-   * Récupère les contrats d'un utilisateur (avec filtre type_contrat)
-   */
+
   getContratsByUser(userId: string): Observable<Contrat[]> {
     return this.http.get<Contrat[]>(`${this.apiUrl}/user/${userId}`);
   }
 
-  /**
-   * Récupère les demandes de renouvellement en cours d'un locataire
-   */
+
   getDemandesEnCours(locataireId: string): Observable<Contrat[]> {
     return this.http.get<Contrat[]>(`${this.apiUrl}/locataire/${locataireId}/demandes-renouvellement`);
   }
@@ -170,32 +153,21 @@ export class ContratService {
     });
   }
 
-  /**
-   * Approuve une demande de renouvellement (admin)
-   */
+
   approuverRenouvellement(demandeId: string, dates: { date_debut: Date, date_fin: Date }): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${demandeId}/approuver`, dates);
   }
 
-  /**
-   * Refuse une demande de renouvellement (admin)
-   */
+
   refuserRenouvellement(demandeId: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${demandeId}/refuser`, {});
   }
 
-  // ==================== ROUTES ADMIN ====================
-
-  /**
-   * Récupère toutes les demandes de renouvellement en attente
-   */
   getDemandesRenouvellementEnAttente(): Observable<Contrat[]> {
     return this.http.get<Contrat[]>(`${this.apiUrl}/renouvellements/en-attente`);
   }
 
-  /**
-   * Récupère toutes les demandes de renouvellement avec pagination
-   */
+
   getToutesDemandesRenouvellement(params?: {
     statut?: string;
     recherche?: string;
@@ -217,9 +189,6 @@ export class ContratService {
     return this.http.get<{ demandes: Contrat[], total: number }>(url);
   }
 
-  /**
-   * Récupère les statistiques des demandes de renouvellement
-   */
   getStatsRenouvellements(): Observable<{
     enAttente: number;
     approuvees: number;

@@ -1,0 +1,195 @@
+<div class="container">
+  <div class="header">
+    <button class="btn-icon" (click)="retour()">
+      <i class="mdi mdi-arrow-left"></i>
+    </button>
+    <h2>
+      <i class="mdi mdi-receipt"></i>
+      Détails du paiement
+    </h2>
+    <span class="statut-badge" [style.backgroundColor]="getStatutColor(paiement?.statut)">
+      <i class="mdi" [class]="getStatutIcon(paiement?.statut)"></i>
+      {{ paiement?.statut }}
+    </span>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="content" *ngIf="!loading && paiement">
+    <div class="recu-card" id="recu-paiement">
+      <div class="recu-header">
+        <div class="recu-title">
+          <i class="mdi mdi-receipt" style="font-size: 48px;"></i>
+          <h1>REÇU DE PAIEMENT</h1>
+        </div>
+        <div class="recu-number">
+          <i class="mdi mdi-barcode"></i>
+          N° {{ paiement._id }}
+        </div>
+        <div class="recu-date">
+          <i class="mdi mdi-calendar"></i>
+          Date: {{ formatDate(paiement.date_paiement, 'dd/MM/yyyy') }}
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="carte">
+          <div class="carte-header">
+            <h3>
+              <i class="mdi mdi-account"></i>
+              Locataire
+            </h3>
+          </div>
+          <div class="carte-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Nom:</span>
+                <span class="value">{{ getLocataireInfo()?.nom }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Email:</span>
+                <span class="value">{{ getLocataireInfo()?.email }}</span>
+              </div>
+              <div class="info-item" *ngIf="getLocataireInfo()?.telephone">
+                <span class="label">Téléphone:</span>
+                <span class="value">{{ getLocataireInfo()?.telephone }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="carte">
+          <div class="carte-header">
+            <h3>
+              <i class="mdi mdi-store"></i>
+              Magasin
+            </h3>
+          </div>
+          <div class="carte-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Nom:</span>
+                <span class="value">{{ getContratInfo()?.nom_magasin }}</span>
+              </div>
+              <div class="info-item" *ngIf="getMagasinInfo()?.superficie">
+                <span class="label">Superficie:</span>
+                <span class="value">{{ getMagasinInfo()?.superficie }} m²</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Loyer mensuel:</span>
+                <span class="value">{{ formatNumber(paiement.montant_par_mois) }} Ariary</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="carte">
+          <div class="carte-header">
+            <h3>
+              <i class="mdi mdi-file-document"></i>
+              Contrat
+            </h3>
+          </div>
+          <div class="carte-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Référence:</span>
+                <span class="value">{{ getContratInfo()?.id }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date début:</span>
+                <span class="value">{{ formatDate(getContratInfo()?.date_debut, 'dd/MM/yyyy') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date fin:</span>
+                <span class="value">{{ formatDate(getContratInfo()?.date_fin, 'dd/MM/yyyy') }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="carte">
+        <div class="carte-header">
+          <h3>
+            <i class="mdi mdi-credit-card"></i>
+            Détails du paiement
+          </h3>
+        </div>
+        <div class="carte-body">
+          <div class="details-grid">
+            <div class="detail-row">
+              <span class="label">
+                <i class="mdi mdi-calendar-range"></i>
+                Période concernée:
+              </span>
+              <span class="value">{{ getMoisConcerne() }}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">
+                <i class="mdi mdi-calendar-multiple"></i>
+                Nombre de mois:
+              </span>
+              <span class="value">{{ paiement.nombre_mois }} mois</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">
+                <i class="mdi mdi-currency-usd"></i>
+                Montant par mois:
+              </span>
+              <span class="value">{{ formatNumber(paiement.montant_par_mois) }} Ariary</span>
+            </div>
+            
+            <div class="detail-row" *ngIf="paiement.penalite">
+              <span class="label">
+                <i class="mdi mdi-alert-circle"></i>
+                Pénalité:
+              </span>
+              <span class="value">{{ formatNumber(paiement.penalite) }} Ariary</span>
+            </div>
+            
+            <div class="detail-row total">
+              <span class="label">
+                <i class="mdi mdi-cash-multiple"></i>
+                TOTAL PAYÉ:
+              </span>
+              <span class="value">{{ formatNumber(paiement.montant) }} Ariary</span>
+            </div>
+          </div>
+
+          <div class="notes" *ngIf="paiement.notes">
+            <h4>
+              <i class="mdi mdi-note-text"></i>
+              Notes:
+            </h4>
+            <p>{{ paiement.notes }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="recu-footer">
+        <p>
+          <i class="mdi mdi-clock-outline"></i>
+          Reçu généré le {{ formatDate(paiement.createdAt, 'dd/MM/yyyy HH:mm') }}
+        </p>
+        <p class="signature">
+          <i class="mdi mdi-pencil"></i>
+          Cachet et signature
+        </p>
+      </div>
+    </div>
+
+    <div class="actions-footer">
+      <button class="btn-secondary" (click)="retour()">
+        <i class="mdi mdi-arrow-left"></i> Retour
+      </button>
+      <button class="btn-primary" (click)="imprimerRecu()" *ngIf="!isAdmin">
+        <i class="mdi mdi-printer"></i> Imprimer le reçu
+      </button>
+    </div>
+  </div>
+</div>

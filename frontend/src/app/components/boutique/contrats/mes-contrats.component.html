@@ -85,7 +85,7 @@
         <div class="progress-bar" *ngIf="!estExpire(contrat.date_fin)">
           <div class="progress-fill" 
                [style.width.%]="progressionExpiration(contrat.date_fin)"
-               [class.progress-urgent]="estUrgent(contrat.date_fin)">
+               [class.progress-urgent]="estUrgent(contrat?.date_fin)">
           </div>
         </div>
       </div>

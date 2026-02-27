@@ -1,0 +1,144 @@
+<div class="container">
+    <!-- Header avec navigation -->
+    <div class="header">
+        <div class="header-title">
+            <h2>Liste des contrats</h2>
+            <p class="sous-titre">Gérez tous les contrats de location</p>
+        </div>
+        <button class="btn-renouvellement" (click)="voirDemandesRenouvellement()">
+            <i class="mdi mdi-clock-outline"></i>
+            Demandes de renouvellement
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="mdi mdi-file-document"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total contrats</h3>
+                <p class="stat-value">{{ stats.total }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="mdi mdi-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Actifs</h3>
+                <p class="stat-value">{{ stats.actifs }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="mdi mdi-alert"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Expirent bientôt</h3>
+                <p class="stat-value">{{ stats.expirant }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="mdi mdi-clock-end"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Terminés</h3>
+                <p class="stat-value">{{ stats.termines }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="filters-section">
+        <div class="filter-group">
+            <div class="search-box">
+                <i class="mdi mdi-magnify"></i>
+                <input type="text" class="search-input" placeholder="Rechercher par magasin ou locataire..."
+                    [(ngModel)]="recherche" (ngModelChange)="rechercher()">
+            </div>
+            <select class="filter-select" [(ngModel)]="filtreStatut" (ngModelChange)="changerFiltreStatut()">
+                <option value="tous">Tous les contrats</option>
+                <option value="actif">Actifs</option>
+                <option value="expirant">Expirent bientôt</option>
+                <option value="termine">Terminés</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="loading" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Chargement des contrats...</p>
+    </div>
+
+    <div class="table-container" *ngIf="!loading">
+        <table class="contrats-table">
+            <thead>
+                <tr>
+                    <th>Référence</th>
+                    <th>Magasin</th>
+                    <th>Locataire</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let contrat of contrats">
+                    <td>
+                        <span class="contrat-ref">{{ contrat.id || contrat._id | slice:0:8 }}...</span>
+                    </td>
+                    <td>
+                        <strong>{{ contrat.nom_magasin || 'Non défini' }}</strong>
+                    </td>
+                    <td>
+                        <div class="locataire-info">
+                            <span class="locataire-nom">{{ contrat.locataire_id.nom || 'Non défini' }}</span>
+                            <small class="locataire-email">{{ contrat.locataire_id.email || '' }}</small>
+                        </div>
+                    </td>
+                    <td>{{ getDateDebut(contrat) | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                        <span [class.date-expirant]="calculerJoursRestants(contrat.date_fin) <= 30">
+                            {{ contrat.date_fin | date:'dd/MM/yyyy' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="statut-badge" [ngClass]="getStatutContrat(contrat.date_fin).classe">
+                            {{ getStatutContrat(contrat.date_fin).label }}
+                        </span>
+                    </td>
+                    <td class="actions-cell">
+                        <button class="btn-action" (click)="voirDetail(contrat._id!)" title="Voir détails">
+                            <i class="mdi mdi-eye"></i>
+                        </button>
+                        <button class="btn-action btn-edit" *ngIf="calculerJoursRestants(contrat.date_fin) > 0"
+                            (click)="voirDetail(contrat._id!)" title="Modifier">
+                            <i class="mdi mdi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="contrats.length === 0">
+                    <td colspan="8" class="no-data">
+                        <i class="mdi mdi-file-document-outline"></i>
+                        <p>Aucun contrat trouvé</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="totalPages > 1">
+            <button class="btn-pagination" [disabled]="pageActuelle === 1" (click)="changerPage(pageActuelle - 1)">
+                <i class="mdi mdi-chevron-left"></i> Précédent
+            </button>
+            <span class="page-info">Page {{ pageActuelle }} sur {{ totalPages }}</span>
+            <button class="btn-pagination" [disabled]="pageActuelle === totalPages"
+                (click)="changerPage(pageActuelle + 1)">
+                Suivant <i class="mdi mdi-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>

@@ -13,7 +13,7 @@ router.post('/', uploadProduits.single('image'), async (req, res) => {
 
     // Gestion de l'image produit
     if (req.file) {
-      data.imagepath = path.join(req.file.destination, req.file.filename);
+      data.imagepath =  req.file.filename;
     }
 
     const produit = new Produits(data);

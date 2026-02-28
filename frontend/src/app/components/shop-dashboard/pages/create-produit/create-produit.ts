@@ -53,15 +53,15 @@ export class CreateProduitComponent implements OnInit {
           this.contrats = contrats.filter(c =>
             c.locataire_id?._id === currentUser._id &&
             !c.deleted_at &&
-            (
-              (typeof c.status_id === 'object' && c.status_id?.nom === 'EN_ATTENTE') ||
-              (typeof c.status_id === 'string' && c.status_id === 'EN_ATTENTE') // au cas où
-            )
+           c.status_id?.nom === 'ACTIF'
           );
-          
+          // console.log("contrat reçu :",contrats)
         },
         error: (err) => console.error('Erreur chargement contrats:', err)
       });
+    }
+    else{ 
+      alert('tsisy contratttttt')
     }
   }
 
@@ -76,7 +76,7 @@ export class CreateProduitComponent implements OnInit {
     const formData = new FormData();
     formData.append('nom', this.nom);
     formData.append('id_categorie', this.id_categorie);
-    formData.append('id_vendeur', this.id_vendeur); // choisi via select
+    formData.append('id_vendeur', this.id_vendeur); 
     if (this.prix !== null) formData.append('prix', this.prix.toString());
     formData.append('description', this.description);
     formData.append('stock', this.stock.toString());

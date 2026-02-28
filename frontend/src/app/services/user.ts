@@ -19,7 +19,7 @@ export class UserService {
   }
 
   const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-  return this.http.get<any>(`${this.apiUrl}/profile`, { headers })  // ← Ajoute /users
+  return this.http.get<any>(`${this.apiUrl}/profile`, { headers })
     .pipe(
       catchError(err => {
         console.error('Erreur backend', err);

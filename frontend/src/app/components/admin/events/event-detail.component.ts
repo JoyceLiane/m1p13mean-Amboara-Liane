@@ -110,9 +110,9 @@ export class EventDetailComponent implements OnInit {
   }
 
   formatCout(cout: number): string {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat('mg-MG', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'MGA'
     }).format(cout || 0);
   }
 }

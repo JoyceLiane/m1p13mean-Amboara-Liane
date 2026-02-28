@@ -13,15 +13,21 @@ import { Router } from '@angular/router';
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
-export class LandingPage {
+export class LandingPage implements OnInit {
+
   contrats: any[] = [];
-  contratsParEtage: { [etage: number]: any[] } = {};
+  contratsParEtage: { [etage: string]: any[] } = {};
   etages: any[] = [];
   selectedMagasin: any = null;
-  produitsMagasin: any[] = [];
+
+  // Source unique de vérité
+  tousLesProduits: any[] = [];
   filteredProduits: any[] = [];
   categoriesMagasin: any[] = [];
+
   selectedCategorie: string = '';
+  selectedEtage: string = '';
+  searchTerm: string = '';
   nombreItemsPanier: number = 0;
 
   constructor(
@@ -32,46 +38,18 @@ export class LandingPage {
     public panierService: PanierService,
     private router: Router
   ) { }
-  searchTerm: string = '';
-  produitsGlobaux: any[] = [];
-  
-  searchProduitsGlobaux() {
-    if (!this.searchTerm || this.searchTerm.trim() === '') {
-      this.produitsGlobaux = [];
-      return;
-    }
-  
-    this.produitsService.getAllProduits().subscribe({
-      next: (data) => {
-        this.produitsGlobaux = data.filter(p =>
-          p.nom.toLowerCase().includes(this.searchTerm.toLowerCase())
-        );
-        this.filteredProduits = this.produitsGlobaux;
-        this.cdr.detectChanges();
-      },
-      error: err => console.error('Erreur recherche produits globaux:', err)
-    });
-  }
+
   ngOnInit() {
-    // ✅ Charger uniquement les produits des contrats actifs
+    // ✅ Un seul fetch pour tous les produits
     this.produitsService.getProduitsActifs().subscribe({
       next: (data) => {
-        this.produitsMagasin = data;
+        this.tousLesProduits = data;
         this.filteredProduits = data;
-  
-        const uniqueCategories = new Map();
-        data.forEach((p: any) => {
-          if (p.id_categorie) {
-            uniqueCategories.set(p.id_categorie._id, p.id_categorie);
-          }
-        });
-        this.categoriesMagasin = Array.from(uniqueCategories.values());
         this.cdr.detectChanges();
       },
       error: err => console.error('Erreur chargement produits actifs:', err)
     });
-  
-    // Charger les contrats actifs pour la carte des magasins
+
     this.contratService.getContratsActifs().subscribe({
       next: data => {
         this.contrats = Array.isArray(data) ? data : [];
@@ -80,97 +58,93 @@ export class LandingPage {
       },
       error: err => console.error('Erreur lors du chargement des contrats actifs:', err)
     });
-  
-    this.panierService.panier$.subscribe(items => {
+
+    this.panierService.panier$.subscribe(() => {
       this.nombreItemsPanier = this.panierService.getNombreItems();
       this.cdr.detectChanges();
     });
   }
-  
-  
+
+  // ✅ Sélection d'un magasin : filtre local uniquement
   selectMagasin(contrat: any) {
     this.selectedMagasin = contrat;
-    this.loadProduitsMagasin(contrat._id);
+    this.selectedCategorie = '';
+    this.searchTerm = '';
+    this.appliquerFiltres();
   }
-  
+
+  // ✅ Recherche globale : filtre local uniquement
+  searchProduitsGlobaux() {
+    this.selectedMagasin = null;
+    this.selectedCategorie = '';
+    this.appliquerFiltres();
+  }
+
+  // ✅ Filtre par catégorie : filtre local
   filterByCategorie() {
-    if (!this.selectedCategorie) {
-      this.filteredProduits = this.produitsMagasin;
+    this.appliquerFiltres();
+  }
+
+  // ✅ Filtre par étage : filtre local sur contrats
+  filterByEtage() {
+    if (!this.selectedEtage) {
+      this.organiserParEtage();
     } else {
-      this.filteredProduits = this.produitsMagasin.filter(
-        p => p.id_categorie?._id === this.selectedCategorie
+      const filtered = this.contrats.filter(
+        c => c.id_magasin?.etage?.nom === this.selectedEtage
       );
+      this.contratsParEtage = { [this.selectedEtage]: filtered };
+      this.etages = [this.selectedEtage];
     }
     this.cdr.detectChanges();
   }
-  OnInit() {
-    this.contratService.getContratsActifs().subscribe({
-      next: data => {
-        this.contrats = Array.isArray(data) ? data : [];
-        this.organiserParEtage();
-        this.cdr.detectChanges();
-      },
-      error: err => console.error('Erreur lors du chargement des contrats actifs:', err)
-    });
-  
-    this.panierService.panier$.subscribe(items => {
-      this.nombreItemsPanier = this.panierService.getNombreItems();
-      this.cdr.detectChanges();
-    });
-  }
-  loadProduitsMagasin(contratId: string) {
-    this.produitsService.getProduitsByContrat(contratId).subscribe({
-      next: (data) => {
-        this.produitsMagasin = data;
-        this.filteredProduits = data;
 
-        const uniqueCategories = new Map();
-        data.forEach((p: any) => {
-          if (p.id_categorie) {
-            uniqueCategories.set(p.id_categorie._id, p.id_categorie);
-          }
-        });
+  // ✅ Méthode centrale qui applique tous les filtres actifs
+  private appliquerFiltres() {
+    let produits = [...this.tousLesProduits];
 
-        this.categoriesMagasin = Array.from(uniqueCategories.values());
-        this.cdr.detectChanges();
-      },
-      error: err => console.error('Erreur chargement produits:', err)
-    });
-  }
-
-  ajouterAuPanier(produit: any, event: Event) {
-    event.stopPropagation();
-  
-    // Vérifier le stock
-    if (produit.stock <= 0) {
-      alert('Produit en rupture de stock');
-      return;
+    // Filtre par magasin sélectionné
+    if (this.selectedMagasin) {
+      produits = produits.filter(
+        p => p.id_vendeur?._id === this.selectedMagasin.id_vendeur?._id
+      );
     }
-  
-    // ✅ Récupérer le contrat vendeur et son magasin
-    const vendeur = produit.id_vendeur;
-    const magasinNom = vendeur?.nom_magasin || 'Magasin inconnu';
-    const magasinId = vendeur?._id || null;
-  
-    this.panierService.ajouterAuPanier(
-      produit,
-      magasinNom,
-      magasinId,
-      1
-    );
-  
-    alert(`${produit.nom} ajouté au panier !`);
+
+    // Filtre par terme de recherche
+    if (this.searchTerm?.trim()) {
+      const terme = this.searchTerm.toLowerCase();
+      produits = produits.filter(p =>
+        p.nom.toLowerCase().includes(terme)
+      );
+    }
+
+    // Filtre par catégorie
+    if (this.selectedCategorie) {
+      produits = produits.filter(
+        p => p.id_categorie?._id === this.selectedCategorie
+      );
+    }
+
+    this.filteredProduits = produits;
+
+    // Recalculer les catégories disponibles selon le contexte actuel
+    const base = this.selectedMagasin
+      ? this.tousLesProduits.filter(p => p.id_vendeur?._id === this.selectedMagasin.id_vendeur?._id)
+      : this.tousLesProduits;
+
+    const uniqueCategories = new Map();
+    base.forEach((p: any) => {
+      if (p.id_categorie) {
+        uniqueCategories.set(p.id_categorie._id, p.id_categorie);
+      }
+    });
+    this.categoriesMagasin = Array.from(uniqueCategories.values());
+
+    this.cdr.detectChanges();
   }
-  
-  goTologin() {
-    this.router.navigate(['/login']);
-  }
-  goToregister() {
-    this.router.navigate(['/register']);
-  }
+
   organiserParEtage() {
     this.contratsParEtage = {};
-  
     this.contrats.forEach(contrat => {
       const etageNom = contrat.id_magasin?.etage?.nom || 'Inconnu';
       if (!this.contratsParEtage[etageNom]) {
@@ -178,21 +152,30 @@ export class LandingPage {
       }
       this.contratsParEtage[etageNom].push(contrat);
     });
-  
     this.etages = Object.keys(this.contratsParEtage);
   }
-  // Nouveau filtre dynamique
-  selectedEtage: string = '';
 
-filterByEtage() {
-  if (!this.selectedEtage) {
-    this.organiserParEtage(); // tous les étages
-  } else {
-    const filtered = this.contrats.filter(
-      c => c.id_magasin?.etage?.nom === this.selectedEtage
-    );
-    this.contratsParEtage = { [this.selectedEtage]: filtered };
+  ajouterAuPanier(produit: any, event: Event) {
+    event.stopPropagation();
+
+    if (produit.stock <= 0) {
+      alert('Produit en rupture de stock');
+      return;
+    }
+
+    const vendeur = produit.id_vendeur;
+    const magasinNom = vendeur?.nom_magasin || 'Magasin inconnu';
+    const magasinId = vendeur?._id || null;
+
+    this.panierService.ajouterAuPanier(produit, magasinNom, magasinId, 1);
+    alert(`${produit.nom} ajouté au panier !`);
   }
-  this.cdr.detectChanges();
-}
+
+  goTologin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToregister() {
+    this.router.navigate(['/register']);
+  }
 }

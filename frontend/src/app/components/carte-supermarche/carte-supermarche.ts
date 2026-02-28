@@ -18,16 +18,19 @@ export class CarteSupermarcheComponent implements OnInit {
 
   contrats: any[] = [];
   contratsParEtage: { [etage: string]: any[] } = {};
-  etages: any[] = [];
+  etages: string[] = [];
+
+  // Panneau interactif
+  etageActif: string = '';
+  boutiquesEtageActif: any[] = [];
+  showMagasins: boolean = true;
+
   selectedMagasin: any = null;
-  
-  // Source unique de vérité
   tousLesProduits: any[] = [];
   filteredProduits: any[] = [];
   categoriesMagasin: any[] = [];
-  
+
   selectedCategorie: string = '';
-  selectedEtage: string = '';
   searchTerm: string = '';
   nombreItemsPanier: number = 0;
 
@@ -45,6 +48,7 @@ export class CarteSupermarcheComponent implements OnInit {
       next: (data) => {
         this.tousLesProduits = data;
         this.filteredProduits = data;
+        this.mettreAJourCategories(data);
         this.cdr.detectChanges();
       },
       error: err => console.error('Erreur chargement produits actifs:', err)
@@ -54,93 +58,18 @@ export class CarteSupermarcheComponent implements OnInit {
       next: data => {
         this.contrats = Array.isArray(data) ? data : [];
         this.organiserParEtage();
+        if (this.etages.length > 0) {
+          this.selectionnerEtage(this.etages[0]);
+        }
         this.cdr.detectChanges();
       },
-      error: err => console.error('Erreur lors du chargement des contrats actifs:', err)
+      error: err => console.error('Erreur chargement contrats:', err)
     });
 
     this.panierService.panier$.subscribe(() => {
       this.nombreItemsPanier = this.panierService.getNombreItems();
       this.cdr.detectChanges();
     });
-  }
-
-  // ✅ Sélection d'un magasin : filtre local sur tousLesProduits
-  selectMagasin(contrat: any) {
-    this.selectedMagasin = contrat;
-    this.selectedCategorie = '';
-    this.searchTerm = '';
-    this.appliquerFiltres();
-  }
-
-  // ✅ Recherche globale : filtre local sur tousLesProduits
-  searchProduitsGlobaux() {
-    this.selectedMagasin = null;
-    this.selectedCategorie = '';
-    this.appliquerFiltres();
-  }
-
-  // ✅ Filtre par catégorie : filtre local
-  filterByCategorie() {
-    this.appliquerFiltres();
-  }
-
-  // ✅ Filtre par étage : filtre local sur contrats
-  filterByEtage() {
-    if (!this.selectedEtage) {
-      this.organiserParEtage();
-    } else {
-      const filtered = this.contrats.filter(
-        c => c.id_magasin?.etage?.nom === this.selectedEtage
-      );
-      this.contratsParEtage = { [this.selectedEtage]: filtered };
-      this.etages = [this.selectedEtage];
-    }
-    this.cdr.detectChanges();
-  }
-
-  // ✅ Méthode centrale qui applique tous les filtres actifs
-  private appliquerFiltres() {
-    let produits = [...this.tousLesProduits];
-
-    // Filtre par magasin sélectionné
-    if (this.selectedMagasin) {
-      produits = produits.filter(
-        p => p.id_vendeur?._id === this.selectedMagasin.id_vendeur?._id
-      );
-    }
-
-    // Filtre par terme de recherche
-    if (this.searchTerm?.trim()) {
-      const terme = this.searchTerm.toLowerCase();
-      produits = produits.filter(p =>
-        p.nom.toLowerCase().includes(terme)
-      );
-    }
-
-    // Filtre par catégorie
-    if (this.selectedCategorie) {
-      produits = produits.filter(
-        p => p.id_categorie?._id === this.selectedCategorie
-      );
-    }
-
-    this.filteredProduits = produits;
-
-    // Recalculer les catégories disponibles selon le contexte actuel (magasin ou global)
-    const base = this.selectedMagasin
-      ? this.tousLesProduits.filter(p => p.id_vendeur?._id === this.selectedMagasin.id_vendeur?._id)
-      : this.tousLesProduits;
-
-    const uniqueCategories = new Map();
-    base.forEach((p: any) => {
-      if (p.id_categorie) {
-        uniqueCategories.set(p.id_categorie._id, p.id_categorie);
-      }
-    });
-    this.categoriesMagasin = Array.from(uniqueCategories.values());
-
-    this.cdr.detectChanges();
   }
 
   organiserParEtage() {
@@ -155,25 +84,92 @@ export class CarteSupermarcheComponent implements OnInit {
     this.etages = Object.keys(this.contratsParEtage);
   }
 
-  ajouterAuPanier(produit: any, event: Event) {
-    event.stopPropagation();
+  selectionnerEtage(etage: string) {
+    this.etageActif = etage;
+    this.boutiquesEtageActif = this.contratsParEtage[etage] || [];
+    this.cdr.detectChanges();
+  }
 
-    if (produit.stock <= 0) {
-      alert('Produit en rupture de stock');
-      return;
+  selectMagasin(contrat: any) {
+    this.selectedMagasin = contrat;
+    this.selectedCategorie = '';
+    this.searchTerm = '';
+    this.appliquerFiltres();
+    setTimeout(() => {
+      document.querySelector('.produits-section')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  reinitialiserMagasin() {
+    this.selectedMagasin = null;
+    this.selectedCategorie = '';
+    this.searchTerm = '';
+    this.appliquerFiltres();
+  }
+
+  toggleMagasins() {
+    this.showMagasins = !this.showMagasins;
+  }
+
+  searchProduitsGlobaux() {
+    this.selectedMagasin = null;
+    this.appliquerFiltres();
+  }
+
+  filterByCategorie() {
+    this.appliquerFiltres();
+  }
+
+  private appliquerFiltres() {
+    let produits = [...this.tousLesProduits];
+
+    // ✅ id_vendeur._id du produit = _id du contrat sélectionné
+    if (this.selectedMagasin) {
+      produits = produits.filter(p => p.id_vendeur?._id === this.selectedMagasin._id);
     }
 
+    if (this.searchTerm?.trim()) {
+      const terme = this.searchTerm.toLowerCase();
+      produits = produits.filter(p =>
+        p.nom?.toLowerCase().includes(terme) ||
+        p.description?.toLowerCase().includes(terme)
+      );
+    }
+
+    if (this.selectedCategorie) {
+      produits = produits.filter(p => p.id_categorie?._id === this.selectedCategorie);
+    }
+
+    this.filteredProduits = produits;
+    this.mettreAJourCategories(
+      this.selectedMagasin
+        ? this.tousLesProduits.filter(p => p.id_vendeur?._id === this.selectedMagasin._id)
+        : this.tousLesProduits
+    );
+    this.cdr.detectChanges();
+  }
+
+  private mettreAJourCategories(produits: any[]) {
+    const uniqueCategories = new Map();
+    produits.forEach((p: any) => {
+      if (p.id_categorie) {
+        uniqueCategories.set(p.id_categorie._id, p.id_categorie);
+      }
+    });
+    this.categoriesMagasin = Array.from(uniqueCategories.values());
+  }
+
+  ajouterAuPanier(produit: any, event: Event) {
+    event.stopPropagation();
+    if (produit.stock <= 0) { alert('Produit en rupture de stock'); return; }
     const vendeur = produit.id_vendeur;
     const magasinNom = vendeur?.nom_magasin || 'Magasin inconnu';
     const magasinId = vendeur?._id || null;
-
     this.panierService.ajouterAuPanier(produit, magasinNom, magasinId, 1);
     alert(`${produit.nom} ajouté au panier !`);
   }
 
-  voirPanier() {
-    this.router.navigate(['/panier']);
-  }
+  voirPanier() { this.router.navigate(['/panier']); }
 
   getStatutColor(contrat: any) {
     const nom = contrat.status_id?.nom || 'inconnu';

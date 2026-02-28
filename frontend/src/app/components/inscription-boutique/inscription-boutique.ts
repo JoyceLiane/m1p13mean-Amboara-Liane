@@ -118,7 +118,6 @@ export class InscriptionBoutiqueComponent implements OnInit {
         type_contrat: 'INITIAL'
       };
   
-      // ⚠️ Envoi du contrat avec fichier
       await this.contratService.createContrat(contrat, this.imageFile).toPromise();
   
       alert("Demande d'inscription boutique effectuée avec succès !");

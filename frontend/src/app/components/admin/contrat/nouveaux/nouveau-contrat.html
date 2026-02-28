@@ -1,0 +1,251 @@
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <div class="header-icon">
+          <i class="mdi mdi-file-plus-outline"></i>
+        </div>
+        <div>
+          <h2>Nouvelles demandes de contrat</h2>
+          <p class="header-sub">Demandes en attente de traitement</p>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Barre de recherche -->
+    <div class="filters-section">
+      <div class="search-box">
+        <i class="mdi mdi-magnify"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Rechercher par magasin ou candidat..."
+          [(ngModel)]="recherche"
+          (ngModelChange)="rechercher()"
+        />
+      </div>
+      <div class="results-count" *ngIf="!loading">
+        <strong>{{ totalDemandes }}</strong> demande(s) en attente
+      </div>
+    </div>
+  
+    <!-- Loading -->
+    <div class="loading" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Chargement des demandes...</p>
+    </div>
+  
+    <!-- Tableau -->
+    <div class="table-container" *ngIf="!loading">
+      <table class="demandes-table">
+        <thead>
+          <tr>
+            <th>Date demande</th>
+            <th>Magasin</th>
+            <th>Candidat</th>
+            <th>Étage</th>
+            <th>Superficie</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let demande of demandes">
+            <td>{{ demande.created_at | date:'dd/MM/yyyy' }}</td>
+            <td><strong>{{ demande.nom_magasin }}</strong></td>
+            <td>
+              <div class="candidat-nom">{{ demande.locataire_id?.nom }}</div>
+              <small class="candidat-email">{{ demande.locataire_id?.email }}</small>
+            </td>
+            <td>
+              <span class="etage-badge">
+                {{ demande.id_magasin?.etage?.nom || '—' }}
+              </span>
+            </td>
+            <td>
+              {{ demande.id_magasin?.superficie ? (demande.id_magasin.superficie + ' m²') : '—' }}
+            </td>
+            <td class="actions-cell">
+              <!-- Voir détails -->
+              <button class="btn-action" (click)="ouvrirDetail(demande)" title="Voir détails">
+                <i class="mdi mdi-eye"></i>
+              </button>
+              <!-- Traiter -->
+              <button class="btn-action btn-traiter" (click)="ouvrirModalTraitement(demande)" title="Traiter">
+                <i class="mdi mdi-check-circle"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="demandes.length === 0">
+            <td colspan="6" class="empty-state">
+              <i class="mdi mdi-inbox-outline"></i>
+              <span>Aucune demande en attente</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button class="btn-pagination" [disabled]="pageActuelle === 1" (click)="changerPage(pageActuelle - 1)">
+          <i class="mdi mdi-chevron-left"></i> Précédent
+        </button>
+        <span class="page-info">Page {{ pageActuelle }} sur {{ totalPages }}</span>
+        <button class="btn-pagination" [disabled]="pageActuelle === totalPages" (click)="changerPage(pageActuelle + 1)">
+          Suivant <i class="mdi mdi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ===== MODAL DÉTAIL ===== -->
+  <div class="modal" *ngIf="modalDetailOuvert" (click)="fermerDetail()">
+    <div class="modal-content modal-detail" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3><i class="mdi mdi-file-document-outline"></i> Détails de la demande</h3>
+        <button class="btn-close" (click)="fermerDetail()">
+          <i class="mdi mdi-close"></i>
+        </button>
+      </div>
+      <div class="modal-body" *ngIf="demandeSelectionnee">
+        <div class="detail-section">
+          <h4 class="detail-section-title">
+            <i class="mdi mdi-store"></i> Magasin demandé
+          </h4>
+          <div class="resume-card">
+            <div class="resume-item">
+              <span class="label">Nom</span>
+              <span class="value">{{ demandeSelectionnee.nom_magasin }}</span>
+            </div>
+            <div class="resume-item">
+              <span class="label">Étage</span>
+              <span class="value">{{ demandeSelectionnee.id_magasin?.etage?.nom || '—' }}</span>
+            </div>
+            <div class="resume-item">
+              <span class="label">Superficie</span>
+              <span class="value">
+                {{ demandeSelectionnee.id_magasin?.superficie ? (demandeSelectionnee.id_magasin.superficie + ' m²') : '—' }}
+              </span>
+            </div>
+            <div class="resume-item">
+              <span class="label">Prix/m²</span>
+              <span class="value">
+                {{ demandeSelectionnee.id_magasin?.prix_m2 ? (demandeSelectionnee.id_magasin.prix_m2 + ' MGA') : '—' }}
+              </span>
+            </div>
+          </div>
+        </div>
+  
+        <div class="detail-section">
+          <h4 class="detail-section-title">
+            <i class="mdi mdi-account"></i> Candidat
+          </h4>
+          <div class="resume-card">
+            <div class="resume-item">
+              <span class="label">Nom</span>
+              <span class="value">{{ demandeSelectionnee.locataire_id?.nom }}</span>
+            </div>
+            <div class="resume-item">
+              <span class="label">Email</span>
+              <span class="value">{{ demandeSelectionnee.locataire_id?.email }}</span>
+            </div>
+            <div class="resume-item" *ngIf="demandeSelectionnee.locataire_id?.telephone">
+              <span class="label">Téléphone</span>
+              <span class="value">{{ demandeSelectionnee.locataire_id.telephone }}</span>
+            </div>
+          </div>
+        </div>
+  
+        <div class="detail-section" *ngIf="demandeSelectionnee.description">
+          <h4 class="detail-section-title">
+            <i class="mdi mdi-text"></i> Description de la boutique
+          </h4>
+          <div class="description-box">{{ demandeSelectionnee.description }}</div>
+        </div>
+  
+        <div class="detail-footer">
+          <span class="date-demande">
+            <i class="mdi mdi-calendar"></i>
+            Demande soumise le {{ demandeSelectionnee.created_at | date:'dd/MM/yyyy à HH:mm' }}
+          </span>
+          <button class="btn-primary" (click)="traiterDepuisDetail()">
+            <i class="mdi mdi-check-circle"></i> Traiter cette demande
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ===== MODAL TRAITEMENT ===== -->
+  <div class="modal" *ngIf="modalOuvert" (click)="fermerModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3><i class="mdi mdi-file-sign"></i> Traiter la demande</h3>
+        <button class="btn-close" (click)="fermerModal()">
+          <i class="mdi mdi-close"></i>
+        </button>
+      </div>
+  
+      <div class="modal-body" *ngIf="demandeSelectionnee">
+        <div class="resume-card">
+          <div class="resume-item">
+            <span class="label">Magasin</span>
+            <span class="value">{{ demandeSelectionnee.nom_magasin }}</span>
+          </div>
+          <div class="resume-item">
+            <span class="label">Candidat</span>
+            <span class="value">{{ demandeSelectionnee.locataire_id?.nom }}</span>
+          </div>
+          <div class="resume-item">
+            <span class="label">Étage</span>
+            <span class="value">{{ demandeSelectionnee.id_magasin?.etage?.nom || '—' }}</span>
+          </div>
+          <div class="resume-item">
+            <span class="label">Superficie</span>
+            <span class="value">
+              {{ demandeSelectionnee.id_magasin?.superficie ? (demandeSelectionnee.id_magasin.superficie + ' m²') : '—' }}
+            </span>
+          </div>
+        </div>
+  
+        <form [formGroup]="traitementForm" (ngSubmit)="approuver()">
+          <div class="form-group">
+            <label><i class="mdi mdi-calendar-start"></i> Date de début <span class="required">*</span></label>
+            <input type="date" class="form-control" formControlName="date_debut" [min]="dateMin" />
+            <div class="error-message"
+              *ngIf="traitementForm.get('date_debut')?.invalid && traitementForm.get('date_debut')?.touched">
+              La date de début est requise
+            </div>
+          </div>
+  
+          <div class="form-group">
+            <label><i class="mdi mdi-calendar-end"></i> Date de fin <span class="required">*</span></label>
+            <input type="date" class="form-control" formControlName="date_fin"
+              [min]="traitementForm.get('date_debut')?.value" />
+            <div class="error-message"
+              *ngIf="traitementForm.get('date_fin')?.invalid && traitementForm.get('date_fin')?.touched">
+              La date de fin est requise
+            </div>
+            <div class="error-message" *ngIf="traitementForm.errors?.['datesInvalides']">
+              La date de fin doit être postérieure à la date de début
+            </div>
+          </div>
+  
+          <div class="info-message" *ngIf="dureeMois > 0">
+            <i class="mdi mdi-information-outline"></i>
+            <span>Durée du contrat : <strong>{{ dureeMois }} mois</strong></span>
+          </div>
+  
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" (click)="fermerModal()">Annuler</button>
+            <button type="button" class="btn-warning" (click)="refuser()" [disabled]="traitementEnCours">
+              <i class="mdi mdi-close"></i> Refuser
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="traitementForm.invalid || traitementEnCours">
+              <i class="mdi mdi-check"></i>
+              {{ traitementEnCours ? 'Traitement...' : 'Approuver' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

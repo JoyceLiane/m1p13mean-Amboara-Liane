@@ -11,13 +11,16 @@ export interface Contrat {
     _id: string;
     nom: string;
     superficie?: number;
-    etage?: number;
-    prix_m2?: number;
+    etage?: {         
+      _id: string;
+      nom: string;
+    };    prix_m2?: number;
   };
   nom_magasin: string;
   locataire_id: {
     _id: string;
     nom: string;
+    prenom?: string;
     email: string;
     telephone?: string;
   };
@@ -199,7 +202,47 @@ export class ContratService {
   }> {
     return this.http.get<any>(`${this.apiUrl}/renouvellements/stats`);
   }
+// Dans ContratService, ajouter après getStatsRenouvellements()
 
+getDemandesNouveauContrat(params?: {
+  statut?: string;
+  recherche?: string;
+  page?: number;
+  limit?: number;
+}): Observable<{ demandes: Contrat[], total: number }> {
+  let url = `${this.apiUrl}/initiaux`;
+  const queryParams: string[] = [];
+
+  if (params?.statut)    queryParams.push(`statut_demande=${params.statut}`);
+  if (params?.recherche) queryParams.push(`recherche=${params.recherche}`);
+  if (params?.page)      queryParams.push(`page=${params.page}`);
+  if (params?.limit)     queryParams.push(`limit=${params.limit}`);
+
+  if (queryParams.length > 0) url += '?' + queryParams.join('&');
+
+  return this.http.get<{ demandes: Contrat[], total: number }>(url);
+}
+
+getStatsNouveauxContrats(): Observable<{
+  enAttente: number;
+  approuvees: number;
+  refusees: number;
+  ceMois: number;
+  total: number;
+}> {
+  return this.http.get<any>(`${this.apiUrl}/initiaux/stats`);
+}
+
+approuverNouveauContrat(
+  demandeId: string,
+  dates: { date_debut: Date; date_fin: Date }
+): Observable<any> {
+  return this.http.patch(`${this.apiUrl}/${demandeId}/approuver-initial`, dates);
+}
+
+refuserNouveauContrat(demandeId: string): Observable<any> {
+  return this.http.patch(`${this.apiUrl}/${demandeId}/refuser-initial`, {});
+}
   // ==================== ROUTES UTILITAIRES ====================
 
   /**

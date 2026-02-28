@@ -30,7 +30,7 @@
           <select [(ngModel)]="selectedMagasin" name="id_magasin" required>
             <option value="" disabled selected>Choisir un magasin disponible</option>
             <option *ngFor="let m of magasins" [value]="m._id">
-              Magasin #{{ m.id }} - {{ m.superficie }} m² (Étage {{ m.etage?.nom }})
+               {{ m.etage?.nom }} : {{ m.superficie }} m² - Prix par mois : {{m.superficie*m.prix_m2}} MGA
             </option>
           </select>
         </div>

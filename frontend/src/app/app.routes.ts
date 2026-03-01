@@ -124,7 +124,7 @@ export const routes: Routes = [
       {
         path: 'contrats',
         canActivate: [RoleGuard],
-        data: { roles: ['boutique'] }, // Les boutiques et admin peuvent accéder
+        data: { roles: ['admin'] }, // Les boutiques et admin peuvent accéder
         children: [
           {
             path: '',
@@ -148,6 +148,19 @@ export const routes: Routes = [
             path: ':id',
             loadComponent: () => import('./components/admin/contrat/demande-detail.component')
               .then(m => m.DemandeDetailComponent)
+          }
+        ]
+      },
+      {
+        path: 'nouveaux-contrats',
+        canActivate: [RoleGuard],
+        data: { roles: ['admin'] },
+        children: [
+
+          {
+            path: '',
+            loadComponent: () => import('./components/admin/contrat//nouveaux/nouveau-contrat')
+              .then(m => m.NouveauContratComponent)
           }
         ]
       },

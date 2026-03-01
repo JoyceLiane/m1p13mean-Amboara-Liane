@@ -53,16 +53,16 @@
             <td>{{ demande.created_at | date:'dd/MM/yyyy' }}</td>
             <td><strong>{{ demande.nom_magasin }}</strong></td>
             <td>
-              <div class="candidat-nom">{{ demande.locataire_id?.nom }}</div>
-              <small class="candidat-email">{{ demande.locataire_id?.email }}</small>
+              <div class="candidat-nom">{{ demande.locataire_id.nom }}</div>
+              <small class="candidat-email">{{ demande.locataire_id.email }}</small>
             </td>
             <td>
               <span class="etage-badge">
-                {{ demande.id_magasin?.etage?.nom || '—' }}
+                {{ demande.id_magasin.etage?.nom || '—' }}
               </span>
             </td>
             <td>
-              {{ demande.id_magasin?.superficie ? (demande.id_magasin.superficie + ' m²') : '—' }}
+              {{ demande.id_magasin.superficie ? (demande.id_magasin.superficie + ' m²') : '—' }}
             </td>
             <td class="actions-cell">
               <!-- Voir détails -->
@@ -118,18 +118,18 @@
             </div>
             <div class="resume-item">
               <span class="label">Étage</span>
-              <span class="value">{{ demandeSelectionnee.id_magasin?.etage?.nom || '—' }}</span>
+              <span class="value">{{ demandeSelectionnee.id_magasin.etage?.nom || '—' }}</span>
             </div>
             <div class="resume-item">
               <span class="label">Superficie</span>
               <span class="value">
-                {{ demandeSelectionnee.id_magasin?.superficie ? (demandeSelectionnee.id_magasin.superficie + ' m²') : '—' }}
+                {{ demandeSelectionnee.id_magasin.superficie ? (demandeSelectionnee.id_magasin.superficie + ' m²') : '—' }}
               </span>
             </div>
             <div class="resume-item">
               <span class="label">Prix/m²</span>
               <span class="value">
-                {{ demandeSelectionnee.id_magasin?.prix_m2 ? (demandeSelectionnee.id_magasin.prix_m2 + ' MGA') : '—' }}
+                {{ demandeSelectionnee.id_magasin.prix_m2 ? (demandeSelectionnee.id_magasin.prix_m2 + ' MGA') : '—' }}
               </span>
             </div>
           </div>
@@ -142,13 +142,13 @@
           <div class="resume-card">
             <div class="resume-item">
               <span class="label">Nom</span>
-              <span class="value">{{ demandeSelectionnee.locataire_id?.nom }}</span>
+              <span class="value">{{ demandeSelectionnee.locataire_id.nom }}</span>
             </div>
             <div class="resume-item">
               <span class="label">Email</span>
-              <span class="value">{{ demandeSelectionnee.locataire_id?.email }}</span>
+              <span class="value">{{ demandeSelectionnee.locataire_id.email }}</span>
             </div>
-            <div class="resume-item" *ngIf="demandeSelectionnee.locataire_id?.telephone">
+            <div class="resume-item" *ngIf="demandeSelectionnee.locataire_id.telephone">
               <span class="label">Téléphone</span>
               <span class="value">{{ demandeSelectionnee.locataire_id.telephone }}</span>
             </div>
@@ -193,16 +193,16 @@
           </div>
           <div class="resume-item">
             <span class="label">Candidat</span>
-            <span class="value">{{ demandeSelectionnee.locataire_id?.nom }}</span>
+            <span class="value">{{ demandeSelectionnee.locataire_id.nom }}</span>
           </div>
           <div class="resume-item">
             <span class="label">Étage</span>
-            <span class="value">{{ demandeSelectionnee.id_magasin?.etage?.nom || '—' }}</span>
+            <span class="value">{{ demandeSelectionnee.id_magasin.etage?.nom || '—' }}</span>
           </div>
           <div class="resume-item">
             <span class="label">Superficie</span>
             <span class="value">
-              {{ demandeSelectionnee.id_magasin?.superficie ? (demandeSelectionnee.id_magasin.superficie + ' m²') : '—' }}
+              {{ demandeSelectionnee.id_magasin.superficie ? (demandeSelectionnee.id_magasin.superficie + ' m²') : '—' }}
             </span>
           </div>
         </div>

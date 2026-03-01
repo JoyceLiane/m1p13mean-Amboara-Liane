@@ -114,7 +114,6 @@ export class ContratListComponent implements OnInit {
   calculerStats() {
     if (!this.contrats.length) return;
     
-    // Récupérer tous les contrats pour les stats
     this.contratService.getAllContrats().subscribe(contrats => {
       this.stats.total = contrats.length;
       this.stats.actifs = contrats.filter(c => this.calculerJoursRestants(c.date_fin) > 30).length;

@@ -122,6 +122,18 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'contrats',
+        canActivate: [RoleGuard],
+        data: { roles: ['boutique'] }, // Les boutiques et admin peuvent accéder
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./components/admin/contrat/contrat-list.component')
+              .then(m => m.ContratListComponent)
+          }
+        ]
+      },
+      {
         path: 'demandes-renouvellement',
         canActivate: [RoleGuard],
         data: { roles: ['admin'] },

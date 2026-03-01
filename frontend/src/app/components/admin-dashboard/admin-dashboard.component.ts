@@ -31,7 +31,7 @@ export class AdminDashboardComponent implements OnInit {
   showDeleteConfirm = false;
   userToDelete: any = null;
 
-    isDarkMode = false;
+    isDarkMode = true;
 
   constructor(
     private adminService: AdminService,

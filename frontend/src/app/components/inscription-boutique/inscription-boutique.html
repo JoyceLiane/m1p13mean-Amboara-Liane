@@ -1,54 +1,113 @@
-<div class="inscription-container">
-  <div class="inscription-card">
-    <!-- Loading: vérification en cours -->
-    <div *ngIf="loadingCheck" class="loading-message">
-      Vérification en cours...
+<div class="container">
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <h2><span>Inscription</span> boutique</h2>
+      <p class="sous-titre">Rejoignez notre centre commercial</p>
     </div>
 
-    <!-- Message si demande déjà en attente -->
-    <div *ngIf="!loadingCheck && hasPendingDemande" class="info-message">
+    <!-- Loading -->
+    <div *ngIf="loadingCheck" class="loading-state">
+      <div class="spinner"></div>
+      <p>Vérification en cours...</p>
+    </div>
+
+    <!-- Demande en attente -->
+    <div *ngIf="!loadingCheck && hasPendingDemande" class="info-card">
+      <div class="info-icon">
+        <span class="mdi mdi-clock-outline"></span>
+      </div>
       <h3>Demande en attente</h3>
       <p>Vous avez déjà une demande d'inscription en cours de traitement. Vous ne pouvez pas soumettre une nouvelle demande pour le moment.</p>
-      <button type="button" class="retour-button" (click)="retour()">Retour</button>
+      <button type="button" class="btn-secondary" (click)="retour()">
+        <span class="mdi mdi-arrow-left"></span>
+        Retour
+      </button>
     </div>
 
-    <!-- Formulaire si pas de demande en attente -->
-    <div *ngIf="!loadingCheck && !hasPendingDemande">
-      <h2>Inscrire une boutique</h2>
+    <!-- Formulaire -->
+    <div *ngIf="!loadingCheck && !hasPendingDemande" class="form-container">
+      
+      <!-- Messages -->
+      <div *ngIf="errorMessage" class="message error">
+        <span class="mdi mdi-alert-circle"></span>
+        {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage" class="message success">
+        <span class="mdi mdi-check-circle"></span>
+        {{ successMessage }}
+      </div>
 
-      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-
-      <form (ngSubmit)="onInscrireBoutique()">
+      <form (ngSubmit)="onInscrireBoutique()" class="form">
+        
+        <!-- Nom boutique -->
         <div class="input-group">
-          <label>Nom de la boutique</label>
-          <input type="text" [(ngModel)]="nom_magasin" name="nom_magasin" placeholder=" " required />
+          <label>
+            <span class="mdi mdi-store-outline"></span>
+            Nom de la boutique
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="nom_magasin" 
+            name="nom_magasin" 
+            placeholder="Ex: Ma Belle Boutique"
+            required />
         </div>
 
+        <!-- Sélection magasin -->
         <div class="input-group">
-          <label>Magasin</label>
+          <label>
+            <span class="mdi mdi-floor-plan"></span>
+            Magasin disponible
+          </label>
           <select [(ngModel)]="selectedMagasin" name="id_magasin" required>
-            <option value="" disabled selected>Choisir un magasin disponible</option>
+            <option value="" disabled selected>Choisir un emplacement</option>
             <option *ngFor="let m of magasins" [value]="m._id">
-               {{ m.etage?.nom }} : {{ m.superficie }} m² - Prix par mois : {{m.superficie*m.prix_m2}} MGA
+              {{ m.etage?.nom }} • {{ m.superficie }} m² • 
+              {{ m.superficie * m.prix_m2 | number }} MGA/mois
             </option>
           </select>
         </div>
 
+        <!-- Description -->
         <div class="input-group">
-          <label>Description</label>
-          <textarea [(ngModel)]="description" name="description" placeholder=" "></textarea>
+          <label>
+            <span class="mdi mdi-text-box-outline"></span>
+            Description
+          </label>
+          <textarea 
+            [(ngModel)]="description" 
+            name="description" 
+            placeholder="Décrivez votre future boutique..."
+            rows="4"></textarea>
         </div>
 
+        <!-- Upload image -->
         <div class="input-group">
-          <label>Image de la boutique</label>
-          <input type="file" (change)="onFileSelected($event)" />
+          <label>
+            <span class="mdi mdi-image-outline"></span>
+            Image de la boutique
+          </label>
+          <input 
+            type="file" 
+            (change)="onFileSelected($event)" 
+            accept="image/*" />
         </div>
 
-        <button type="submit" class="inscrire-button" [disabled]="envoiEnCours">
-          {{ envoiEnCours ? 'Inscription...' : 'S’inscrire' }}
-        </button>
-        <button type="button" class="retour-button" (click)="retour()">Retour</button>
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" [disabled]="envoiEnCours">
+            <span *ngIf="!envoiEnCours" class="mdi mdi-check"></span>
+            <span *ngIf="envoiEnCours" class="mdi mdi-loading mdi-spin"></span>
+            {{ envoiEnCours ? 'Inscription...' : 'S\'inscrire' }}
+          </button>
+          
+          <button type="button" class="btn-secondary" (click)="retour()">
+            <span class="mdi mdi-arrow-left"></span>
+            Retour
+          </button>
+        </div>
+
       </form>
     </div>
   </div>

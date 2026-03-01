@@ -32,10 +32,9 @@ export const routes: Routes = [
     loadComponent: () => import('./components/not-found/not-found.component').then(m => m.NotFoundComponent)
   },
 
-  // Routes protégées avec layout
   {
     path: '',
-    canActivate: [AuthGuard], // AuthGuard protège TOUTES les routes enfants
+    canActivate: [AuthGuard], 
     children: [
       // Admin uniquement
       {

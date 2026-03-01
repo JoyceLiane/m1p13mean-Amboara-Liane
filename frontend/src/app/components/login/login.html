@@ -1,41 +1,92 @@
 <div class="login-container">
   <div class="login-card">
-    <button class="retour-btn" (click)="goToLanding()">
-      <i class="mdi mdi-home"></i>
+    
+    <!-- Bouton retour (accueil) -->
+    <button class="btn-home" (click)="goToLanding()" title="Accueil">
+      <span class="mdi mdi-home-outline"></span>
     </button>
 
-    <div class="login-content">
+    <div class="login-grid">
+      
+      <!-- Colonne image (gauche) -->
       <div class="login-image">
-        <img [src]="urlHelper.getProfilUrl('login.jpg')" alt="Image décorative">
+        <img [src]="urlHelper.getProfilUrl('login.jpg')" alt="Décoration" />
+        <div class="image-overlay"></div>
       </div>
 
+      <!-- Colonne formulaire (droite) -->
       <div class="login-form">
-        <h2>Connectez-vous pour plus de possibilité</h2>
+        
+        <!-- Header -->
+        <div class="form-header">
+          <h2>Content de vous <span>revoir</span></h2>
+          <p>Connectez-vous pour accéder à votre espace</p>
+        </div>
 
-        <div *ngIf="errorMessage" class="error-message">
+        <!-- Message d'erreur -->
+        <div *ngIf="errorMessage" class="alert alert-error">
+          <span class="mdi mdi-alert-circle"></span>
           {{ errorMessage }}
         </div>
 
-        <form (ngSubmit)="onLogin()">
-          <div class="input-group">
-            <input type="email" [(ngModel)]="email" name="email" placeholder=" " required />
-            <label>Email</label>
+        <!-- Formulaire -->
+        <form (ngSubmit)="onLogin()" class="form">
+          
+          <div class="form-group">
+            <div class="input-wrapper">
+              <span class="input-icon mdi mdi-email-outline"></span>
+              <input 
+                type="email" 
+                [(ngModel)]="email" 
+                name="email" 
+                placeholder="Votre email"
+                required />
+            </div>
           </div>
 
-          <div class="input-group">
-            <input type="password" [(ngModel)]="mdp" name="mdp" placeholder=" " required />
-            <label>Mot de passe</label>
+          <div class="form-group">
+            <div class="input-wrapper">
+              <span class="input-icon mdi mdi-lock-outline"></span>
+              <input 
+                type="password" 
+                [(ngModel)]="mdp" 
+                name="mdp" 
+                placeholder="Votre mot de passe"
+                required />
+            </div>
           </div>
 
-          <button type="submit" class="login-button" [class.loading]="loading" [disabled]="loading">
-            {{ loading ? '' : 'Se connecter' }}
+          <!-- Lien mot de passe oublié -->
+          <div class="forgot-password">
+            <a href="#">Mot de passe oublié ?</a>
+          </div>
+
+          <!-- Bouton de connexion -->
+          <button type="submit" class="btn-login" [class.loading]="loading" [disabled]="loading">
+            <span *ngIf="!loading" class="mdi mdi-login"></span>
+            <span *ngIf="loading" class="mdi mdi-loading mdi-spin"></span>
+            {{ loading ? 'Connexion...' : 'Se connecter' }}
           </button>
+
+          <!-- Séparateur -->
+          <div class="separator">
+            <span>ou</span>
+          </div>
+
+          <!-- Lien inscription -->
+          <div class="register-link">
+            <p>Première visite ? <a routerLink="/register">Créer un compte</a></p>
+          </div>
+
         </form>
 
-        <div class="login-footer">
-          <p>Pas encore de compte ? <a href="register">S'inscrire</a></p>
+        <!-- Footer discret -->
+        <div class="form-footer">
+          <small>En vous connectant, vous acceptez nos <a href="#">conditions d'utilisation</a></small>
         </div>
+
       </div>
     </div>
+
   </div>
 </div>

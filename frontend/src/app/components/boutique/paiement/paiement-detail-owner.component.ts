@@ -8,7 +8,7 @@ import { PaiementService } from '../../../services/paiement.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './paiement-detail-owner.component.html',
-//   styleUrls: ['./paiement-detail-owner.component.css']
+  styleUrls: ['./paiement-detail-owner.component.css']
 })
 export class PaiementDetailOwnerComponent implements OnInit {
   paiement: any = null;
@@ -147,6 +147,6 @@ export class PaiementDetailOwnerComponent implements OnInit {
   }
 
   retour(): void {
-    this.router.navigate(['/owner/paiements']);
+    this.router.navigate(['/paiements']);
   }
 }

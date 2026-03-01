@@ -8,13 +8,13 @@
 
 <!-- BARRE DE FILTRES -->
 <div class="filter-bar">
-  <input type="text" [(ngModel)]="searchTerm" (input)="searchProduitsGlobaux()" placeholder="🔍 Rechercher un produit...">
+  <input type="text" [(ngModel)]="searchTerm" (input)="searchProduitsGlobaux()" placeholder=" Rechercher un produit...">
   <select [(ngModel)]="selectedCategorie" (change)="filterByCategorie()">
     <option value="">Toutes les catégories</option>
     <option *ngFor="let cat of categoriesMagasin" [value]="cat._id">{{ cat.nom }}</option>
   </select>
   <button class="btn-toggle-magasins" (click)="toggleMagasins()">
-    {{ showMagasins ? '🏪 Masquer les magasins' : '🏪 Choisir un magasin' }}
+    {{ showMagasins ? 'Masquer les magasins' : ' Choisir un magasin' }}
   </button>
   <button class="btn-reset" *ngIf="selectedMagasin" (click)="reinitialiserMagasin()">
     ✕ {{ selectedMagasin.nom_magasin }}
@@ -34,7 +34,7 @@
         [class.active]="etageActif === etage"
         (click)="selectionnerEtage(etage)"
       >
-        <span class="etage-btn-icon">🏢</span>
+        <span class="etage-btn-icon"> </span>
         <span class="etage-btn-label">{{ etage }}</span>
         <span class="etage-btn-count">{{ contratsParEtage[etage].length }}</span>
       </button>

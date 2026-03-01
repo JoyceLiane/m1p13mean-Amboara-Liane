@@ -1,197 +1,446 @@
 /* ===== CONTAINER ===== */
 .create-produit-container {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #fafbff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* ===== CARD ===== */
-  .create-produit-card {
-    background: white;
-    padding: 2.5rem;
-    width: 480px;
-    border-radius: 12px;
-    border: 1px solid #f0f0fa;
-    box-shadow: 0 8px 24px rgba(124, 77, 255, 0.08);
-    animation: cardEnter 0.8s ease forwards;
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  .input-group select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #e0e0ed;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #1e1e2f;
-    background: white;
-    transition: all 0.3s ease;
-  }
-  
-  .input-group select:focus {
-    border-color: #7c4dff;
-    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
-  }
-  
-  @keyframes cardEnter {
-    from { opacity: 0; transform: translateY(30px) scale(0.95); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  
-  /* ===== TITRE ===== */
-  .create-produit-card h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #1e1e2f;
-    font-size: 1.8rem;
-    font-weight: 600;
-  }
-  
-  /* ===== INPUT GROUP ===== */
-  .input-group {
-    position: relative;
-    margin-bottom: 1.5rem;
-  }
-  
-  .input-group input,
-  .input-group textarea {
-    width: 100%;
-    padding: 12px 12px;
-    border: 1px solid #e0e0ed;
-    border-radius: 6px;
-    outline: none;
-    font-size: 14px;
-    color: #1e1e2f;
-    background: white;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-  }
-  
-  .input-group textarea {
-    min-height: 80px;
-    resize: vertical;
-  }
-  
-  .input-group input:focus,
-  .input-group textarea:focus {
-    border-color: #7c4dff;
-    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
-  }
-  
-  .input-group input::placeholder,
-  .input-group textarea::placeholder {
-    color: #a0a0b0;
-    opacity: 0;
-  }
-  
-  .input-group label {
-    position: absolute;
-    top: 50%;
-    left: 12px;
-    transform: translateY(-50%);
-    color: #6b6b7a;
-    font-size: 14px;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    background: white;
-    padding: 0 4px;
-  }
-  
-  .input-group input:focus + label,
-  .input-group input:not(:placeholder-shown) + label,
-  .input-group textarea:focus + label,
-  .input-group textarea:not(:placeholder-shown) + label {
-    top: -8px;
-    left: 10px;
-    font-size: 12px;
-    color: #7c4dff;
-    font-weight: 500;
-  }
-  
-  /* ===== FILE UPLOAD ===== */
-  .input-group input[type="file"] {
-    border: none;
-    padding: 0;
-  }
-  .input-group label[for="file"] {
-    position: static;
-    transform: none;
-    font-size: 14px;
-    color: #6b6b7a;
-    margin-bottom: 6px;
-    display: block;
-  }
-  
-  /* ===== BUTTON ===== */
-  .create-button {
-    width: 100%;
-    padding: 12px;
-    background: #7c4dff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 0.5rem;
-    position: relative;
-  }
-  
-  .create-button:hover:not(:disabled) {
-    background: #6b3f8a;
-    box-shadow: 0 4px 12px rgba(124, 77, 255, 0.3);
-    transform: translateY(-2px);
-  }
-  
-  .create-button:active:not(:disabled) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: #fafbff;
+}
+
+/* ===== CARD ===== */
+.create-produit-card {
+  background: white;
+  width: 100%;
+  max-width: 520px;
+  padding: 2.5rem;
+  border-radius: 24px;
+  border: 1px solid #f0f0fa;
+  box-shadow: 0 12px 32px rgba(124, 77, 255, 0.1);
+  animation: cardEnter 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes cardEnter {
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
-  
-  .create-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+}
+
+/* ===== TITRE ===== */
+.create-produit-card h2 {
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+  color: #1e1e2f;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.create-produit-card h2 span {
+  color: #7c4dff;
+  font-weight: 600;
+}
+
+.subtitle {
+  text-align: center;
+  color: #a0a0b0;
+  font-size: 14px;
+  margin-bottom: 2rem;
+}
+
+/* ===== INPUT GROUP ===== */
+.input-group {
+  position: relative;
+  margin-bottom: 1.8rem;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e0e0ed;
+  border-radius: 12px;
+  outline: none;
+  font-size: 15px;
+  color: #1e1e2f;
+  background: #fafbff;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.input-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.input-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b6b7a'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 20px;
+  padding-right: 48px;
+  cursor: pointer;
+}
+
+.input-group input:hover,
+.input-group select:hover,
+.input-group textarea:hover {
+  border-color: #b0b0c0;
+  background: white;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  border-color: #7c4dff;
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
+  background: white;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: #c0c0d0;
+  opacity: 1;
+  font-size: 14px;
+}
+
+/* ===== LABELS FLOTTANTS (optionnel) ===== */
+.input-group.float-label {
+  position: relative;
+}
+
+.input-group.float-label input,
+.input-group.float-label textarea {
+  padding: 16px 16px 8px;
+}
+
+.input-group.float-label label {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  color: #a0a0b0;
+  font-size: 14px;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  background: transparent;
+  padding: 0 4px;
+}
+
+.input-group.float-label textarea + label {
+  top: 16px;
+  transform: none;
+}
+
+.input-group.float-label input:focus + label,
+.input-group.float-label input:not(:placeholder-shown) + label,
+.input-group.float-label textarea:focus + label,
+.input-group.float-label textarea:not(:placeholder-shown) + label {
+  top: 8px;
+  font-size: 11px;
+  color: #7c4dff;
+  font-weight: 500;
+  background: white;
+  padding: 0 6px;
+  left: 12px;
+}
+
+/* ===== FILE UPLOAD ===== */
+.input-group.file-input {
+  border: 2px dashed #e0e0ed;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  background: #fafbff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.input-group.file-input:hover {
+  border-color: #7c4dff;
+  background: #f5f3ff;
+}
+
+.input-group.file-input input[type="file"] {
+  display: none;
+}
+
+.input-group.file-input .file-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.input-group.file-input .file-label .mdi {
+  font-size: 32px;
+  color: #7c4dff;
+}
+
+.input-group.file-input .file-label span {
+  color: #1e1e2f;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.input-group.file-input .file-label small {
+  color: #a0a0b0;
+  font-size: 12px;
+}
+
+/* ===== BOUTON ===== */
+.create-button {
+  width: 100%;
+  padding: 16px;
+  background: #7c4dff;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.create-button:hover:not(:disabled) {
+  background: #6b3f8a;
+  box-shadow: 0 8px 20px rgba(124, 77, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.create-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.create-button:disabled {
+  background: #b0b0c0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.create-button .mdi {
+  font-size: 20px;
+}
+
+/* Loading state */
+.create-button.loading {
+  color: transparent;
+}
+
+.create-button.loading::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid white;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ===== MESSAGES ===== */
+.error-message,
+.success-message {
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 1.8rem;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-message {
+  background: #fff2f2;
+  color: #d32f2f;
+  border-left: 3px solid #d32f2f;
+}
+
+.success-message {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 3px solid #2e7d32;
+}
+
+.error-message .mdi,
+.success-message .mdi {
+  font-size: 20px;
+}
+
+/* ===== BOUTON RETOUR ===== */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  margin-bottom: 20px;
+  background: white;
+  border: 1px solid #e0e0ed;
+  border-radius: 12px;
+  color: #6b6b7a;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: #f5f3ff;
+  border-color: #7c4dff;
+  color: #7c4dff;
+  transform: translateX(-4px);
+}
+
+.btn-back .mdi {
+  font-size: 18px;
+}
+
+/* ===== DARK MODE ===== */
+:host-context(body.dark-mode) .create-produit-container {
+  background: #0a0a0f;
+}
+
+:host-context(body.dark-mode) .create-produit-card {
+  background: #16161d;
+  border-color: #2a2a35;
+}
+
+:host-context(body.dark-mode) .create-produit-card h2 {
+  color: white;
+}
+
+:host-context(body.dark-mode) .subtitle {
+  color: #6b6b7a;
+}
+
+:host-context(body.dark-mode) .input-group input,
+:host-context(body.dark-mode) .input-group select,
+:host-context(body.dark-mode) .input-group textarea {
+  background: #1a1a24;
+  border-color: #3a3a48;
+  color: white;
+}
+
+:host-context(body.dark-mode) .input-group input:focus,
+:host-context(body.dark-mode) .input-group select:focus,
+:host-context(body.dark-mode) .input-group textarea:focus {
+  border-color: #9f7aea;
+  background: #1e1e2a;
+  box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+:host-context(body.dark-mode) .input-group input::placeholder,
+:host-context(body.dark-mode) .input-group textarea::placeholder {
+  color: #4a4a5a;
+}
+
+:host-context(body.dark-mode) .input-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a0a0b0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+}
+
+:host-context(body.dark-mode) .input-group.float-label input:focus + label,
+:host-context(body.dark-mode) .input-group.float-label input:not(:placeholder-shown) + label,
+:host-context(body.dark-mode) .input-group.float-label textarea:focus + label,
+:host-context(body.dark-mode) .input-group.float-label textarea:not(:placeholder-shown) + label {
+  background: #1e1e2a;
+  color: #9f7aea;
+}
+
+:host-context(body.dark-mode) .input-group.file-input {
+  background: #1a1a24;
+  border-color: #3a3a48;
+}
+
+:host-context(body.dark-mode) .input-group.file-input:hover {
+  border-color: #9f7aea;
+  background: #2a1e4a;
+}
+
+:host-context(body.dark-mode) .input-group.file-input .file-label span {
+  color: white;
+}
+
+:host-context(body.dark-mode) .btn-back {
+  background: #1e1e2a;
+  border-color: #3a3a48;
+  color: #a0a0b0;
+}
+
+:host-context(body.dark-mode) .btn-back:hover {
+  background: #2a1e4a;
+  border-color: #9f7aea;
+  color: #9f7aea;
+}
+
+:host-context(body.dark-mode) .create-button {
+  background: #9f7aea;
+}
+
+:host-context(body.dark-mode) .create-button:hover:not(:disabled) {
+  background: #8b5cf6;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .create-produit-card {
+    padding: 2rem 1.5rem;
+    margin: 0 12px;
   }
   
-  /* ===== MESSAGES ===== */
-  .error-message {
-    background: #ffebee;
-    color: #c62828;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 1.5rem;
+  .create-produit-card h2 {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
     font-size: 13px;
-    text-align: center;
-    border: 1px solid #ffcdd2;
-  }
-  
-  .success-message {
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 10px;
-    border-radius: 6px;
     margin-bottom: 1.5rem;
+  }
+
+  .input-group input,
+  .input-group select,
+  .input-group textarea {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .create-button {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  .btn-back {
+    padding: 8px 14px;
     font-size: 13px;
-    text-align: center;
-    border: 1px solid #a5d6a7;
   }
-  
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 480px) {
-    .create-produit-card {
-      width: 90%;
-      padding: 2rem 1.5rem;
-      margin: 0 20px;
-    }
-    
-    .create-produit-card h2 {
-      font-size: 1.5rem;
-    }
-  }
-  
+}

@@ -342,10 +342,10 @@ loadProprietaireData(): void {
   }
 
   voirDetails(id: string): void {
-    this.router.navigate(['/shop/paiements', id]);
+    this.router.navigate(['/owner/paiements', id]);
   }
 
   retour(): void {
-    this.router.navigate(['/shop-dashboard']);
+    this.router.navigate(['/owner/paiements']);
   }
 }

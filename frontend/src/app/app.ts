@@ -6,6 +6,7 @@ import { MenuService } from './services/menu.service';
 import { AuthService } from './services/auth'; // ← AJOUTER CET IMPORT
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'; // ← AJOUTER CET IMPORT
+import { FooterComponent } from './components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ import { map } from 'rxjs/operators'; // ← AJOUTER CET IMPORT
   imports: [
     RouterOutlet,
     CommonModule,
-    MenuComponent
+    MenuComponent,
+    FooterComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -25,7 +27,7 @@ export class AppComponent {
 
   constructor(
     private menuService: MenuService,
-    private authService: AuthService 
+    private authService: AuthService,
   ) {
     this.isCollapsed$ = this.menuService.isCollapsed$;
     

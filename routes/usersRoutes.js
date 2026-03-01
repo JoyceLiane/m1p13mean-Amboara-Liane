@@ -266,7 +266,7 @@ router.post('/', uploadProfils.single('pdp'), async (req, res) => {
 
     // Gestion de l'image de profil
     if (req.file) {
-      userData.pdp = path.join(req.file.destination, req.file.filename);
+      userData.pdp = req.file.filename;
     }
 
     const user = new Users(userData);

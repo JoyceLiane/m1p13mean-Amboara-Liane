@@ -4,6 +4,153 @@ const Contrat = require('../models/Contrat');
 const mongoose = require('mongoose');
 const StatusContrat = require('../models/StatusContrat');
 const { uploadMagasins} = require('../middleware/upload');
+const Roles = require('../models/Roles'); // assure-toi d'importer le modèle Roles
+const Users = require('../models/Users');
+const auth = require('../middleware/auth');
+const authorizeRoles = require('../middleware/role');
+// ===== DEMANDES INITIALES =====
+
+router.get('/initiaux', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const { statut_demande, recherche, page = 1, limit = 10 } = req.query;
+
+    const query = {
+      type_contrat: 'INITIAL',
+      deleted_at: null
+    };
+
+    // Résoudre le statut_demande via StatusContrat
+    if (statut_demande && statut_demande !== 'all') {
+      const statusDoc = await StatusContrat.findOne({ nom: statut_demande });
+      if (statusDoc) query.status_id = statusDoc._id;
+    } else if (!statut_demande) {
+      const statusEnAttente = await StatusContrat.findOne({ nom: 'EN_ATTENTE' });
+      if (statusEnAttente) query.status_id = statusEnAttente._id;
+    }
+
+    let contrats = await Contrat.find(query)
+      .populate({
+        path: 'id_magasin',
+        populate: { path: 'etage' } 
+      })
+      .populate('locataire_id', 'nom email telephone')
+      .populate('status_id', 'nom couleur')
+      .sort({ created_at: -1 });
+
+    if (recherche) {
+      const terme = recherche.toLowerCase();
+      contrats = contrats.filter(c =>
+        c.nom_magasin?.toLowerCase().includes(terme) ||
+        c.locataire_id?.nom?.toLowerCase().includes(terme) ||
+        c.locataire_id?.email?.toLowerCase().includes(terme)
+      );
+    }
+
+    const total = contrats.length;
+    const debut = (parseInt(page) - 1) * parseInt(limit);
+    const demandes = contrats.slice(debut, debut + parseInt(limit));
+
+    res.json({ demandes, total });
+  } catch (err) {
+    console.error('Erreur get initiaux:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET stats des demandes initiales
+router.get('/initiaux/stats', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const base = { type_contrat: 'INITIAL' };
+
+    const [enAttente, approuvees, refusees, total] = await Promise.all([
+      Contrat.countDocuments({ ...base, statut_demande: 'EN_ATTENTE' }),
+      Contrat.countDocuments({ ...base, statut_demande: 'APPROUVEE' }),
+      Contrat.countDocuments({ ...base, statut_demande: 'REFUSEE' }),
+      Contrat.countDocuments(base)
+    ]);
+
+    const debutMois = new Date();
+    debutMois.setDate(1);
+    debutMois.setHours(0, 0, 0, 0);
+    const ceMois = await Contrat.countDocuments({
+      ...base,
+      created_at: { $gte: debutMois }
+    });
+
+    res.json({ enAttente, approuvees, refusees, total, ceMois });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH approuver un contrat initial
+router.patch('/:id/approuver-initial', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    const { date_debut, date_fin } = req.body;
+
+    if (!date_debut || !date_fin) {
+      return res.status(400).json({ error: 'Dates de début et fin requises' });
+    }
+
+    // 1. Récupérer le statut ACTIF
+    const statusActif = await StatusContrat.findOne({ nom: 'ACTIF' });
+    if (!statusActif) return res.status(500).json({ error: 'Statut ACTIF introuvable' });
+
+    // 2. Mettre à jour le contrat : dates + status_id → ACTIF
+    const contrat = await Contrat.findByIdAndUpdate(
+      req.params.id,
+      {
+        date_debut,
+        date_fin,
+        status_id: statusActif._id,
+        updated_at: new Date()
+      },
+      { new: true }
+    ).populate('locataire_id');
+
+    if (!contrat) return res.status(404).json({ error: 'Contrat non trouvé' });
+
+    // 3. Changer le rôle du locataire → boutique
+    const roleShop = await Roles.findOne({ nom: 'boutique' });
+    if (!roleShop) return res.status(500).json({ error: 'Rôle boutique introuvable' });
+
+    await Users.findByIdAndUpdate(contrat.locataire_id._id, {
+      role_id: roleShop._id,
+      updated_at: new Date()
+    });
+
+    res.json({ message: 'Contrat approuvé, utilisateur promu boutique', contrat });
+  } catch (err) {
+    console.error('Erreur approbation initial:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH refuser un contrat initial
+router.patch('/:id/refuser-initial', auth, authorizeRoles('admin'), async (req, res) => {
+  try {
+    // 1. Récupérer le statut REFUSEE
+    const statusRefuse = await StatusContrat.findOne({ nom: 'REFUSEE' });
+    if (!statusRefuse) return res.status(500).json({ error: 'Statut REFUSEE introuvable' });
+
+    // 2. Mettre à jour le contrat : status_id → REFUSEE
+    const contrat = await Contrat.findByIdAndUpdate(
+      req.params.id,
+      {
+        status_id: statusRefuse._id,
+        updated_at: new Date()
+      },
+      { new: true }
+    );
+
+    if (!contrat) return res.status(404).json({ error: 'Contrat non trouvé' });
+
+    res.json({ message: 'Demande refusée', contrat });
+  } catch (err) {
+    console.error('Erreur refus initial:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.post('/', uploadMagasins.single('image'), async (req, res) => {
   try {

@@ -64,14 +64,14 @@ export class AuthService {
       );
   }
 
-  logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('user');
-    this.currentUserSubject.next(null);
-    this.isAuthenticatedSubject.next(false);
-    this.router.navigate(['/login']);
-  }
+logout(): void {
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  localStorage.removeItem('user');
+  this.currentUserSubject.next(null);
+  this.isAuthenticatedSubject.next(false);
+  this.router.navigate(['/login']);
+}
 
   fetchCurrentUser(): Observable<User> {
     const token = this.getToken();

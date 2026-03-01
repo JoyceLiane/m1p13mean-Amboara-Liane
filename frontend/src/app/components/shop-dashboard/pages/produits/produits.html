@@ -54,7 +54,7 @@
           <td>
             {{ typeof produit.id_categorie === 'object' ? produit.id_categorie.nom : '' }}
           </td>
-          <td>{{ produit.prix }} €</td>
+          <td>{{ produit.prix }} MGA</td>
           <td [class.rupture]="produit.stock === 0">
             {{ produit.stock }}
           </td>

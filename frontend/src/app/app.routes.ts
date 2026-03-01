@@ -140,19 +140,6 @@ export const routes: Routes = [
         ]
       },
       {
-        path: 'contrats',
-        canActivate: [RoleGuard],
-        data: { roles: ['admin'] },
-        children: [
-
-          {
-            path: '',
-            loadComponent: () => import('./components/admin/contrat/contrat-list.component')
-              .then(m => m.ContratListComponent)
-          }
-        ]
-      },
-      {
         path: 'shop-mouvement-stock/:produitId',
         loadComponent: () =>
           import('./components/shop-dashboard/pages/mouvement-stock/mouvement-stock')
